@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapa id="planta1" nom="Entrada de la Torre">
+    <habitacions>
+        <habitacio id="sala_entrada" x="0" y="0" amplada="20" alcada="10">
+            <descripcio>L'entrada de la torre, fosca i freda. Les pedres de les parets suen humitat.</descripcio>
+            <entitats>
+                <enemic tipus="follet" x="5" y="4"/>
+                <item tipus="torxa" x="2" y="2"/>
+            </entitats>
+        </habitacio>
+
+        <habitacio id="corredor_est" x="20" y="3" amplada="8" alcada="4">
+            <descripcio>Un corredor estret que fa olor de sutge</descripcio>
+            <entitats/>
+        </habitacio>
+
+        <habitacio id="sala_guarda" x="28" y="0" amplada="18" alcada="10">
+            <descripcio>La sala dels guàrdies, amb dues taules de fusta trencades</descripcio>
+            <entitats>
+                <enemic tipus="dimoni_petit" x="5" y="3"/>
+                <enemic tipus="dimoni_petit" x="10" y="6"/>
+                <item tipus="espasa_rovellada" x="3" y="7"/>
+            </entitats>
+        </habitacio>
+    </habitacions>
+
+    <connexions>
+        <connexio de="sala_entrada" a="corredor_est" direccio="est"/>
+        <connexio de="corredor_est" a="sala_guarda" direccio="est"/>
+    </connexions>
+</mapa>
