@@ -4,6 +4,8 @@
  */
 package com.iessineu.rondalles.entitats;
 
+import com.googlecode.lanterna.TextColor;
+
 /**
  *
  * @author jaume, dani, sergi, kanhai i pere
@@ -125,5 +127,10 @@ public class Jugador extends Entitat {
     public void setEstatJugador(EstatJugador e) {
         this.estatJugador = e;
     }
-    
+
+    @Override
+    public TextColor getColor() {
+        return TextColor.ANSI.GREEN_BRIGHT;
+    }
+
 }
