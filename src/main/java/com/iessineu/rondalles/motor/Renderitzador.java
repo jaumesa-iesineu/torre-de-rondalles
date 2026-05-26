@@ -67,7 +67,7 @@ public class Renderitzador {
 
         for (int y = 0; y < celles.length; y++) {
             for (int x = 0; x < celles[y].length; x++) {
-                double dist = Math.sqrt(((x - jx) * (x - jx)) + ((y - jy) * (y - jy)*4));//Modificar camp te visió.
+                double dist = Math.sqrt(((x - jx) * (x - jx)/2) + ((y - jy) * (y - jy)*2));//Modificar camp te visió.
                 if (dist > RADI_LLANTERNA) continue;
 
                 double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.75;//Modificar degradat de la visió.
@@ -131,19 +131,24 @@ public class Renderitzador {
     private void dibuixaHUD(com.iessineu.rondalles.entitats.Jugador jugador) {
         int col = 1;
         int fila = 1;
-
+        
+        //Bloc de vida:
         String vida = "VIDA:  " + jugador.getVida() + " / " + jugador.getVidaMaxima();
         pintaText(col, fila, vida, new TextColor.RGB(220, 50, 50));
-
-        String pes = "PES:   " + jugador.getPes() + " / " + jugador.getpesMaxim() + " kg";
+        
+        //Bloc de pes:
+        String pes = "PES:   " + jugador.getPes() + " / " + jugador.getpesMaxim();
         pintaText(col, fila + 1, pes, new TextColor.RGB(180, 160, 80));
-
+        
+         //Bloc d'atac:
         String armes = "ATAC:  " + jugador.getAtacTotal();
         pintaText(col, fila + 2, armes, new TextColor.RGB(200, 120, 50));
-
+        
+         //Bloc de defensa:
         String armadura = "DEF:   " + jugador.getDefensaTotal();
         pintaText(col, fila + 3, armadura, new TextColor.RGB(100, 160, 220));
-
+        
+        //Bloc d'objectes d'inventari (Temporal)
         String inv = "INV:   (buit)";
         pintaText(col, fila + 4, inv, new TextColor.RGB(140, 200, 140));
     }
