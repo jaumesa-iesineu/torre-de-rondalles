@@ -1,52 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mapa id="planta1" nom="Entrada de la Torre">
     <habitacions>
-        <habitacio id="sala_entrada" x="0" y="0" amplada="35" alcada="20">
+        <habitacio id="sala_entrada1" x="0" y="0" amplada="17" alcada="11" porta="6" portaEsp="4">
             <descripcio>L'entrada de la torre, fosca i freda. Les pedres de les parets suen humitat.</descripcio>
-            <entitats>
-                <enemic tipus="follet" x="8" y="8"/>
-                <item tipus="torxa" x="3" y="3"/>
-            </entitats>
         </habitacio>
 
-        <habitacio id="corredor_est" x="35" y="7" amplada="12" alcada="6">
-            <descripcio>Un corredor estret que fa olor de sutge</descripcio>
-            <entitats/>
-        </habitacio>
-
-        <habitacio id="sala_guarda" x="47" y="0" amplada="30" alcada="20">
-            <descripcio>La sala dels guàrdies, amb dues taules de fusta trencades</descripcio>
-            <entitats>
-                <enemic tipus="dimoni_petit" x="8" y="5"/>
-                <enemic tipus="dimoni_petit" x="18" y="12"/>
-                <item tipus="espasa_rovellada" x="5" y="15"/>
-            </entitats>
+        <habitacio id="sala_entrada2" x="16" y="0" amplada="17" alcada="11" porta="7" portaEsp="2">
         </habitacio>
         
-        <habitacio x="4" y="10" amplada="1" alcada="1">
+        <habitacio id="sala_entrada3" x="32" y="0" amplada="17" alcada="11" porta="7" portaEsp="2">
         </habitacio>
-        <habitacio x="5" y="11" amplada="1" alcada="1">
+        
+        <habitacio id="sala_guarda" x="0" y="10" amplada="49" alcada="11">
+            <descripcio>La sala dels guàrdies, amb dues taules de fusta trencades</descripcio>
         </habitacio>
-        <habitacio x="6" y="12" amplada="1" alcada="1">
+        
+        <habitacio id="sala_entrada3" x="50" y="0" amplada="1" alcada="20">
         </habitacio>
-        <habitacio x="7" y="13" amplada="1" alcada="1">
+        <habitacio id="sala_entrada3" x="51" y="0" amplada="1" alcada="20">
         </habitacio>
-        <habitacio x="8" y="14" amplada="1" alcada="1">
-        </habitacio>
-        <habitacio x="9" y="14" amplada="1" alcada="1">
-        </habitacio>
-        <habitacio x="10" y="13" amplada="1" alcada="1">
-        </habitacio>
-        <habitacio x="11" y="12" amplada="1" alcada="1">
-        </habitacio>
-        <habitacio x="12" y="11" amplada="1" alcada="1">
-        </habitacio>
-        <habitacio x="13" y="10" amplada="1" alcada="1">
+        <habitacio id="sala_entrada3" x="52" y="0" amplada="1" alcada="20">
         </habitacio>
     </habitacions>
 
     <connexions>
-        <connexio de="sala_entrada" a="corredor_est" direccio="est"/>
-        <connexio de="corredor_est" a="sala_guarda" direccio="est"/>
+        <connexio de="sala_entrada1" a="sala_guarda" direccio="sud"/>
+        <connexio de="sala_entrada2" a="sala_guarda" direccio="sud"/>
+        <connexio de="sala_entrada3" a="sala_guarda" direccio="sud"/>
     </connexions>
 </mapa>
