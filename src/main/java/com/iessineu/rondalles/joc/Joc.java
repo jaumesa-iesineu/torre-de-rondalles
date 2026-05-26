@@ -109,7 +109,8 @@ public class Joc extends Motor {
         try {
             //passam tots els enemics com a llista d'entitats al renderitzador
             List<Entitat> totes = new ArrayList<>(enemics);
-            renderer.dibuixa(mapa, jugador.getX(), jugador.getY(), totes);
+            // CANVI: afegit "jugador" com a paràmetre per poder pintar el HUD
+            renderer.dibuixa(mapa, jugador.getX(), jugador.getY(), totes, jugador);
         } catch (IOException ex) {
             //si hi ha un error de pantalla aturem el joc
             corrent = false;

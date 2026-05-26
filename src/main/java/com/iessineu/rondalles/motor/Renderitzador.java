@@ -53,9 +53,8 @@ public class Renderitzador {
         screen.setCursorPosition(null);
     }
 
-    //pinta tot el mapa aplicant l'efecte de llanterna des de la posició del jugador
-    //el mapa es centra dins la finestra perquè no quedi tot a dalt a l'esquerra
-    public void dibuixa(Mapa mapa, int jx, int jy, List<Entitat> entitats) throws IOException {
+    // CANVI 1: afegit el paràmetre "jugador" al mètode dibuixa
+    public void dibuixa(Mapa mapa, int jx, int jy, List<Entitat> entitats, com.iessineu.rondalles.entitats.Jugador jugador) throws IOException {
         screen.clear();
 
         char[][] celles = mapa.getCelles();
@@ -93,6 +92,9 @@ public class Renderitzador {
         //el jugador sempre es pinta verd per damunt de tot
         screen.setCharacter(offsetX + jx, offsetY + jy, new TextCharacter('@', TextColor.ANSI.GREEN_BRIGHT, TextColor.ANSI.BLACK));
 
+        // CANVI 2: cridam el HUD just abans de fer refresh
+        dibuixaHUD(jugador);
+
         screen.refresh();
     }
 
@@ -123,6 +125,33 @@ public class Renderitzador {
         int g = (int)(rgb.getGreen() * factor);
         int b = (int)(rgb.getBlue() * factor);
         return new TextColor.RGB(r, g, b);
+    }
+
+    // CANVI 3: mètodes nous per pintar el HUD
+    private void dibuixaHUD(com.iessineu.rondalles.entitats.Jugador jugador) {
+        int col = 1;
+        int fila = 1;
+
+        String vida = "VIDA:  " + jugador.getHp() + " / " + jugador.getHpMax();
+        pintaText(col, fila, vida, new TextColor.RGB(220, 50, 50));
+
+        String pes = "PES:   " + jugador.getPes() + " / " + jugador.getPesMax() + " kg";
+        pintaText(col, fila + 1, pes, new TextColor.RGB(180, 160, 80));
+
+        String armes = "ATAC:  " + jugador.getAtacTotal();
+        pintaText(col, fila + 2, armes, new TextColor.RGB(200, 120, 50));
+
+        String armadura = "DEF:   " + jugador.getDefensaTotal();
+        pintaText(col, fila + 3, armadura, new TextColor.RGB(100, 160, 220));
+
+        String inv = "INV:   (buit)";
+        pintaText(col, fila + 4, inv, new TextColor.RGB(140, 200, 140));
+    }
+
+    private void pintaText(int col, int fila, String text, TextColor color) {
+        for (int i = 0; i < text.length(); i++) {
+            screen.setCharacter(col + i, fila, new TextCharacter(text.charAt(i), color, TextColor.ANSI.BLACK));
+        }
     }
 
     //espera que l'usuari premi una tecla (bloquejant)
