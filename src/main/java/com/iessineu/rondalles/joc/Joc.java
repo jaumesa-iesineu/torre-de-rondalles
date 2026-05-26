@@ -112,12 +112,12 @@ public class Joc extends Motor {
             List<Entitat> totes = new ArrayList<>(enemics);
             renderer.dibuixa(mapa, jugador.getX(), jugador.getY(), totes);
         } catch (IOException ex) {
-            //si hi ha un error de pantalla aturem el joc
+            //errorr
             corrent = false;
         }
     }
 
-    //cerca la primera casella de terra on posar el jugador
+    //cerca la primera casella de terra on posar es jugador
     private int trobaInicialX() {
         char[][] celles = mapa.getCelles();
         for (int y = 0; y < celles.length; y++)
