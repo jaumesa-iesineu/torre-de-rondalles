@@ -31,7 +31,7 @@ public class Renderitzador {
 
     //el radi de la llanterna en caselles
     //tot el que quedi fora d'aquest radi es veu negre
-    private static final int RADI_LLANTERNA = 14;
+    private static final int RADI_LLANTERNA = 10;
 
     public Renderitzador() throws IOException {
         //usam swing perquè funcioni des de netbeans i des de qualsevol màquina
@@ -70,7 +70,7 @@ public class Renderitzador {
                 double dist = Math.sqrt((x - jx) * (x - jx) + (y - jy) * (y - jy));
                 if (dist > RADI_LLANTERNA) continue;
 
-                double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.5;
+                double factor = 1.0 - (dist / RADI_LLANTERNA) * 1.0;
                 TextColor colorBase = colorPerCasella(celles[y][x]);
                 TextColor colorFinal = fosqueix(colorBase, factor);
 

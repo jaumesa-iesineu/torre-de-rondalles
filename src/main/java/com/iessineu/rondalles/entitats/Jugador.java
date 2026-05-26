@@ -43,7 +43,7 @@ public class Jugador extends Entitat {
         this.pesMaxim = 50;
         this.pes = 0;
         this.velocitat = 5;
-        this.visio = 14;
+        this.visio = 5;
         this.estatJugador = EstatJugador.IDLE;
     }
 
