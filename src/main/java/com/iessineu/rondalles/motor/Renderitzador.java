@@ -132,10 +132,10 @@ public class Renderitzador {
         int col = 1;
         int fila = 1;
 
-        String vida = "VIDA:  " + jugador.getHp() + " / " + jugador.getHpMax();
+        String vida = "VIDA:  " + jugador.getVida() + " / " + jugador.getVidaMaxima();
         pintaText(col, fila, vida, new TextColor.RGB(220, 50, 50));
 
-        String pes = "PES:   " + jugador.getPes() + " / " + jugador.getPesMax() + " kg";
+        String pes = "PES:   " + jugador.getPes() + " / " + jugador.getpesMaxim() + " kg";
         pintaText(col, fila + 1, pes, new TextColor.RGB(180, 160, 80));
 
         String armes = "ATAC:  " + jugador.getAtacTotal();
