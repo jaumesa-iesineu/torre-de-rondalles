@@ -4,6 +4,8 @@
  */
 package com.iessineu.rondalles.entitats;
 
+import com.googlecode.lanterna.TextColor;
+
 /**
  *
  * @author jaume, dani, sergi, kanhai i pere
@@ -32,6 +34,8 @@ public abstract class Entitat {
 
     //interacció
     public abstract void interactua(Jugador jugador);
+
+    public abstract TextColor getColor();
 
     //getters
     public int getX() {

@@ -15,9 +15,7 @@ public abstract class Enemic extends Entitat {
         PATRULLANT,
         ALERTA,
         PERSEGUINT,
-        ATACANT,
-        ATORDIT,
-        FUGINT,
+        EXECUTANT_ACCIO,
         MORT
     }
 
@@ -54,7 +52,7 @@ public abstract class Enemic extends Entitat {
         //quan el jugador entra a la casella de l'enemic, pega
         //de moment simplement resta vida, el combat real el farem més endavant
         jugador.rebreDany(atac);
-        estatEnemic = EstatEnemic.ATACANT;
+        estatEnemic = EstatEnemic.EXECUTANT_ACCIO;
     }
 
     //distància efins jugador
@@ -74,9 +72,6 @@ public abstract class Enemic extends Entitat {
             vida = 0;
             estatEnemic = EstatEnemic.MORT;
             actiu = false;
-        } else if (vida < vidaMaxima / 4) {
-            //si queda amb menys d'un quart de vida, fuig
-            estatEnemic = EstatEnemic.FUGINT;
         }
     }
 
