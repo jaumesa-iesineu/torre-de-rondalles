@@ -39,8 +39,19 @@ public class Mapa {
         return c != '#';
     }
 
-    public char[][] getCelles() { return celles; }
-    public String getNom() { return nom; }
-    public int getAmplada() { return amplada; }
-    public int getAlcada() { return alcada; }
+    public char[][] getCelles() {
+        return celles;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public int getAmplada() {
+        return amplada;
+    }
+
+    public int getAlcada() {
+        return alcada;
+    }
 }

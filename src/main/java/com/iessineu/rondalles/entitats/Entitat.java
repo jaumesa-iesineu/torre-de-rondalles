@@ -10,15 +10,14 @@ package com.iessineu.rondalles.entitats;
  */
 public abstract class Entitat {
 
-    //posició de l'entitat al mapa
+    //posició de s'entitat a nes mapa
     protected int x;
     protected int y;
 
-    //el caràcter que es pinta a la pantalla
+    //es simbol que es pinta
     protected char simbol;
 
-    //si actiu és false, l'entitat no es pinta ni interactua
-    //ho feim servir per les entitats mortes o recollides
+    //per gestionar el sistema per torns rogue
     protected boolean actiu;
 
     public Entitat(int x, int y, char simbol) {
@@ -28,19 +27,39 @@ public abstract class Entitat {
         this.actiu = true;
     }
 
-    //cada entitat sap actualitzar-se ella mateixa cada torn
+    //funció per si l'entitat per exemple té un efecte de verí
     public abstract void actualitza();
 
-    //quan el jugador xoca amb una entitat passa alguna cosa
-    //pot ser combat, recollir un item, parlar amb un npc...
+    //interacció
     public abstract void interactua(Jugador jugador);
 
-    public int getX() { return x; }
-    public int getY() { return y; }
-    public char getSimbol() { return simbol; }
-    public boolean isActiu() { return actiu; }
+    //getters
+    public int getX() {
+        return x;
+    }
+    
+    public int getY() {
+        return y;
+    }
+    
+    public char getSimbol() {
+        return simbol;
+    }
+    
+    public boolean isActiu() {
+        return actiu;
+    }
 
-    public void setX(int x) { this.x = x; }
-    public void setY(int y) { this.y = y; }
-    public void setActiu(boolean actiu) { this.actiu = actiu; }
+    //setters
+    public void setX(int x) {
+        this.x = x;
+    }
+    
+    public void setY(int y) {
+        this.y = y;
+    }
+    
+    public void setActiu(boolean actiu) {
+        this.actiu = actiu;
+    }
 }
