@@ -31,12 +31,14 @@ public class CarregadorMapa {
         } else {
             //el cercam a /
             InputStream is = CarregadorMapa.class.getResourceAsStream("/" + rutaFitxer);
-            if (is == null) throw new Exception("no trobat el fitxer: " + rutaFitxer);
+            if (is == null) {
+                throw new Exception("no trobat el fitxer: " + rutaFitxer);
+            }
             DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             doc = db.parse(is);
         }
 
-        return parsejaDocument(doc); 
+        return parsejaDocument(doc);
     }
 
     //funció per parsejar el xml i convertir-lo a nes mapa
@@ -57,15 +59,21 @@ public class CarregadorMapa {
             int amplada = Integer.parseInt(h.getAttribute("amplada"));
             int alcada = Integer.parseInt(h.getAttribute("alcada"));
 
-            if (x + amplada > maxX) maxX = x + amplada;
-            if (y + alcada > maxY) maxY = y + alcada;
+            if (x + amplada > maxX) {
+                maxX = x + amplada;
+            }
+            if (y + alcada > maxY) {
+                maxY = y + alcada;
+            }
         }
 
         //cream els "bordes" de sa habitació
         char[][] celles = new char[maxY][maxX];
-        for (int y = 0; y < maxY; y++)
-            for (int x = 0; x < maxX; x++)
+        for (int y = 0; y < maxY; y++) {
+            for (int x = 0; x < maxX; x++) {
                 celles[y][x] = '#';
+            }
+        }
 
         //la dibuixam
         for (int i = 0; i < habitacions.getLength(); i++) {
@@ -89,7 +97,9 @@ public class CarregadorMapa {
                 Element e = (Element) entitats.item(j);
                 int ex = ox + Integer.parseInt(e.getAttribute("x"));
                 int ey = oy + Integer.parseInt(e.getAttribute("y"));
-                if (ey < maxY && ex < maxX) celles[ey][ex] = 'e';
+                if (ey < maxY && ex < maxX) {
+                    celles[ey][ex] = 'e';
+                }
             }
 
             NodeList items = h.getElementsByTagName("item");
@@ -97,7 +107,9 @@ public class CarregadorMapa {
                 Element e = (Element) items.item(j);
                 int ex = ox + Integer.parseInt(e.getAttribute("x"));
                 int ey = oy + Integer.parseInt(e.getAttribute("y"));
-                if (ey < maxY && ex < maxX) celles[ey][ex] = 'i';
+                if (ey < maxY && ex < maxX) {
+                    celles[ey][ex] = 'i';
+                }
             }
         }
 
@@ -113,7 +125,9 @@ public class CarregadorMapa {
             //trobam les dues habitacions per obrir la porta
             Element habDe = trobaHabitacio(habitacions, de);
             Element habA = trobaHabitacio(habitacions, a);
-            if (habDe == null || habA == null) continue;
+            if (habDe == null || habA == null) {
+                continue;
+            }
 
             obrirPorta(celles, habDe, habA, dir);
         }
@@ -125,7 +139,9 @@ public class CarregadorMapa {
     private static Element trobaHabitacio(NodeList llista, String id) {
         for (int i = 0; i < llista.getLength(); i++) {
             Element h = (Element) llista.item(i);
-            if (h.getAttribute("id").equals(id)) return h;
+            if (h.getAttribute("id").equals(id)) {
+                return h;
+            }
         }
         return null;
     }
@@ -136,33 +152,58 @@ public class CarregadorMapa {
         int y1 = Integer.parseInt(de.getAttribute("y"));
         int a1 = Integer.parseInt(de.getAttribute("amplada"));
         int h1 = Integer.parseInt(de.getAttribute("alcada"));
-        //int po = Integer.parseInt(de.getAttribute("porta"));
+        int po = Integer.parseInt(de.getAttribute("porta"));
+        int poEsp = Integer.parseInt(de.getAttribute("portaEsp"));
 
         //calculam el punt mig de la paret on obrirem la porta
         switch (dir) {
-            case "est" -> { // si la direccio es est, obrim la porta a la dreta
+            case "est" -> {
                 int px = x1 + a1 - 1;
-                int py = y1 + h1 / 2;
-                celles[py][px] = '.';
-                if (px + 1 < celles[0].length) celles[py][px + 1] = '.';
+                for (int i = 0; i < poEsp; i++) {
+                    int py = y1 + po + i;
+                    if (py < celles.length) {
+                        celles[py][px] = '.';
+                        if (px + 1 < celles[0].length) {
+                            celles[py][px + 1] = '.';
+                        }
+                    }
+                }
             }
-            case "oest" -> { // si la direccio es oest, obrim la porta a l'esquerra
+            case "oest" -> {
                 int px = x1;
-                int py = y1 + h1 / 2;
-                celles[py][px] = '.';
-                if (px - 1 >= 0) celles[py][px - 1] = '.';
+                for (int i = 0; i < poEsp; i++) {
+                    int py = y1 + po + i;
+                    if (py < celles.length) {
+                        celles[py][px] = '.';
+                        if (px - 1 >= 0) {
+                            celles[py][px - 1] = '.';
+                        }
+                    }
+                }
             }
-            case "sud" -> { // si la direccio es sud, obrim la porta a baix
-                int px = x1 + a1 / 2;
+            case "sud" -> {
                 int py = y1 + h1 - 1;
-                celles[py][px] = '.';
-                if (py + 1 < celles.length) celles[py + 1][px] = '.';
+                for (int i = 0; i < poEsp; i++) {
+                    int px = x1 + po + i;
+                    if (px < celles[0].length) {
+                        celles[py][px] = '.';
+                        if (py + 1 < celles.length) {
+                            celles[py + 1][px] = '.';
+                        }
+                    }
+                }
             }
-            case "nord" -> { // si la direccio es nord, obrim la porta a dalt
-                int px = x1 + a1 / 2;
+            case "nord" -> {
                 int py = y1;
-                celles[py][px] = '.';
-                if (py - 1 >= 0) celles[py - 1][px] = '.';
+                for (int i = 0; i < poEsp; i++) {
+                    int px = x1 + po + i;
+                    if (px < celles[0].length) {
+                        celles[py][px] = '.';
+                        if (py - 1 >= 0) {
+                            celles[py - 1][px] = '.';
+                        }
+                    }
+                }
             }
         }
     }
