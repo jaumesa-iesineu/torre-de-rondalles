@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>cat.iesineu</groupId>
+    <groupId>com.iessineu</groupId>
     <artifactId>torre-de-rondalles</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>24</maven.compiler.release>
-        <exec.mainClass>cat.iesineu.rondalles.Main</exec.mainClass>
+        <exec.mainClass>com.iessineu.rondalles.Main</exec.mainClass>
     </properties>
     <dependencies>
         <dependency>
@@ -24,7 +24,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>cat.iesineu.rondalles.Main</mainClass>
+                    <mainClass>com.iessineu.rondalles.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package cat.iesineu.rondalles.motor;
+package com.iessineu.rondalles.motor;
 
 import com.googlecode.lanterna.input.KeyStroke;
 
@@ -34,7 +34,7 @@ public abstract class Motor {
     public void start() throws Exception {
         init();
         corrent = true;
-        estat = Estat.JUGANT;
+        estat = Estat.MON_SEMIOBERT;
 
         //el joc és per torns: esperam que el jugador premi una tecla
         //si no prem res, no passa res i no fem feina de bades

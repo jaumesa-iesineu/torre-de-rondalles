@@ -2,15 +2,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package cat.iesineu.rondalles.joc;
+package com.iessineu.rondalles.joc;
 
-import cat.iesineu.rondalles.entitats.Enemic;
-import cat.iesineu.rondalles.entitats.Entitat;
-import cat.iesineu.rondalles.entitats.Jugador;
-import cat.iesineu.rondalles.mapa.CarregadorMapa;
-import cat.iesineu.rondalles.mapa.Mapa;
-import cat.iesineu.rondalles.motor.Motor;
-import cat.iesineu.rondalles.motor.Renderitzador;
+import com.iessineu.rondalles.entitats.Enemic;
+import com.iessineu.rondalles.entitats.Entitat;
+import com.iessineu.rondalles.entitats.Jugador;
+import com.iessineu.rondalles.mapa.CarregadorMapa;
+import com.iessineu.rondalles.mapa.Mapa;
+import com.iessineu.rondalles.motor.Estat;
+import com.iessineu.rondalles.motor.Motor;
+import com.iessineu.rondalles.motor.Renderitzador;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import java.io.IOException;
@@ -55,6 +56,12 @@ public class Joc extends Motor {
         //de moment la llista d'enemics és buida
         //TODO: crear els enemics llegint el fitxer .game
         enemics = new ArrayList<>();
+
+        //TODO (punt 7): oïda dels enemics basada en distància (activació per proximitat)
+        //TODO (punt 8): visió dels enemics en línia recta bloquejada per murs (line-of-sight)
+        //TODO (punt 8): waypoints: quan no detecten el jugador, patrullen entre punts del .game
+
+        estat = Estat.MON_SEMIOBERT;
     }
 
     @Override
@@ -82,7 +89,7 @@ public class Joc extends Motor {
         if (mapa.esPasable(nx, ny)) {
             jugador.setX(nx);
             jugador.setY(ny);
-            jugador.setEstatJugador(Jugador.EstatJugador.MOVENT);
+            jugador.setEstatJugador(Jugador.EstatJugador.MOVIMENT);
 
             //el jugador s'ha mogut: ara és el torn dels enemics
             //cada enemic fa una acció basada en la seva IA
