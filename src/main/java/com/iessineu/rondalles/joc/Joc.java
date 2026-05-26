@@ -24,10 +24,9 @@ import java.util.List;
  */
 public class Joc extends Motor {
 
-    //el mapa actual carregat del fitxer .game
+    //el mapa actual carregat des fitxer .game
     private Mapa mapa;
 
-    //el jugador
     private Jugador jugador;
 
     //tots els enemics del mapa
@@ -64,13 +63,13 @@ public class Joc extends Motor {
 
     @Override
     protected void actualitza(KeyStroke tecla) {
-        //si l'usuari tanca la finestra o prem escape, aturem el joc
+        //escape tanca es joc
         if (tecla.getKeyType() == KeyType.Escape || tecla.getKeyType() == KeyType.EOF) {
             corrent = false;
             return;
         }
 
-        //calculam la nova posició segons la tecla premuda
+        //calcul posició segons tecla
         int nx = jugador.getX();
         int ny = jugador.getY();
 
@@ -80,16 +79,18 @@ public class Joc extends Motor {
             case ArrowLeft  -> nx--;
             case ArrowRight -> nx++;
             //si no és una fletxa no és el torn del jugador, no fem res
-            default -> { return; }
+            default -> {
+                return;
+            }
         }
 
-        //comprovam si la casella és passable
+        //comprovam si la casella és una paret o si s'hi pot passar
         if (mapa.esPasable(nx, ny)) {
             jugador.setX(nx);
             jugador.setY(ny);
             jugador.setEstatJugador(Jugador.EstatJugador.MOVIMENT);
 
-            //el jugador s'ha mogut: ara és el torn dels enemics
+            //el jugador s'ha mogut per tant ara és el torn dels enemics
             //cada enemic fa una acció basada en la seva IA
             for (Enemic e : enemics) {
                 if (e.isActiu()) {
@@ -98,7 +99,7 @@ public class Joc extends Motor {
             }
         }
 
-        //si el jugador ha mort acabam el joc
+        //si el jugador ha mort acabam es joc
         if (jugador.esMort()) {
             corrent = false;
         }
