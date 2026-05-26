@@ -136,6 +136,7 @@ public class CarregadorMapa {
         int y1 = Integer.parseInt(de.getAttribute("y"));
         int a1 = Integer.parseInt(de.getAttribute("amplada"));
         int h1 = Integer.parseInt(de.getAttribute("alcada"));
+        //int po = Integer.parseInt(de.getAttribute("porta"));
 
         //calculam el punt mig de la paret on obrirem la porta
         switch (dir) {

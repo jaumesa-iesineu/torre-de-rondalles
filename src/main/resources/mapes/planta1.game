@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapa id="planta1" nom="Entrada de la Torre">
+    <habitacions>
+        <habitacio id="sala_entrada" x="0" y="0" amplada="35" alcada="20">
+            <descripcio>L'entrada de la torre, fosca i freda. Les pedres de les parets suen humitat.</descripcio>
+            <entitats>
+                <enemic tipus="follet" x="8" y="8"/>
+                <item tipus="torxa" x="3" y="3"/>
+            </entitats>
+        </habitacio>
+
+        <habitacio id="corredor_est" x="35" y="7" amplada="12" alcada="6">
+            <descripcio>Un corredor estret que fa olor de sutge</descripcio>
+            <entitats/>
+        </habitacio>
+
+        <habitacio id="sala_guarda" x="47" y="0" amplada="30" alcada="20">
+            <descripcio>La sala dels guàrdies, amb dues taules de fusta trencades</descripcio>
+            <entitats>
+                <enemic tipus="dimoni_petit" x="8" y="5"/>
+                <enemic tipus="dimoni_petit" x="18" y="12"/>
+                <item tipus="espasa_rovellada" x="5" y="15"/>
+            </entitats>
+        </habitacio>
+        
+        <habitacio x="4" y="10" amplada="1" alcada="1">
+        </habitacio>
+        <habitacio x="5" y="11" amplada="1" alcada="1">
+        </habitacio>
+        <habitacio x="6" y="12" amplada="1" alcada="1">
+        </habitacio>
+        <habitacio x="7" y="13" amplada="1" alcada="1">
+        </habitacio>
+        <habitacio x="8" y="14" amplada="1" alcada="1">
+        </habitacio>
+        <habitacio x="9" y="14" amplada="1" alcada="1">
+        </habitacio>
+        <habitacio x="10" y="13" amplada="1" alcada="1">
+        </habitacio>
+        <habitacio x="11" y="12" amplada="1" alcada="1">
+        </habitacio>
+        <habitacio x="12" y="11" amplada="1" alcada="1">
+        </habitacio>
+        <habitacio x="13" y="10" amplada="1" alcada="1">
+        </habitacio>
+    </habitacions>
+
+    <connexions>
+        <connexio de="sala_entrada" a="corredor_est" direccio="est"/>
+        <connexio de="corredor_est" a="sala_guarda" direccio="est"/>
+    </connexions>
+</mapa>
