@@ -56,13 +56,13 @@ public abstract class Enemic extends Entitat {
 
     @Override
     public void actualitza() {
-        //TODO: quan tinguem el jugador accessible des d'aquí cridam actualitzaIA
+        //haurem de fer que actualitza() tengui accés al jugador
     }
 
     @Override
     public void interactua(Jugador jugador) {
-        //quan el jugador intenta entrar a la casella de l'enemic, ataca
-        //TODO: implementar el sistema de combat complet
+        //quan el jugador entra a la casella de l'enemic, pega
+        //de moment simplement resta hp, el combat real el farem més endavant
         jugador.rebreDany(atac);
         estatEnemic = EstatEnemic.ATACANT;
     }

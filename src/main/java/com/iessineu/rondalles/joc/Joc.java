@@ -31,7 +31,7 @@ public class Joc extends Motor {
     private Jugador jugador;
 
     //tots els enemics del mapa
-    //TODO: quan afegim npcs i items, haurem de tenir llistes separades o una llista de Entitat
+    //potser quan afegim npcs i items haurem de separar-ho en llistes o usar una sola de Entitat
     private List<Enemic> enemics;
 
     //el fitxer .game que hem de carregar
@@ -50,16 +50,14 @@ public class Joc extends Motor {
         mapa = CarregadorMapa.carrega(fitxerMapa);
 
         //posam el jugador a la primera posició lliure del mapa
-        //TODO: treure la posició inicial del fitxer .game
+        //la posició inicial hauria de venir del .game, de moment cercam la primera casella lliure
         jugador = new Jugador(trobaInicialX(), trobaInicialY());
 
-        //de moment la llista d'enemics és buida
-        //TODO: crear els enemics llegint el fitxer .game
+        //de moment la llista d'enemics és buida, els crearem quan llegim el .game
         enemics = new ArrayList<>();
 
-        //TODO (punt 7): oïda dels enemics basada en distància (activació per proximitat)
-        //TODO (punt 8): visió dels enemics en línia recta bloquejada per murs (line-of-sight)
-        //TODO (punt 8): waypoints: quan no detecten el jugador, patrullen entre punts del .game
+        //els enemics haurien de tenir oïda (activar-se per distància) i visió (línia recta bloquejada per parets)
+        //quan no detectin el jugador, patrullen entre els waypoints definits al .game
 
         estat = Estat.MON_SEMIOBERT;
     }

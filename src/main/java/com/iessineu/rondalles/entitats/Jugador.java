@@ -60,7 +60,7 @@ public class Jugador extends Entitat {
 
     @Override
     public void actualitza() {
-        //TODO: efectes per torn (verí, regeneració de hp, fam...)
+        //aquí hi hauran els efectes per torn, verí, regeneració, fam...
     }
 
     @Override
@@ -79,12 +79,12 @@ public class Jugador extends Entitat {
 
     //les stats reals sumen base + equipament (quan tinguem equipament)
     public int getAtacTotal() {
-        //TODO: sumar bonificació d'arma equipada
+        //quan tinguem arma equipada aquí sumarem el seu atac
         return atac;
     }
 
     public int getDefensaTotal() {
-        //TODO: sumar bonificació d'armadura equipada
+        //quan tinguem armadura aquí sumarem la seva defensa
         return defensa;
     }
 
