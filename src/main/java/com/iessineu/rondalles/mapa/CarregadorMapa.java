@@ -55,7 +55,7 @@ public class CarregadorMapa {
             int x = Integer.parseInt(h.getAttribute("x"));
             int y = Integer.parseInt(h.getAttribute("y"));
             int amplada = Integer.parseInt(h.getAttribute("amplada"));
-            int alcada = Integer.parseInt(h.getAttribute("alçada"));
+            int alcada = Integer.parseInt(h.getAttribute("alcada"));
 
             if (x + amplada > maxX) maxX = x + amplada;
             if (y + alcada > maxY) maxY = y + alcada;
@@ -79,7 +79,7 @@ public class CarregadorMapa {
             for (int y = oy; y < oy + alcada; y++) {
                 for (int x = ox; x < ox + amplada; x++) {
                     boolean esParet = (x == ox || x == ox + amplada - 1 || y == oy || y == oy + alcada - 1);
-                    celles[y][x] = esParet ? '#' : '·';
+                    celles[y][x] = esParet ? '#' : '.';
                 }
             }
 
