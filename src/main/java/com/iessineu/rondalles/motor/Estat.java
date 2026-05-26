@@ -9,18 +9,9 @@ package com.iessineu.rondalles.motor;
  * @author jaume, dani, sergi, kanhai i pere
  */
 public enum Estat {
-    //pantalla inicial, menú principal
-    MENU,
-    //explorant el mapa, el món semiobert
-    MON_SEMIOBERT,
-    //quan s'inicia un combat (futur)
-    COMBAT,
-    //quan s'obre l'inventari (futur)
-    INVENTARI,
-    //quan parles amb un npc (futur)
-    DIALEG,
-    //el jugador ha mort, pantalla de mort
-    MORT,
-    //permadeath: fi de la partida
-    GAME_OVER
+    MENU, //pantalla inicial, menú principal
+    MON, //bucle principal: jugador explora el mapa per torns
+    COMBAT, //pantalla de combat per torns, mapa congelat
+    GAME_OVER, //permadeath: jugador mort, s'esborra la partida de SQLite
+    VICTORIA //jugador ha derrotat Es Drac a la planta 5
 }

@@ -36,7 +36,7 @@ public class CarregadorMapa {
             doc = db.parse(is);
         }
 
-        return parsejaDocument(doc);
+        return parsejaDocument(doc); 
     }
 
     //funció per parsejar el xml i convertir-lo a nes mapa
@@ -50,7 +50,7 @@ public class CarregadorMapa {
         int maxX = 0;
         int maxY = 0;
 
-        for (int i = 0; i < habitacions.getLength(); i++) {
+        for (int i = 0; i < habitacions.getLength(); i++) { // per cada habitacio
             Element h = (Element) habitacions.item(i);
             int x = Integer.parseInt(h.getAttribute("x"));
             int y = Integer.parseInt(h.getAttribute("y"));
@@ -140,25 +140,25 @@ public class CarregadorMapa {
 
         //calculam el punt mig de la paret on obrirem la porta
         switch (dir) {
-            case "est" -> {
+            case "est" -> { // si la direccio es est, obrim la porta a la dreta
                 int px = x1 + a1 - 1;
                 int py = y1 + h1 / 2;
                 celles[py][px] = '.';
                 if (px + 1 < celles[0].length) celles[py][px + 1] = '.';
             }
-            case "oest" -> {
+            case "oest" -> { // si la direccio es oest, obrim la porta a l'esquerra
                 int px = x1;
                 int py = y1 + h1 / 2;
                 celles[py][px] = '.';
                 if (px - 1 >= 0) celles[py][px - 1] = '.';
             }
-            case "sud" -> {
+            case "sud" -> { // si la direccio es sud, obrim la porta a baix
                 int px = x1 + a1 / 2;
                 int py = y1 + h1 - 1;
                 celles[py][px] = '.';
                 if (py + 1 < celles.length) celles[py + 1][px] = '.';
             }
-            case "nord" -> {
+            case "nord" -> { // si la direccio es nord, obrim la porta a dalt
                 int px = x1 + a1 / 2;
                 int py = y1;
                 celles[py][px] = '.';

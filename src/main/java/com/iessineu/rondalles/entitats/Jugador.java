@@ -10,7 +10,7 @@ import com.googlecode.lanterna.TextColor;
  *
  * @author jaume, dani, sergi, kanhai i pere
  */
-public class Jugador extends Entitat {
+public class Jugador extends Entitat { // extends Entitat es perque extends la classe Entitat
 
     //màquina d'estats del jugador
     public enum EstatJugador {
@@ -20,23 +20,23 @@ public class Jugador extends Entitat {
         MORT
     }
 
-    private int vida;
-    private int vidaMaxima;
+    private int vida; // vida actual del jugador
+    private int vidaMaxima; // vida maxima del jugador
 
-    private int atac;
+    private int atac; // atac actual del jugador
 
-    private int defensa;
+    private int defensa; // defensa actual del jugador
 
-    private int pes;
-    private int pesMaxim;
+    private int pes; // pes actual del jugador
+    private int pesMaxim; // pes maxim del jugador
 
-    private int velocitat;
+    private int velocitat; // velocitat actual del jugador
 
-    private int visio;
+    private int visio; // visio actual del jugador
 
-    private EstatJugador estatJugador;
+    private EstatJugador estatJugador; // estat actual del jugador
 
-    public Jugador(int x, int y) {
+    public Jugador(int x, int y) { // constructor de la classe Jugador
         super(x, y, '@');
         this.vidaMaxima = 100;
         this.vida = vidaMaxima;
@@ -91,6 +91,8 @@ public class Jugador extends Entitat {
             estatJugador = EstatJugador.MORT;
         }
     }
+
+    // getters i setters
 
     public int getVida() {
         return vida;

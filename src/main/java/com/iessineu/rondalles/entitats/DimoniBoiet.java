@@ -8,26 +8,26 @@ import com.googlecode.lanterna.TextColor;
 
 /**
  *
- * @author kanhai
+ * @author kanhai, jaume, dani, sergi, pere
  */
-public class DimoniBoiet extends Enemic {
+public class DimoniBoiet extends Enemic { // extends Enemic es perque extends la classe Enemic
 
-    public DimoniBoiet(int x, int y) {
+    public DimoniBoiet(int x, int y) { // constructor de la classe DimoniBoiet
         super(x, y, 'd', 10, 5, 5);
     }
 
     @Override
-    public void actualitzaIA(Jugador jugador) {
+    public void actualitzaIA(Jugador jugador) { // actualitzaIA es perque actualitza la IA del Dimoni Boiet
         if (distanciaAl(jugador) < radDeteccio) {
-            canviaEstat(EstatEnemic.PERSEGUINT);
+            canviaEstat(EstatEnemic.PERSEGUINT); // si entres al radi de deteccio, canvia a PERSEGUINT
         } else {
-            canviaEstat(EstatEnemic.PATRULLANT);
+            canviaEstat(EstatEnemic.PATRULLANT); // si no entres al radi de deteccio, canvia a PATRULLANT
         }
     }
 
     @Override
-    public TextColor getColor() {
-        return new TextColor.RGB(180, 40, 10);
+    public TextColor getColor() { // getColor es perque retorna el color del Dimoni Boiet
+        return new TextColor.RGB(180, 40, 10); // intent de vermell cremat :)
     }
 
 }

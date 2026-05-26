@@ -58,11 +58,11 @@ public class Joc extends Motor {
         //els enemics haurien de tenir oïda (activar-se per distància) i visió (línia recta bloquejada per parets)
         //quan no detectin el jugador, patrullen entre els waypoints definits al .game
 
-        estat = Estat.MON_SEMIOBERT;
+        estat = Estat.MON;
     }
 
     @Override
-    protected void actualitza(KeyStroke tecla) {
+    protected void actualitza(KeyStroke tecla) { // reacció des joc a les tecles
         //escape tanca es joc
         if (tecla.getKeyType() == KeyType.Escape || tecla.getKeyType() == KeyType.EOF) {
             corrent = false;
@@ -106,7 +106,7 @@ public class Joc extends Motor {
     }
 
     @Override
-    protected void renderitza() {
+    protected void renderitza() { // renderitza la pantalla
         try {
             //passam tots els enemics com a llista d'entitats al renderitzador
             List<Entitat> totes = new ArrayList<>(enemics);
@@ -119,7 +119,7 @@ public class Joc extends Motor {
     }
 
     //cerca la primera casella de terra on posar es jugador
-    private int trobaInicialX() {
+    private int trobaInicialX() { // cerca la primera casella de terra on posar es jugador (x)
         char[][] celles = mapa.getCelles();
         for (int y = 0; y < celles.length; y++)
             for (int x = 0; x < celles[y].length; x++)
@@ -127,7 +127,7 @@ public class Joc extends Motor {
         return 1;
     }
 
-    private int trobaInicialY() {
+    private int trobaInicialY() { // cerca la primera casella de terra on posar es jugador (y)
         char[][] celles = mapa.getCelles();
         for (int y = 0; y < celles.length; y++)
             for (int x = 0; x < celles[y].length; x++)

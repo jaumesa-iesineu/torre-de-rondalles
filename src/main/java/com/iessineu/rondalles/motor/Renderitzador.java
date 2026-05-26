@@ -24,14 +24,14 @@ import javax.swing.JFrame;
  *
  * @author jaume, dani, sergi, kanhai i pere
  */
-public class Renderitzador {
+public class Renderitzador { // classe per gestionar la pantalla
 
     //la pantalla de lanterna
     private Screen screen;
 
     //el radi de la llanterna en caselles
     //tot el que quedi fora d'aquest radi es veu negre
-    private static final int RADI_LLANTERNA = 10;
+    private static final int RADI_LLANTERNA = 10; 
 
     public Renderitzador() throws IOException {
         //usam swing perquè funcioni des de netbeans i des de qualsevol màquina
@@ -128,13 +128,13 @@ public class Renderitzador {
     }
 
     // CANVI 3: mètodes nous per pintar el HUD
-    private void dibuixaHUD(com.iessineu.rondalles.entitats.Jugador jugador) {
+    private void dibuixaHUD(com.iessineu.rondalles.entitats.Jugador jugador) { 
         int col = 1;
         int fila = 1;
         
         //Bloc de vida:
         String vida = "VIDA:  " + jugador.getVida() + " / " + jugador.getVidaMaxima();
-        pintaText(col, fila, vida, new TextColor.RGB(220, 50, 50));
+        pintaText(col, fila, vida, new TextColor.RGB(220, 50, 50)); 
         
         //Bloc de pes:
         String pes = "PES:   " + jugador.getPes() + " / " + jugador.getpesMaxim();
@@ -153,7 +153,7 @@ public class Renderitzador {
         pintaText(col, fila + 4, inv, new TextColor.RGB(140, 200, 140));
     }
 
-    private void pintaText(int col, int fila, String text, TextColor color) {
+    private void pintaText(int col, int fila, String text, TextColor color) { // pintaText es perque pinta el text a la pantalla
         for (int i = 0; i < text.length(); i++) {
             screen.setCharacter(col + i, fila, new TextCharacter(text.charAt(i), color, TextColor.ANSI.BLACK));
         }
@@ -161,11 +161,11 @@ public class Renderitzador {
 
     //espera que l'usuari premi una tecla (bloquejant)
     //és bloquejant perquè el joc és per torns, no fa falta bucle actiu
-    public KeyStroke llegeixInput() throws IOException {
+    public KeyStroke llegeixInput() throws IOException { // llegeixInput es perque llegeix la tecla que l'usuari ha premut
         return screen.readInput();
     }
 
-    public void tanca() throws IOException {
+    public void tanca() throws IOException { // tanca es perque tanca la pantalla
         screen.close();
     }
 }

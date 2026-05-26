@@ -8,7 +8,7 @@ package com.iessineu.rondalles.mapa;
  *
  * @author jaume, dani, sergi, kanhai i pere
  */
-public class Mapa {
+public class Mapa { // classe per gestionar el mapa
 
     //la graella de caràcters que representa el mapa
     //'#' = paret, '.' = terra, 'e' = enemic, 'i' = item, 'N' = npc
@@ -21,7 +21,7 @@ public class Mapa {
     private int amplada;
     private int alcada;
 
-    public Mapa(char[][] celles, String nom) {
+    public Mapa(char[][] celles, String nom) { // constructor de la classe Mapa
         this.celles = celles;
         this.nom = nom;
         this.alcada = celles.length;
@@ -38,6 +38,8 @@ public class Mapa {
         //quan hi ha una entitat (enemic, npc...) s'hi pot entrar per interactuar
         return c != '#';
     }
+
+    // getters i setters
 
     public char[][] getCelles() {
         return celles;
