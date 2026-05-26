@@ -34,7 +34,7 @@ public abstract class Motor {
     public void start() throws Exception {
         init();
         corrent = true;
-        estat = Estat.MON_SEMIOBERT;
+        estat = Estat.MON;
 
         //el joc és per torns: esperam que el jugador premi una tecla
         //si no prem res, no passa res i no fem feina de bades

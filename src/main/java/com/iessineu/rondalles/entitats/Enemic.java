@@ -8,7 +8,7 @@ package com.iessineu.rondalles.entitats;
  *
  * @author jaume, dani, sergi, kanhai i pere
  */
-public abstract class Enemic extends Entitat {
+public abstract class Enemic extends Entitat { // extends Entitat es perque extends la classe Entitat
 
     //màquina d'estats
     public enum EstatEnemic {
@@ -29,7 +29,7 @@ public abstract class Enemic extends Entitat {
     //estat actual de la màquina
     protected EstatEnemic estatEnemic;
 
-    public Enemic(int x, int y, char simbol, int vida, int atac, int radDeteccio) {
+    public Enemic(int x, int y, char simbol, int vida, int atac, int radDeteccio) { // constructor de la classe Enemic
         super(x, y, simbol);
         this.vidaMaxima = vida;
         this.vida = vida;
@@ -62,7 +62,7 @@ public abstract class Enemic extends Entitat {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    public void canviaEstat(EstatEnemic nouEstat) {
+    public void canviaEstat(EstatEnemic nouEstat) { 
         this.estatEnemic = nouEstat;
     }
 
@@ -75,15 +75,17 @@ public abstract class Enemic extends Entitat {
         }
     }
 
-    public EstatEnemic getEstatEnemic() {
+    // getters i setters
+
+    public EstatEnemic getEstatEnemic() { // getEstatEnemic es perque retorna l'estat actual de la màquina d'estats
         return estatEnemic;
     }
 
-    public int getVida() {
+    public int getVida() { // getVida es perque retorna la vida actual de l'enemic
         return vida;
     }
 
-    public boolean esMort() {
+    public boolean esMort() { // esMort es perque retorna si l'enemic esta mort
         return vida <= 0;
     }
 }

@@ -10,7 +10,7 @@ import com.googlecode.lanterna.TextColor;
  *
  * @author jaume, dani, sergi, kanhai i pere
  */
-public abstract class Entitat {
+public abstract class Entitat { // classe base per totes les entitats (enemics, jugadors, etc.)
 
     //posició de s'entitat a nes mapa
     protected int x;
@@ -37,6 +37,8 @@ public abstract class Entitat {
 
     public abstract TextColor getColor();
 
+    // getters i setters
+    
     //getters
     public int getX() {
         return x;

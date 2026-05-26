@@ -19,9 +19,9 @@ public class Main {
         //res (carrega el fitxer per defecte)
         String fitxer = "mapes/planta1.game";
 
-        for (int i = 0; i < args.length - 1; i++) {
-            if (args[i].equals("-game") || args[i].equals("-mod")) {
-                fitxer = args[i + 1];
+        for (int i = 0; i < args.length - 1; i++) { // per cada argument
+            if (args[i].equals("-game") || args[i].equals("-mod")) { // si l'argument es -game o -mod, carrega el fitxer corresponent
+                fitxer = args[i + 1]; // si l'argument es -game o -mod, carrega el fitxer corresponent
             }
         }
 
