@@ -18,18 +18,18 @@ import org.w3c.dom.NodeList;
  */
 public class CarregadorMapa {
 
-    //carrega un mapa des d'un fitxer .game (format xml)
-    //primer mira al sistema de fitxers, si no el troba el cerca dins el jar
+    //carrega un mapa des d'un fitxer .game en format xml
+    //primer intenta trobar es fitxer i si no throw Exception
     public static Mapa carrega(String rutaFitxer) throws Exception {
         Document doc;
 
         File fitxer = new File(rutaFitxer);
         if (fitxer.exists()) {
-            //si el fitxer és al disc, el llegim directament
+            //el llegim
             DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             doc = db.parse(fitxer);
         } else {
-            //si no, el cercam dins els recursos del jar
+            //el cercam a /
             InputStream is = CarregadorMapa.class.getResourceAsStream("/" + rutaFitxer);
             if (is == null) throw new Exception("no trobat el fitxer: " + rutaFitxer);
             DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -39,13 +39,13 @@ public class CarregadorMapa {
         return parsejaDocument(doc);
     }
 
-    //converteix el document xml en un objecte Mapa
+    //funció per parsejar el xml i convertir-lo a nes mapa
     private static Mapa parsejaDocument(Document doc) {
         Element arrel = doc.getDocumentElement();
         String nom = arrel.getAttribute("nom");
 
-        //primer passada: calculam les dimensions màximes del mapa
-        //cada habitació té una posició i una mida, necessitam saber quant gran ha de ser la graella
+        //primer miram les dimensions del mapa
+        //cada habitació té una posició i una mida, necessitam saber quant gran ha de ser
         NodeList habitacions = arrel.getElementsByTagName("habitacio");
         int maxX = 0;
         int maxY = 0;
@@ -55,19 +55,19 @@ public class CarregadorMapa {
             int x = Integer.parseInt(h.getAttribute("x"));
             int y = Integer.parseInt(h.getAttribute("y"));
             int amplada = Integer.parseInt(h.getAttribute("amplada"));
-            int alcada = Integer.parseInt(h.getAttribute("alcada"));
+            int alcada = Integer.parseInt(h.getAttribute("alçada"));
 
             if (x + amplada > maxX) maxX = x + amplada;
             if (y + alcada > maxY) maxY = y + alcada;
         }
 
-        //creim la graella buida (tot parets per defecte)
+        //cream els "bordes" de sa habitació
         char[][] celles = new char[maxY][maxX];
         for (int y = 0; y < maxY; y++)
             for (int x = 0; x < maxX; x++)
                 celles[y][x] = '#';
 
-        //segona passada: dibuixam cada habitació
+        //la dibuixam
         for (int i = 0; i < habitacions.getLength(); i++) {
             Element h = (Element) habitacions.item(i);
             int ox = Integer.parseInt(h.getAttribute("x"));
@@ -75,11 +75,11 @@ public class CarregadorMapa {
             int amplada = Integer.parseInt(h.getAttribute("amplada"));
             int alcada = Integer.parseInt(h.getAttribute("alcada"));
 
-            //dibuixam les parets i el terra de l'habitació
+            //dibuixam # a ses parets i · si es en terra
             for (int y = oy; y < oy + alcada; y++) {
                 for (int x = ox; x < ox + amplada; x++) {
                     boolean esParet = (x == ox || x == ox + amplada - 1 || y == oy || y == oy + alcada - 1);
-                    celles[y][x] = esParet ? '#' : '.';
+                    celles[y][x] = esParet ? '#' : '·';
                 }
             }
 

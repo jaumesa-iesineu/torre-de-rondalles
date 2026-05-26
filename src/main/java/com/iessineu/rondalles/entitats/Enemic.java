@@ -24,15 +24,14 @@ public abstract class Enemic extends Entitat {
         ATACANT,
         //atordit: ha rebut un cop fort, es salta un torn sencer
         ATORDIT,
-        //fugint: li queden pocs hp i intenta escapar del jugador
+        //fugint: li queda poca vida i intenta escapar del jugador
         FUGINT,
-        //mort: hp és 0, l'entitat queda inactiva
+        //mort: vida és 0, l'entitat queda inactiva
         MORT
     }
 
-    //vida i dany de l'enemic
-    protected int hp;
-    protected int hpMax;
+    protected int vida;
+    protected int vidaMaxima;
     protected int atac;
 
     //fins a quina distància detecta el jugador
@@ -41,10 +40,10 @@ public abstract class Enemic extends Entitat {
     //estat actual de la màquina
     protected EstatEnemic estatEnemic;
 
-    public Enemic(int x, int y, char simbol, int hp, int atac, int radDeteccio) {
+    public Enemic(int x, int y, char simbol, int vida, int atac, int radDeteccio) {
         super(x, y, simbol);
-        this.hpMax = hp;
-        this.hp = hp;
+        this.vidaMaxima = vida;
+        this.vida = vida;
         this.atac = atac;
         this.radDeteccio = radDeteccio;
         this.estatEnemic = EstatEnemic.PATRULLANT;
@@ -62,7 +61,7 @@ public abstract class Enemic extends Entitat {
     @Override
     public void interactua(Jugador jugador) {
         //quan el jugador entra a la casella de l'enemic, pega
-        //de moment simplement resta hp, el combat real el farem més endavant
+        //de moment simplement resta vida, el combat real el farem més endavant
         jugador.rebreDany(atac);
         estatEnemic = EstatEnemic.ATACANT;
     }
@@ -79,18 +78,26 @@ public abstract class Enemic extends Entitat {
     }
 
     public void rebreDany(int dany) {
-        hp -= dany;
-        if (hp <= 0) {
-            hp = 0;
+        vida -= dany;
+        if (vida <= 0) {
+            vida = 0;
             estatEnemic = EstatEnemic.MORT;
             actiu = false;
-        } else if (hp < hpMax / 4) {
+        } else if (vida < vidaMaxima / 4) {
             //si queda amb menys d'un quart de vida, fuig
             estatEnemic = EstatEnemic.FUGINT;
         }
     }
 
-    public EstatEnemic getEstatEnemic() { return estatEnemic; }
-    public int getHp() { return hp; }
-    public boolean esMort() { return hp <= 0; }
+    public EstatEnemic getEstatEnemic() {
+        return estatEnemic;
+    }
+
+    public int getVida() {
+        return vida;
+    }
+
+    public boolean esMort() {
+        return vida <= 0;
+    }
 }
