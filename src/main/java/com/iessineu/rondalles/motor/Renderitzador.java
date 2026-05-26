@@ -67,10 +67,10 @@ public class Renderitzador {
 
         for (int y = 0; y < celles.length; y++) {
             for (int x = 0; x < celles[y].length; x++) {
-                double dist = Math.sqrt((x - jx) * (x - jx) + (y - jy) * (y - jy));
+                double dist = Math.sqrt(((x - jx) * (x - jx)) + ((y - jy) * (y - jy)*4));//Modificar camp te visió.
                 if (dist > RADI_LLANTERNA) continue;
 
-                double factor = 1.0 - (dist / RADI_LLANTERNA) * 1.0;
+                double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.75;//Modificar degradat de la visió.
                 TextColor colorBase = colorPerCasella(celles[y][x]);
                 TextColor colorFinal = fosqueix(colorBase, factor);
 
