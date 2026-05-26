@@ -10,23 +10,14 @@ package com.iessineu.rondalles.entitats;
  */
 public abstract class Enemic extends Entitat {
 
-    //màquina d'estats de l'enemic
-    //cada estat defineix un comportament diferent
+    //màquina d'estats
     public enum EstatEnemic {
-        //patrullant: es mou pel seu camí marcat al fitxer .game
         PATRULLANT,
-        //alerta: ha sentit qualque cosa però no veu el jugador
-        //es gira cap al so i mira
         ALERTA,
-        //perseguint: ha vist el jugador i va directament cap a ell
         PERSEGUINT,
-        //atacant: el jugador és al costat i li pega cada torn
         ATACANT,
-        //atordit: ha rebut un cop fort, es salta un torn sencer
         ATORDIT,
-        //fugint: li queda poca vida i intenta escapar del jugador
         FUGINT,
-        //mort: vida és 0, l'entitat queda inactiva
         MORT
     }
 
@@ -34,7 +25,7 @@ public abstract class Enemic extends Entitat {
     protected int vidaMaxima;
     protected int atac;
 
-    //fins a quina distància detecta el jugador
+    //distancia de detecció jugador
     protected int radDeteccio;
 
     //estat actual de la màquina
@@ -49,13 +40,13 @@ public abstract class Enemic extends Entitat {
         this.estatEnemic = EstatEnemic.PATRULLANT;
     }
 
-    //cada tipus d'enemic té la seva pròpia IA
+    //cada tipus d'enemic té sa seva pròpia IA
     //es crida quan el jugador fa un moviment (és el seu torn)
     public abstract void actualitzaIA(Jugador jugador);
 
     @Override
     public void actualitza() {
-        //haurem de fer que actualitza() tengui accés al jugador
+        //per actualitzacions
     }
 
     @Override
@@ -66,7 +57,7 @@ public abstract class Enemic extends Entitat {
         estatEnemic = EstatEnemic.ATACANT;
     }
 
-    //distància euclidiana fins al jugador
+    //distància efins jugador
     protected double distanciaAl(Jugador jugador) {
         int dx = jugador.getX() - this.x;
         int dy = jugador.getY() - this.y;
