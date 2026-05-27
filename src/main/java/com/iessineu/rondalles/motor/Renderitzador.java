@@ -67,7 +67,7 @@ public class Renderitzador { // classe per gestionar la pantalla
 
         for (int y = 0; y < celles.length; y++) {
             for (int x = 0; x < celles[y].length; x++) {
-                double dist = Math.sqrt(((x - jx) * (x - jx)/2) + ((y - jy) * (y - jy)*2));//Modificar camp te visió.
+                double dist = Math.sqrt((x - jx) * (x - jx) + (y - jy) * (y - jy));
                 if (dist > RADI_LLANTERNA) continue;
 
                 double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.75;//Modificar degradat de la visió.
@@ -85,7 +85,7 @@ public class Renderitzador { // classe per gestionar la pantalla
             if (dist > RADI_LLANTERNA) continue;
 
             double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.5;
-            TextColor color = fosqueix(colorPerEntitat(e.getSimbol()), factor);
+            TextColor color = fosqueix(e.getColor(), factor);
             screen.setCharacter(offsetX + e.getX(), offsetY + e.getY(), new TextCharacter(e.getSimbol(), color, TextColor.ANSI.BLACK));
         }
 
@@ -107,14 +107,6 @@ public class Renderitzador { // classe per gestionar la pantalla
             case 'i' -> new TextColor.RGB(220, 180, 50); //item
             case 'N' -> new TextColor.RGB(80, 200, 220); //npc
             default -> new TextColor.RGB(90, 90, 90);
-        };
-    }
-
-    //color base per als símbols d'entitats
-    private TextColor colorPerEntitat(char simbol) {
-        return switch (simbol) {
-            case 'f', 'd' -> new TextColor.RGB(200, 50, 50); //follets i dimonis
-            default -> new TextColor.RGB(180, 180, 50);
         };
     }
 
@@ -148,9 +140,20 @@ public class Renderitzador { // classe per gestionar la pantalla
         String armadura = "DEF:   " + jugador.getDefensaTotal();
         pintaText(col, fila + 3, armadura, new TextColor.RGB(100, 160, 220));
         
-        //Bloc d'objectes d'inventari (Temporal)
-        String inv = "INV:   (buit)";
-        pintaText(col, fila + 4, inv, new TextColor.RGB(140, 200, 140));
+        //cada item de l'inventari en una línia pròpia amb el seu número
+        if (jugador.getInventari().mida() == 0) {
+            pintaText(col, fila + 4, "INV:   (buit)", new TextColor.RGB(140, 200, 140));
+        } else {
+            for (int i = 0; i < jugador.getInventari().mida(); i++) {
+                String linia = "[" + (i + 1) + "] " + jugador.getInventari().get(i).getNom();
+                pintaText(col, fila + 4 + i, linia, new TextColor.RGB(140, 200, 140));
+            }
+        }
+
+        if (jugador.getTornsVeri() > 0) { //si hi ha verí actiu, avisam
+            int filaVeri = fila + 4 + Math.max(1, jugador.getInventari().mida());
+            pintaText(col, filaVeri, "VERI:  " + jugador.getTornsVeri() + " torns", new TextColor.RGB(100, 220, 80));
+        }
     }
 
     private void pintaText(int col, int fila, String text, TextColor color) { // pintaText es perque pinta el text a la pantalla
