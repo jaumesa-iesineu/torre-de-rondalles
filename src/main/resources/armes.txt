@@ -1,0 +1,7 @@
+# id | nom | pes | simbol | atac | rang
+puny            | Puny                     | 0 | p | 1  | 1
+falc-llaurador  | Falç de llaurador        | 1 | f | 3  | 1
+garrot-olivera  | Garrot d'olivera         | 2 | g | 5  | 1
+llanca-pescador | Llança de pescador       | 3 | l | 7  | 2
+espasa-cavaller | Espasa del Cavaller Sant | 3 | e | 9  | 1
+destral-gegant  | Destral de Gegant        | 5 | X | 15 | 1

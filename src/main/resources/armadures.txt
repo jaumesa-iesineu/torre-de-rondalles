@@ -1,0 +1,13 @@
+# id | nom | pes | simbol | defensa | slot
+capell-pages       | Capell de pagès          | 2  | ^ | 1 | CASC
+elm-ferro-oxidat   | Elm de ferro oxidat      | 5  | h | 3 | CASC
+casc-cavaller      | Casc de Cavaller Sant    | 9  | C | 6 | CASC
+camisa-lli         | Camisa de lli            | 5  | c | 2 | COS
+cota-malla         | Cota de malla            | 12 | m | 5 | COS
+armadura-cuir-drac | Armadura de cuir de drac | 20 | A | 9 | COS
+calcons-llana      | Calçons de llana         | 3  | k | 1 | CAMES
+greves-ferro       | Greves de ferro          | 7  | v | 3 | CAMES
+polaines-encantades| Polaines encantades      | 12 | P | 6 | CAMES
+espardenyes-canem  | Espardenyes de cànem     | 2  | s | 1 | PEUS
+botes-cuir         | Botes de cuir            | 4  | b | 2 | PEUS
+botes-ferro        | Botes de ferro           | 8  | F | 4 | PEUS

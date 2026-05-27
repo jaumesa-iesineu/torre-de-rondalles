@@ -10,8 +10,7 @@ import com.iessineu.rondalles.entitats.Enemic;
 import com.iessineu.rondalles.entitats.Entitat;
 import com.iessineu.rondalles.entitats.Jugador;
 import com.iessineu.rondalles.inventari.ItemMapa;
-import com.iessineu.rondalles.inventari.PocioVida;
-import com.iessineu.rondalles.inventari.PocioVeri;
+import com.iessineu.rondalles.inventari.RegistreItems;
 import com.iessineu.rondalles.mapa.CarregadorMapa;
 import com.iessineu.rondalles.mapa.Mapa;
 import com.iessineu.rondalles.motor.Estat;
@@ -176,8 +175,8 @@ public class Joc extends Motor {
             for (int x = 0; x < celles[y].length; x++) {
                 if (celles[y][x] == 'i') {
                     //alternam vida i verí perquè hi hagi varietat
-                    if (comptador % 2 == 0) itemsMapa.add(new ItemMapa(x, y, new PocioVida(30)));
-                    else itemsMapa.add(new ItemMapa(x, y, new PocioVeri(5)));
+                    if (comptador % 2 == 0) itemsMapa.add(new ItemMapa(x, y, RegistreItems.get().pocio("pocio-vida")));
+                    else itemsMapa.add(new ItemMapa(x, y, RegistreItems.get().pocio("pocio-veri")));
                     comptador++;
                 }
             }
