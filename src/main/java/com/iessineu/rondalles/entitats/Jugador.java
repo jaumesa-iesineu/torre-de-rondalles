@@ -23,9 +23,11 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     private int vida; // vida actual del jugador
     private int vidaMaxima; // vida maxima del jugador
 
-    private int atac; // atac actual del jugador
+    private int atac; // atac base del jugador
+    private int atacExtra; // atac afegit per l'arma equipada
 
     private int defensa; // defensa actual del jugador
+    private int defensaExtra; // defensa afegida per l'armadura equipada
 
     private int pes; // pes actual del jugador
     private int pesMaxim; // pes maxim del jugador
@@ -69,13 +71,19 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
 
     //les stats reals sumen base + equipament (quan tinguem equipament)
     public int getAtacTotal() {
-        //quan tinguem arma equipada aquí sumarem el seu atac
-        return atac;
+        return atac + atacExtra;
     }
 
     public int getDefensaTotal() {
-        //quan tinguem armadura aquí sumarem la seva defensa
-        return defensa;
+        return defensa + defensaExtra;
+    }
+
+    public void setAtacExtra(int atacExtra) {
+        this.atacExtra = atacExtra;
+    }
+
+    public void setDefensaExtra(int defensaExtra) {
+        this.defensaExtra = defensaExtra;
     }
 
     public boolean esMort() {
