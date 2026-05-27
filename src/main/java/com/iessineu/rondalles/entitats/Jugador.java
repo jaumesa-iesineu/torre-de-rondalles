@@ -5,6 +5,8 @@
 package com.iessineu.rondalles.entitats;
 
 import com.googlecode.lanterna.TextColor;
+import com.iessineu.rondalles.inventari.Inventari;
+import com.iessineu.rondalles.inventari.Item;
 
 /**
  *
@@ -23,18 +25,23 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     private int vida; // vida actual del jugador
     private int vidaMaxima; // vida maxima del jugador
 
-    private int atac; // atac actual del jugador
+    private int atac; // atac base del jugador
+    private int atacExtra; // atac afegit per l'arma equipada
 
     private int defensa; // defensa actual del jugador
+    private int defensaExtra; // defensa afegida per l'armadura equipada
 
     private int pes; // pes actual del jugador
     private int pesMaxim; // pes maxim del jugador
 
     private int velocitat; // velocitat actual del jugador
 
-    private int visio; // visio actual del jugador
+    private int visio; //visio actual del jugador
 
-    private EstatJugador estatJugador; // estat actual del jugador
+    private EstatJugador estatJugador; //estat actual del jugador
+
+    private Inventari inventari = new Inventari(); //el que du a sobre
+    private int tornsVeri = 0; //quants torns li queden de verí
 
     public Jugador(int x, int y) { // constructor de la classe Jugador
         super(x, y, '@');
@@ -69,13 +76,19 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
 
     //les stats reals sumen base + equipament (quan tinguem equipament)
     public int getAtacTotal() {
-        //quan tinguem arma equipada aquí sumarem el seu atac
-        return atac;
+        return atac + atacExtra;
     }
 
     public int getDefensaTotal() {
-        //quan tinguem armadura aquí sumarem la seva defensa
-        return defensa;
+        return defensa + defensaExtra;
+    }
+
+    public void setAtacExtra(int atacExtra) {
+        this.atacExtra = atacExtra;
+    }
+
+    public void setDefensaExtra(int defensaExtra) {
+        this.defensaExtra = defensaExtra;
     }
 
     public boolean esMort() {
@@ -83,13 +96,35 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     }
 
     public void rebreDany(int dany) {
-        //la defensa redueix el dany rebut
-        int danyReal = Math.max(1, dany - defensa);
+        int danyReal = Math.max(1, dany - defensa); //la defensa absorb part del cop
         vida -= danyReal;
         if (vida <= 0) {
             vida = 0;
             estatJugador = EstatJugador.MORT;
         }
+    }
+
+    public void curar(int quantitat) { //recupera vida sense passar del màxim
+        vida = Math.min(vidaMaxima, vida + quantitat);
+    }
+
+    public void afegeixItem(Item item) { //recull un item del terra
+        inventari.afegeix(item);
+        pes += item.getPes();
+    }
+
+    public void usaItem(int index) { //usa l'item del slot indicat (0-based)
+        if (index < 0 || index >= inventari.mida()) return;
+        Item item = inventari.get(index);
+        item.aplicaEfecte(this);
+        pes -= item.getPes();
+        inventari.elimina(index);
+    }
+
+    public void tickVeri() { //cada torn que passa amb verí, fa mal
+        if (tornsVeri <= 0) return;
+        rebreDany(3);
+        tornsVeri--;
     }
 
     // getters i setters
@@ -129,6 +164,12 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     public void setEstatJugador(EstatJugador e) {
         this.estatJugador = e;
     }
+
+    public void setTornsVeri(int t) { tornsVeri = t; }
+
+    public int getTornsVeri() { return tornsVeri; }
+
+    public Inventari getInventari() { return inventari; }
 
     @Override
     public TextColor getColor() {

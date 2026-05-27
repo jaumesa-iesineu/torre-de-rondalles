@@ -85,7 +85,11 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
         return vida;
     }
 
-    public boolean esMort() { // esMort es perque retorna si l'enemic esta mort
+    public boolean esMort() {
         return vida <= 0;
     }
+
+    public int getAtac() { return atac; } //necessari pel sistema de combat
+
+    public int getVidaMaxima() { return vidaMaxima; }
 }

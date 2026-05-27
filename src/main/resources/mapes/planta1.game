@@ -3,6 +3,10 @@
     <habitacions>
         <habitacio id="sala_entrada1" x="0" y="0" amplada="17" alcada="11" porta="6" portaEsp="4">
             <descripcio>L'entrada de la torre, fosca i freda. Les pedres de les parets suen humitat.</descripcio>
+            <item x="3" y="3"/>
+            <item x="7" y="5"/>
+            <enemic x="10" y="4"/>
+            <enemic x="5" y="7"/>
         </habitacio>
 
         <habitacio id="sala_entrada2" x="16" y="0" amplada="17" alcada="11" porta="7" portaEsp="2">
