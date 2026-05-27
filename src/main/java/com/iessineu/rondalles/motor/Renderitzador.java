@@ -4,6 +4,7 @@
  */
 package com.iessineu.rondalles.motor;
 
+import com.iessineu.rondalles.entitats.Enemic;
 import com.iessineu.rondalles.entitats.Entitat;
 import com.iessineu.rondalles.mapa.Mapa;
 import com.googlecode.lanterna.TerminalSize;
@@ -160,6 +161,48 @@ public class Renderitzador { // classe per gestionar la pantalla
         for (int i = 0; i < text.length(); i++) {
             screen.setCharacter(col + i, fila, new TextCharacter(text.charAt(i), color, TextColor.ANSI.BLACK));
         }
+    }
+
+    public void dibuixaCombat(Enemic enemic, com.iessineu.rondalles.entitats.Jugador jugador) throws IOException {
+        screen.clear();
+
+        int cols = screen.getTerminalSize().getColumns();
+        int files = screen.getTerminalSize().getRows();
+        int ample = 36;
+        int alcada = 12;
+        int ox = (cols - ample) / 2; //centram el quadre
+        int oy = (files - alcada) / 2;
+
+        //marc del quadre de combat
+        TextColor blanc = new TextColor.RGB(220, 220, 220);
+        TextColor vermell = new TextColor.RGB(220, 60, 60);
+        TextColor verd = new TextColor.RGB(80, 200, 100);
+        TextColor groc = new TextColor.RGB(220, 180, 50);
+
+        pintaText(ox, oy,           "╔" + "═".repeat(ample - 2) + "╗", blanc);
+        for (int i = 1; i < alcada - 1; i++)
+            pintaText(ox, oy + i,   "║" + " ".repeat(ample - 2) + "║", blanc);
+        pintaText(ox, oy + alcada - 1, "╚" + "═".repeat(ample - 2) + "╝", blanc);
+
+        //nom i vida de l'enemic
+        String nomEnemic = enemic.getClass().getSimpleName().toUpperCase();
+        pintaText(ox + 2, oy + 1, nomEnemic, vermell);
+        String hpEnemic = "HP: " + enemic.getVida() + "/" + enemic.getVidaMaxima();
+        pintaText(ox + ample - 2 - hpEnemic.length(), oy + 1, hpEnemic, verd);
+
+        //opcions
+        pintaText(ox + 2, oy + 3, "[A] Atacar", blanc);
+        for (int i = 0; i < jugador.getInventari().mida(); i++) {
+            String linia = "[" + (i + 1) + "] " + jugador.getInventari().get(i).getNom();
+            pintaText(ox + 2, oy + 4 + i, linia, groc);
+        }
+        pintaText(ox + 2, oy + alcada - 3, "[F] Fugir", blanc);
+
+        //vida del jugador
+        String hpJugador = "El teu HP: " + jugador.getVida() + "/" + jugador.getVidaMaxima();
+        pintaText(ox + 2, oy + alcada - 2, hpJugador, verd);
+
+        screen.refresh();
     }
 
     //espera que l'usuari premi una tecla (bloquejant)

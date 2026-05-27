@@ -4,6 +4,8 @@
  */
 package com.iessineu.rondalles.joc;
 
+import com.iessineu.rondalles.combat.SistemaCombat;
+import com.iessineu.rondalles.entitats.DimoniBoiet;
 import com.iessineu.rondalles.entitats.Enemic;
 import com.iessineu.rondalles.entitats.Entitat;
 import com.iessineu.rondalles.entitats.Jugador;
@@ -34,6 +36,7 @@ public class Joc extends Motor {
 
     private List<Enemic> enemics; //tots els enemics carregats al mapa
     private List<ItemMapa> itemsMapa = new ArrayList<>(); //items que hi ha al terra
+    private Enemic enemicCombat = null; //l'enemic amb qui estam lluitant ara mateix
 
     //el fitxer .game que hem de carregar
     private String fitxerMapa;
@@ -56,6 +59,7 @@ public class Joc extends Motor {
 
         enemics = new ArrayList<>();
 
+        carregaEnemics(); //escanejam les 'e' del mapa i cream els enemics
         carregaItemsMapa(); //escanejam les 'i' del mapa i posam els items
 
         estat = Estat.MON;
@@ -68,11 +72,46 @@ public class Joc extends Motor {
             return;
         }
 
-        //tecles 1-9 per usar l'item del slot corresponent, també gasta torn
+        if (estat == Estat.COMBAT) {
+            gestionaCombat(tecla);
+        } else {
+            gestionaMoviment(tecla);
+        }
+    }
+
+    private void gestionaCombat(KeyStroke tecla) { //gestiona les tecles durant el combat
+        if (tecla.getKeyType() != KeyType.Character) return;
+        char c = tecla.getCharacter();
+
+        if (c >= '1' && c <= '9') { //usar ítem no gasta torn de l'enemic
+            jugador.usaItem(c - '1');
+            return;
+        }
+
+        if (c == 'f' || c == 'F') { //fugir torna al mapa
+            enemicCombat = null;
+            estat = Estat.MON;
+            return;
+        }
+
+        if (c == 'a' || c == 'A') { //atacar
+            SistemaCombat.atacaEnemic(jugador, enemicCombat);
+            if (enemicCombat.esMort()) { //si l'enemic mor, torna al mapa
+                enemics.remove(enemicCombat);
+                enemicCombat = null;
+                estat = Estat.MON;
+                return;
+            }
+            SistemaCombat.atacaJugador(enemicCombat, jugador); //contraatac
+            if (jugador.esMort()) corrent = false;
+        }
+    }
+
+    private void gestionaMoviment(KeyStroke tecla) { //gestiona el moviment pel mapa
         if (tecla.getKeyType() == KeyType.Character) {
             char c = tecla.getCharacter();
-            if (c >= '1' && c <= '9') {
-                jugador.usaItem(c - '1'); //convertim el caràcter a índex 0-based
+            if (c >= '1' && c <= '9') { //usar ítem fora de combat també gasta torn
+                jugador.usaItem(c - '1');
                 jugador.tickVeri();
                 if (jugador.esMort()) corrent = false;
                 return;
@@ -87,7 +126,14 @@ public class Joc extends Motor {
             case ArrowDown  -> ny++;
             case ArrowLeft  -> nx--;
             case ArrowRight -> nx++;
-            default -> { return; } //si no és moviment no passa el torn
+            default -> { return; }
+        }
+
+        Enemic enemic = trobaEnemicA(nx, ny); //si hi ha un enemic, iniciam combat
+        if (enemic != null) {
+            enemicCombat = enemic;
+            estat = Estat.COMBAT;
+            return;
         }
 
         if (mapa.esPasable(nx, ny)) {
@@ -95,9 +141,8 @@ public class Joc extends Motor {
             jugador.setY(ny);
             jugador.setEstatJugador(Jugador.EstatJugador.MOVIMENT);
 
-            recullItemSiNHiHa(nx, ny); //comprova si ha trepitjat un item
-
-            jugador.tickVeri(); //el verí avança cada torn
+            recullItemSiNHiHa(nx, ny);
+            jugador.tickVeri();
 
             for (Enemic e : enemics) {
                 if (e.isActiu()) e.actualitzaIA(jugador);
@@ -105,6 +150,12 @@ public class Joc extends Motor {
         }
 
         if (jugador.esMort()) corrent = false;
+    }
+
+    private Enemic trobaEnemicA(int x, int y) { //cerca si hi ha un enemic a la posició donada
+        for (Enemic e : enemics)
+            if (e.isActiu() && e.getX() == x && e.getY() == y) return e;
+        return null;
     }
 
     private void recullItemSiNHiHa(int x, int y) { //si hi ha un item a (x,y) el recull
@@ -133,15 +184,28 @@ public class Joc extends Motor {
         }
     }
 
+    private void carregaEnemics() { //escana les 'e' del mapa i crea un DimoniBoiet per cada una
+        char[][] celles = mapa.getCelles();
+        for (int y = 0; y < celles.length; y++) {
+            for (int x = 0; x < celles[y].length; x++) {
+                if (celles[y][x] == 'e') {
+                    enemics.add(new DimoniBoiet(x, y));
+                    mapa.setCella(x, y, '.'); //el renderitzador el pinta des de la llista
+                }
+            }
+        }
+    }
+
     @Override
-    protected void renderitza() { // renderitza la pantalla
+    protected void renderitza() {
         try {
-            //passam tots els enemics com a llista d'entitats al renderitzador
             List<Entitat> totes = new ArrayList<>(enemics);
-            // CANVI: afegit "jugador" com a paràmetre per poder pintar el HUD
-            renderer.dibuixa(mapa, jugador.getX(), jugador.getY(), totes, jugador);
+            if (estat == Estat.COMBAT) {
+                renderer.dibuixaCombat(enemicCombat, jugador);
+            } else {
+                renderer.dibuixa(mapa, jugador.getX(), jugador.getY(), totes, jugador);
+            }
         } catch (IOException ex) {
-            //errorr
             corrent = false;
         }
     }
