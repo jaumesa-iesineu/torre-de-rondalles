@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapa id="planta2" nom="Les Cambres dels Servents">
+    <habitacions>
+
+        <habitacio id="escales_pujada" x="0" y="14" amplada="10" alcada="12">
+            <descripcio>Les escales crugeixen sota els peus. Una porta de ferro rovellada dóna accés al segon pis.</descripcio>
+            <entitats>
+                <item tipus="torxa" x="3" y="3"/>
+            </entitats>
+        </habitacio>
+
+        <habitacio id="corredor_entrada" x="10" y="17" amplada="8" alcada="5">
+            <descripcio>Un corredor fosc que fa olor de sutge i carn cremada.</descripcio>
+            <entitats/>
+        </habitacio>
+
+        <habitacio id="sala_servents" x="18" y="10" amplada="22" alcada="20">
+            <descripcio>L'antiga sala dels servents. Jerros trencats i roba pudenta per terra.</descripcio>
+            <entitats>
+                <enemic tipus="dimoni_boiet" x="8" y="5"/>
+                <enemic tipus="dimoni_boiet" x="15" y="12"/>
+                <item tipus="pa_moreno" x="5" y="16"/>
+            </entitats>
+        </habitacio>
+
+        <habitacio id="corredor_nord" x="25" y="5" amplada="8" alcada="5">
+            <descripcio>Un corredor que puja cap al nord. El vent xiula entre les pedres.</descripcio>
+            <entitats/>
+        </habitacio>
+
+        <habitacio id="sala_rebost" x="18" y="0" amplada="22" alcada="5">
+            <descripcio>El rebost de la torre. Queden restes de menjar podrit i barrils buits.</descripcio>
+            <entitats>
+                <enemic tipus="bubota" x="5" y="2"/>
+                <item tipus="pocio_vida" x="15" y="2"/>
+            </entitats>
+        </habitacio>
+
+        <habitacio id="corredor_est" x="40" y="14" amplada="8" alcada="5">
+            <descripcio>Un passadís fosc que s'allarga cap a l'est.</descripcio>
+            <entitats/>
+        </habitacio>
+
+        <habitacio id="sala_guarda_2" x="48" y="5" amplada="25" alcada="30">
+            <descripcio>La sala de guàrdia del segon pis. Tres dimonis juguen a daus sobre una taula de pedra.</descripcio>
+            <entitats>
+                <enemic tipus="dimoni_boiet" x="8" y="8"/>
+                <enemic tipus="dimoni_boiet" x="15" y="15"/>
+                <enemic tipus="bubota" x="18" y="5"/>
+                <item tipus="falc_llaurador" x="5" y="25"/>
+                <item tipus="torxa" x="20" y="25"/>
+            </entitats>
+        </habitacio>
+
+        <habitacio id="corredor_final" x="73" y="17" amplada="8" alcada="5">
+            <descripcio>Un corredor que porta a les escales de la tercera planta.</descripcio>
+            <entitats/>
+        </habitacio>
+
+        <habitacio id="escales_pujada_3" x="81" y="10" amplada="12" alcada="20">
+            <descripcio>Les escales de pedra que pugen a la tercera planta. Una bubota vigila el replà.</descripcio>
+            <entitats>
+                <enemic tipus="bubota" x="5" y="10"/>
+                <item tipus="torxa" x="8" y="3"/>
+            </entitats>
+        </habitacio>
+
+    </habitacions>
+
+    <connexions>
+        <connexio de="escales_pujada" a="corredor_entrada" direccio="est"/>
+        <connexio de="corredor_entrada" a="sala_servents" direccio="est"/>
+        <connexio de="sala_servents" a="corredor_nord" direccio="nord"/>
+        <connexio de="corredor_nord" a="sala_rebost" direccio="nord"/>
+        <connexio de="sala_servents" a="corredor_est" direccio="est"/>
+        <connexio de="corredor_est" a="sala_guarda_2" direccio="est"/>
+        <connexio de="sala_guarda_2" a="corredor_final" direccio="est"/>
+        <connexio de="corredor_final" a="escales_pujada_3" direccio="est"/>
+    </connexions>
+</mapa>

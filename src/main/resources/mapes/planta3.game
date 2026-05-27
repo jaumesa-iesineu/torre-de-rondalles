@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapa id="planta3" nom="Els Passadissos del Bruixot">
+    <habitacions>
+
+        <habitacio id="escales_entrada" x="0" y="15" amplada="10" alcada="12">
+            <descripcio>El replà de la tercera planta. L'aire fa olor de sofre i herbes cremades.</descripcio>
+            <entitats>
+                <item tipus="torxa" x="3" y="3"/>
+            </entitats>
+        </habitacio>
+
+        <habitacio id="sala_rituals" x="10" y="8" amplada="20" alcada="26">
+            <descripcio>Una sala circular plena de símbols gravats a terra. Quelcom aquí no és natural.</descripcio>
+            <entitats>
+                <enemic tipus="bubota" x="8" y="8"/>
+                <enemic tipus="bubota" x="12" y="18"/>
+                <enemic tipus="na_maria_enganxa" x="5" y="5"/>
+                <item tipus="pocio_vida" x="15" y="20"/>
+            </entitats>
+        </habitacio>
+
+        <habitacio id="corredor_oest" x="30" y="20" amplada="8" alcada="5">
+            <descripcio>Un corredor fosc amb pedres lliscoses.</descripcio>
+            <entitats/>
+        </habitacio>
+
+        <habitacio id="sala_bibliotheca" x="30" y="5" amplada="25" alcada="15">
+            <descripcio>La biblioteca del bruixot. Llibres encadenats a les prestatgeries, alguns es mouen sols.</descripcio>
+            <entitats>
+                <enemic tipus="bubota" x="10" y="5"/>
+                <enemic tipus="dimoni_boiet" x="18" y="10"/>
+                <item tipus="pergami" x="5" y="10"/>
+                <item tipus="pocio_vida" x="20" y="5"/>
+            </entitats>
+        </habitacio>
+
+        <habitacio id="sala_tortures" x="38" y="20" amplada="20" alcada="18">
+            <descripcio>La sala de tortures. Cadenes rovellades pengen del sostre. No és bon lloc per aturar-se.</descripcio>
+            <entitats>
+                <enemic tipus="na_maria_enganxa" x="8" y="8"/>
+                <enemic tipus="bubota" x="15" y="12"/>
+                <enemic tipus="dimoni_boiet" x="3" y="3"/>
+                <item tipus="garrot_olivera" x="15" y="15"/>
+            </entitats>
+        </habitacio>
+
+        <habitacio id="corredor_final" x="58" y="15" amplada="8" alcada="5">
+            <descripcio>El corredor que porta als aposentos del bruixot.</descripcio>
+            <entitats/>
+        </habitacio>
+
+        <habitacio id="sala_aposentos" x="66" y="5" amplada="30" alcada="32">
+            <descripcio>Els aposentos privats del bruixot En Salom. Mobiliari luxós cobert de pols. Al fons, les escales de la quarta planta.</descripcio>
+            <entitats>
+                <enemic tipus="bubota" x="10" y="10"/>
+                <enemic tipus="bubota" x="20" y="20"/>
+                <enemic tipus="dimoni_boiet" x="5" y="25"/>
+                <enemic tipus="na_maria_enganxa" x="25" y="5"/>
+                <item tipus="pocio_vida" x="15" y="28"/>
+                <item tipus="torxa" x="25" y="28"/>
+            </entitats>
+        </habitacio>
+
+    </habitacions>
+
+    <connexions>
+        <connexio de="escales_entrada" a="sala_rituals" direccio="est"/>
+        <connexio de="sala_rituals" a="sala_bibliotheca" direccio="nord"/>
+        <connexio de="sala_rituals" a="corredor_oest" direccio="est"/>
+        <connexio de="corredor_oest" a="sala_tortures" direccio="est"/>
+        <connexio de="sala_tortures" a="corredor_final" direccio="est"/>
+        <connexio de="corredor_final" a="sala_aposentos" direccio="est"/>
+    </connexions>
+</mapa>

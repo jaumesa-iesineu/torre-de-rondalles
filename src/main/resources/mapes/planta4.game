@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapa id="planta4" nom="La Sala del Gegant">
+    <habitacions>
+
+        <habitacio id="escales_entrada" x="0" y="18" amplada="10" alcada="12">
+            <descripcio>El replà de la quarta planta. El terra tremola amb cada pas. Alguna cosa gran es mou aquí dalt.</descripcio>
+            <entitats>
+                <item tipus="torxa" x="3" y="3"/>
+                <item tipus="pocio_vida" x="6" y="8"/>
+            </entitats>
+        </habitacio>
+
+        <habitacio id="corredor_entrada" x="10" y="20" amplada="8" alcada="5">
+            <descripcio>Un corredor ample. Les pedres de les parets han estat esfondrades per alguna cosa enorme.</descripcio>
+            <entitats/>
+        </habitacio>
+
+        <habitacio id="sala_tropes" x="18" y="10" amplada="22" alcada="25">
+            <descripcio>La sala de les tropes del Gegant. Dimonis i bubotes fan guàrdia.</descripcio>
+            <entitats>
+                <enemic tipus="dimoni_boiet" x="5" y="5"/>
+                <enemic tipus="dimoni_boiet" x="15" y="5"/>
+                <enemic tipus="bubota" x="10" y="15"/>
+                <enemic tipus="na_maria_enganxa" x="3" y="20"/>
+                <enemic tipus="na_maria_enganxa" x="18" y="20"/>
+                <item tipus="espasa_cavaller" x="10" y="10"/>
+            </entitats>
+        </habitacio>
+
+        <habitacio id="corredor_gegant" x="40" y="18" amplada="8" alcada="5">
+            <descripcio>Un corredor altíssim. Les empremtes gegantines al terra us posen els pèls de punta.</descripcio>
+            <entitats/>
+        </habitacio>
+
+        <habitacio id="sala_gegant" x="48" y="5" amplada="35" alcada="35">
+            <descripcio>La sala del Gegant. Enorme, amb columnes de pedra trencades. El Gegant us mira des del fons amb ulls com llums de carburo.</descripcio>
+            <entitats>
+                <enemic tipus="gegant" x="20" y="20"/>
+                <enemic tipus="dimoni_boiet" x="5" y="5"/>
+                <enemic tipus="dimoni_boiet" x="28" y="5"/>
+                <enemic tipus="bubota" x="5" y="28"/>
+                <item tipus="destral_gegant" x="28" y="28"/>
+                <item tipus="pocio_vida" x="15" y="30"/>
+            </entitats>
+        </habitacio>
+
+        <habitacio id="corredor_final" x="83" y="18" amplada="8" alcada="5">
+            <descripcio>Una porta secreta darrere el tron del Gegant. Porta al cim de la torre.</descripcio>
+            <entitats/>
+        </habitacio>
+
+        <habitacio id="escales_cim" x="91" y="12" amplada="12" alcada="20">
+            <descripcio>Les escales finals. El cim és a sobre. Podeu sentir el rugit del Drac.</descripcio>
+            <entitats>
+                <item tipus="torxa" x="5" y="3"/>
+            </entitats>
+        </habitacio>
+
+    </habitacions>
+
+    <connexions>
+        <connexio de="escales_entrada" a="corredor_entrada" direccio="est"/>
+        <connexio de="corredor_entrada" a="sala_tropes" direccio="est"/>
+        <connexio de="sala_tropes" a="corredor_gegant" direccio="est"/>
+        <connexio de="corredor_gegant" a="sala_gegant" direccio="est"/>
+        <connexio de="sala_gegant" a="corredor_final" direccio="est"/>
+        <connexio de="corredor_final" a="escales_cim" direccio="est"/>
+    </connexions>
+</mapa>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapa id="planta5" nom="El Cim de la Torre — Niu del Drac">
+    <habitacions>
+
+        <habitacio id="escales_entrada" x="0" y="15" amplada="10" alcada="12">
+            <descripcio>El replà del cim. L'aire crema els pulmons. El sostre és obert i podeu veure el cel nocturn.</descripcio>
+            <entitats>
+                <item tipus="pocio_vida" x="4" y="4"/>
+                <item tipus="torxa" x="7" y="8"/>
+            </entitats>
+        </habitacio>
+
+        <habitacio id="corredor_cim" x="10" y="17" amplada="8" alcada="5">
+            <descripcio>Un corredor obert als vents. Les pedres del terra estan negres de foc antic.</descripcio>
+            <entitats/>
+        </habitacio>
+
+        <habitacio id="sala_dimonis_cim" x="18" y="8" amplada="20" alcada="25">
+            <descripcio>L'avantcambra del Drac. Dimonis i bubotes guarden l'entrada al niu.</descripcio>
+            <entitats>
+                <enemic tipus="bubota" x="5" y="5"/>
+                <enemic tipus="bubota" x="14" y="18"/>
+                <enemic tipus="dimoni_boiet" x="8" y="12"/>
+                <enemic tipus="na_maria_enganxa" x="2" y="20"/>
+                <enemic tipus="na_maria_enganxa" x="16" y="2"/>
+                <item tipus="pocio_vida" x="10" y="20"/>
+            </entitats>
+        </habitacio>
+
+        <habitacio id="corredor_niu" x="38" y="17" amplada="8" alcada="5">
+            <descripcio>Les portes del niu del Drac. Gravades amb dracs en relleu. Podeu sentir la calor a través de la pedra.</descripcio>
+            <entitats/>
+        </habitacio>
+
+        <habitacio id="niu_drac" x="46" y="3" amplada="47" alcada="37">
+            <descripcio>El niu del Drac. Una sala enorme oberta al cel, plena de cendres i ossos. Al centre, ES DRAC us mira. Els seus ulls brillen com brases. Darrere ell, el tresor d'En Salom.</descripcio>
+            <entitats>
+                <enemic tipus="drac" x="25" y="18"/>
+                <enemic tipus="bubota" x="5" y="5"/>
+                <enemic tipus="bubota" x="40" y="5"/>
+                <enemic tipus="bubota" x="5" y="30"/>
+                <enemic tipus="na_maria_enganxa" x="15" y="10"/>
+                <enemic tipus="na_maria_enganxa" x="30" y="10"/>
+                <enemic tipus="na_maria_enganxa" x="15" y="28"/>
+                <enemic tipus="na_maria_enganxa" x="30" y="28"/>
+                <item tipus="tresor_salom" x="25" y="32"/>
+                <item tipus="pocio_vida" x="3" y="18"/>
+            </entitats>
+        </habitacio>
+
+    </habitacions>
+
+    <connexions>
+        <connexio de="escales_entrada" a="corredor_cim" direccio="est"/>
+        <connexio de="corredor_cim" a="sala_dimonis_cim" direccio="est"/>
+        <connexio de="sala_dimonis_cim" a="corredor_niu" direccio="est"/>
+        <connexio de="corredor_niu" a="niu_drac" direccio="est"/>
+    </connexions>
+</mapa>

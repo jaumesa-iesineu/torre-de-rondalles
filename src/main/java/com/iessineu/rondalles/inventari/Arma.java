@@ -1,5 +1,6 @@
 package com.iessineu.rondalles.inventari;
 
+import com.googlecode.lanterna.TextColor;
 import com.iessineu.rondalles.entitats.Jugador;
 
 /**
@@ -28,5 +29,12 @@ public class Arma extends Item { // arma equipable pel jugador
 
     public int getRang() {
         return rang;
+    }
+
+    @Override
+    public TextColor getColor() { // daurat — intensitat creix amb l'atac (nivell 1-3)
+        if (atac <= 3)  return new TextColor.RGB(180, 140, 40);  // daurat apagat
+        if (atac <= 9)  return new TextColor.RGB(220, 180, 50);  // daurat mitjà
+        return          new TextColor.RGB(255, 215, 0);          // daurat brillant
     }
 }

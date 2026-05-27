@@ -69,8 +69,12 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     //funció que calcula sa velocitat depenent de es pes / pesMaxim
     public int velocitatEfectiva() {
         double percentatge = (double) pes / pesMaxim;
-        if (percentatge <= 0.50) return velocitat;
-        if (percentatge <= 0.80) return Math.max(1, velocitat - 1);
+        if (percentatge <= 0.50) {
+            return velocitat;
+        }
+        if (percentatge <= 0.80) {
+            return Math.max(1, velocitat - 1);
+        }
         return Math.max(1, velocitat - 2);
     }
 
@@ -128,39 +132,38 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     }
 
     // getters i setters
-
     public int getVida() {
         return vida;
     }
-    
+
     public int getVidaMaxima() {
         return vidaMaxima;
     }
-    
+
     public int getAtac() {
         return atac;
     }
-    
+
     public int getDefensa() {
         return defensa;
     }
-    
+
     public int getPes() {
         return pes;
     }
-    
+
     public int getpesMaxim() {
         return pesMaxim;
     }
-    
+
     public int getVisio() {
         return visio;
     }
-    
+
     public EstatJugador getEstatJugador() {
         return estatJugador;
     }
-    
+
     public void setEstatJugador(EstatJugador e) {
         this.estatJugador = e;
     }
