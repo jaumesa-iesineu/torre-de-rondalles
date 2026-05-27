@@ -4,6 +4,7 @@
  */
 package com.iessineu.rondalles;
 
+import com.iessineu.rondalles.editor.EditorMapes;
 import com.iessineu.rondalles.joc.Joc;
 
 /**
@@ -12,16 +13,28 @@ import com.iessineu.rondalles.joc.Joc;
  */
 public class Main {
 
+    //arguments acceptats:
+    //(res)          -> joc normal amb planta1.game
+    //-game <fitxer> -> joc normal amb un fitxer concret
+    //mapes          -> obre s'editor de mapes buit
+    //mapes <fitxer> -> obre s'editor de mapes amb un fitxer existent
     public static void main(String[] args) throws Exception {
-        //arguments acceptats:
-        //-game <fitxer> carrega un fitxer .game concret
-        //-mod <fitxer> carrega un mod (futur, de moment igual que -game)
-        //res (carrega el fitxer per defecte)
-        String fitxer = "mapes/planta1.game";
 
-        for (int i = 0; i < args.length - 1; i++) { // per cada argument
-            if (args[i].equals("-game") || args[i].equals("-mod")) { // si l'argument es -game o -mod, carrega el fitxer corresponent
-                fitxer = args[i + 1]; // si l'argument es -game o -mod, carrega el fitxer corresponent
+        if (args.length > 0) {
+            switch (args[0]) {
+                case "mapes" -> {
+                    if (args.length > 1) EditorMapes.lancarAmbMapa(args[1]);
+                    else                 EditorMapes.lancar();
+                    return;
+                }
+            }
+        }
+
+        //mode normal
+        String fitxer = "mapes/planta1.game";
+        for (int i = 0; i < args.length - 1; i++) {
+            if (args[i].equals("-game") || args[i].equals("-mod")) {
+                fitxer = args[i + 1];
             }
         }
 

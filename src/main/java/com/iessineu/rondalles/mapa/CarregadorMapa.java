@@ -5,7 +5,11 @@
 package com.iessineu.rondalles.mapa;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
@@ -42,9 +46,16 @@ public class CarregadorMapa {
     }
 
     //funció per parsejar el xml i convertir-lo a nes mapa
+    //suporta dos formats: habitacions (clàssic) i tilemap (editor de mapes)
     private static Mapa parsejaDocument(Document doc) {
         Element arrel = doc.getDocumentElement();
         String nom = arrel.getAttribute("nom");
+
+        //si té <tilemap> és un mapa pintat tile a tile, no per habitacions
+        NodeList tilemapNodes = arrel.getElementsByTagName("tilemap");
+        if (tilemapNodes.getLength() > 0) {
+            return parsejaTilemap(tilemapNodes.item(0).getTextContent(), nom);
+        }
 
         //primer miram les dimensions del mapa
         //cada habitació té una posició i una mida, necessitam saber quant gran ha de ser
@@ -144,6 +155,37 @@ public class CarregadorMapa {
             }
         }
         return null;
+    }
+
+    //parseja un bloc <tilemap> amb la quadrícula de caràcters directament
+    private static Mapa parsejaTilemap(String contingut, String nom) {
+        List<String> files = new ArrayList<>();
+        for (String linia : contingut.split("\n")) {
+            String t = linia.stripTrailing();
+            if (!t.isBlank()) files.add(t);
+        }
+        int alcada = files.size();
+        int amplada = files.isEmpty() ? 0 : files.stream().mapToInt(String::length).max().orElse(0);
+        char[][] celles = new char[alcada][amplada];
+        for (int y = 0; y < alcada; y++) {
+            String row = files.get(y);
+            for (int x = 0; x < amplada; x++)
+                celles[y][x] = x < row.length() ? row.charAt(x) : '#';
+        }
+        return new Mapa(celles, nom);
+    }
+
+    //desa un mapa pintat com a fitxer .game amb format <tilemap>
+    public static void desaGameXml(Mapa mapa, String rutaFitxer) throws Exception {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(rutaFitxer))) {
+            pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            pw.println("<mapa id=\"" + mapa.getNom() + "\" nom=\"" + mapa.getNom() + "\">");
+            pw.println("    <tilemap>");
+            for (char[] fila : mapa.getCelles())
+                pw.println("        " + new String(fila));
+            pw.println("    </tilemap>");
+            pw.println("</mapa>");
+        }
     }
 
     //obre una porta entre dues habitacions posant '.' a la paret
