@@ -109,7 +109,7 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     }
 
     public void afegeixItem(Item item) { //recull un item del terra
-        inventari.afegir(item);
+        inventari.afegeix(item);
         pes += item.getPes();
     }
 
