@@ -25,36 +25,72 @@ public class CarregadorMapa {
     //carrega un mapa des d'un fitxer .game en format xml
     //primer intenta trobar es fitxer i si no throw Exception
     public static Mapa carrega(String rutaFitxer) throws Exception {
-        Document doc;
+        return parsejaDocument(parsejaFitxer(rutaFitxer));
+    }
 
-        File fitxer = new File(rutaFitxer);
-        if (fitxer.exists()) {
-            //el llegim
-            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            doc = db.parse(fitxer);
-        } else {
-            //el cercam a /
-            InputStream is = CarregadorMapa.class.getResourceAsStream("/" + rutaFitxer);
-            if (is == null) {
-                throw new Exception("no trobat el fitxer: " + rutaFitxer);
+    //retorna les habitacions definides al fitxer (per a l'editor)
+    //funciona tant amb l'antic format <habitacio amplada=...> com amb el nou <habitacio><tiles>
+    //si el fitxer és tilemap pur retorna llista buida
+    public static List<Habitacio> carregaHabitacionsDefinides(String rutaFitxer) throws Exception {
+        Document doc = parsejaFitxer(rutaFitxer);
+        Element arrel = doc.getDocumentElement();
+        List<Habitacio> resultat = new ArrayList<>();
+
+        NodeList nodes = arrel.getElementsByTagName("habitacio");
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element h = (Element) nodes.item(i);
+            int x = h.hasAttribute("x") ? Integer.parseInt(h.getAttribute("x")) : 0;
+            int y = h.hasAttribute("y") ? Integer.parseInt(h.getAttribute("y")) : 0;
+            String id = h.hasAttribute("id") ? h.getAttribute("id") : "hab" + (i + 1);
+
+            //format nou: <tiles> embedded, calculam w/h de les línies
+            NodeList tilesNodes = h.getElementsByTagName("tiles");
+            if (tilesNodes.getLength() > 0) {
+                List<String> files = extrauFiles(tilesNodes.item(0).getTextContent());
+                int w = files.stream().mapToInt(String::length).max().orElse(0);
+                int hh = files.size();
+                if (w > 0 && hh > 0) resultat.add(new Habitacio(id, x, y, w, hh));
+                continue;
             }
-            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            doc = db.parse(is);
-        }
 
-        return parsejaDocument(doc);
+            //format antic: amplada i alcada com a atributs
+            if (h.hasAttribute("amplada") && h.hasAttribute("alcada")) {
+                int w  = Integer.parseInt(h.getAttribute("amplada"));
+                int hh = Integer.parseInt(h.getAttribute("alcada"));
+                resultat.add(new Habitacio(id, x, y, w, hh));
+            }
+        }
+        return resultat;
+    }
+
+    private static Document parsejaFitxer(String rutaFitxer) throws Exception {
+        File fitxer = new File(rutaFitxer);
+        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        if (fitxer.exists()) return db.parse(fitxer);
+        InputStream is = CarregadorMapa.class.getResourceAsStream("/" + rutaFitxer);
+        if (is == null) throw new Exception("no trobat el fitxer: " + rutaFitxer);
+        return db.parse(is);
     }
 
     //funció per parsejar el xml i convertir-lo a nes mapa
-    //suporta dos formats: habitacions (clàssic) i tilemap (editor de mapes)
+    //suporta tres formats: habitacions clàssiques, tilemap pla, habitacions amb tiles embedded
     private static Mapa parsejaDocument(Document doc) {
         Element arrel = doc.getDocumentElement();
         String nom = arrel.getAttribute("nom");
 
-        //si té <tilemap> és un mapa pintat tile a tile, no per habitacions
+        //si té <tilemap> és un mapa pintat tile a tile
         NodeList tilemapNodes = arrel.getElementsByTagName("tilemap");
         if (tilemapNodes.getLength() > 0) {
             return parsejaTilemap(tilemapNodes.item(0).getTextContent(), nom);
+        }
+
+        //si la primera <habitacio> té un fill <tiles> és el format nou
+        NodeList habNodes = arrel.getElementsByTagName("habitacio");
+        if (habNodes.getLength() > 0) {
+            Element primera = (Element) habNodes.item(0);
+            if (primera.getElementsByTagName("tiles").getLength() > 0) {
+                return parsejaHabitacionsAmbTiles(arrel, nom);
+            }
         }
 
         //primer miram les dimensions del mapa
@@ -175,6 +211,59 @@ public class CarregadorMapa {
         return new Mapa(celles, nom);
     }
 
+    //parseja el nou format: <habitacio> amb <tiles> embedded
+    private static Mapa parsejaHabitacionsAmbTiles(Element arrel, String nom) {
+        NodeList nodes = arrel.getElementsByTagName("habitacio");
+
+        //primera passada: calculam les dimensions màximes del mapa global
+        int maxX = 0, maxY = 0;
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element h = (Element) nodes.item(i);
+            int ox = Integer.parseInt(h.getAttribute("x"));
+            int oy = Integer.parseInt(h.getAttribute("y"));
+            NodeList tilesNodes = h.getElementsByTagName("tiles");
+            if (tilesNodes.getLength() == 0) continue;
+            List<String> files = extrauFiles(tilesNodes.item(0).getTextContent());
+            int w = files.stream().mapToInt(String::length).max().orElse(0);
+            int hh = files.size();
+            if (ox + w  > maxX) maxX = ox + w;
+            if (oy + hh > maxY) maxY = oy + hh;
+        }
+
+        //cream la graella buida plena de parets
+        char[][] celles = new char[maxY][maxX];
+        for (char[] row : celles) java.util.Arrays.fill(row, '#');
+
+        //segona passada: enganxam els tiles de cada habitació a la posició corresponent
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element h = (Element) nodes.item(i);
+            int ox = Integer.parseInt(h.getAttribute("x"));
+            int oy = Integer.parseInt(h.getAttribute("y"));
+            NodeList tilesNodes = h.getElementsByTagName("tiles");
+            if (tilesNodes.getLength() == 0) continue;
+            List<String> files = extrauFiles(tilesNodes.item(0).getTextContent());
+            for (int dy = 0; dy < files.size(); dy++) {
+                String row = files.get(dy);
+                for (int dx = 0; dx < row.length(); dx++) {
+                    int gy = oy + dy, gx = ox + dx;
+                    if (gy < maxY && gx < maxX) celles[gy][gx] = row.charAt(dx);
+                }
+            }
+        }
+
+        return new Mapa(celles, nom);
+    }
+
+    //extreu les línies no buides d'un bloc de text (ús intern)
+    private static List<String> extrauFiles(String text) {
+        List<String> files = new ArrayList<>();
+        for (String linia : text.split("\n")) {
+            String t = linia.stripTrailing();
+            if (!t.isBlank()) files.add(t);
+        }
+        return files;
+    }
+
     //desa un mapa pintat com a fitxer .game amb format <tilemap>
     public static void desaGameXml(Mapa mapa, String rutaFitxer) throws Exception {
         try (PrintWriter pw = new PrintWriter(new FileWriter(rutaFitxer))) {
@@ -184,6 +273,31 @@ public class CarregadorMapa {
             for (char[] fila : mapa.getCelles())
                 pw.println("        " + new String(fila));
             pw.println("    </tilemap>");
+            pw.println("</mapa>");
+        }
+    }
+
+    //desa un mapa amb habitacions definides en el nou format <habitacio><tiles>
+    public static void desaGameXmlAmbHabitacions(List<Habitacio> habitacions, char[][] celles, String nom, String rutaFitxer) throws Exception {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(rutaFitxer))) {
+            pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            pw.println("<mapa id=\"" + nom + "\" nom=\"" + nom + "\">");
+            pw.println("    <habitacions>");
+            for (Habitacio hab : habitacions) {
+                pw.println("        <habitacio id=\"" + hab.id + "\" x=\"" + hab.x + "\" y=\"" + hab.y + "\">");
+                pw.println("            <tiles>");
+                for (int dy = 0; dy < hab.h; dy++) {
+                    StringBuilder sb = new StringBuilder("                ");
+                    for (int dx = 0; dx < hab.w; dx++) {
+                        int gy = hab.y + dy, gx = hab.x + dx;
+                        sb.append((gy < celles.length && gx < celles[0].length) ? celles[gy][gx] : '#');
+                    }
+                    pw.println(sb);
+                }
+                pw.println("            </tiles>");
+                pw.println("        </habitacio>");
+            }
+            pw.println("    </habitacions>");
             pw.println("</mapa>");
         }
     }
