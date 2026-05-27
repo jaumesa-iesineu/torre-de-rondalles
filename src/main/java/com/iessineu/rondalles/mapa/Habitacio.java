@@ -6,8 +6,8 @@ package com.iessineu.rondalles.mapa;
  */
 public class Habitacio {
 
-    public String id;
-    public int x, y, w, h;
+    private String id;
+    private int x, y, w, h;
 
     public Habitacio(String id, int x, int y, int w, int h) {
         this.id = id;
@@ -16,4 +16,10 @@ public class Habitacio {
         this.w  = w;
         this.h  = h;
     }
+
+    public String getId() { return id; }
+    public int getX()     { return x; }
+    public int getY()     { return y; }
+    public int getW()     { return w; }
+    public int getH()     { return h; }
 }

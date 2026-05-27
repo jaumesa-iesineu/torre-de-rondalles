@@ -284,12 +284,12 @@ public class CarregadorMapa {
             pw.println("<mapa id=\"" + nom + "\" nom=\"" + nom + "\">");
             pw.println("    <habitacions>");
             for (Habitacio hab : habitacions) {
-                pw.println("        <habitacio id=\"" + hab.id + "\" x=\"" + hab.x + "\" y=\"" + hab.y + "\">");
+                pw.println("        <habitacio id=\"" + hab.getId() + "\" x=\"" + hab.getX() + "\" y=\"" + hab.getY() + "\">");
                 pw.println("            <tiles>");
-                for (int dy = 0; dy < hab.h; dy++) {
+                for (int dy = 0; dy < hab.getH(); dy++) {
                     StringBuilder sb = new StringBuilder("                ");
-                    for (int dx = 0; dx < hab.w; dx++) {
-                        int gy = hab.y + dy, gx = hab.x + dx;
+                    for (int dx = 0; dx < hab.getW(); dx++) {
+                        int gy = hab.getY() + dy, gx = hab.getX() + dx;
                         sb.append((gy < celles.length && gx < celles[0].length) ? celles[gy][gx] : '#');
                     }
                     pw.println(sb);

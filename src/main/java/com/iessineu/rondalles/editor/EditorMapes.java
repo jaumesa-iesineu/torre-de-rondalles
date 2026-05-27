@@ -130,12 +130,12 @@ public class EditorMapes {
             g2.setFont(new Font("Monospaced", Font.BOLD, 11));
             for (Habitacio hab : habitacions) {
                 g2.setColor(new Color(100, 200, 255, 50));
-                g2.fillRect(hab.x * MIDA, hab.y * MIDA, hab.w * MIDA, hab.h * MIDA);
+                g2.fillRect(hab.getX() * MIDA, hab.getY() * MIDA, hab.getW() * MIDA, hab.getH() * MIDA);
                 g2.setStroke(new BasicStroke(2));
                 g2.setColor(new Color(100, 200, 255));
-                g2.drawRect(hab.x * MIDA, hab.y * MIDA, hab.w * MIDA - 1, hab.h * MIDA - 1);
+                g2.drawRect(hab.getX() * MIDA, hab.getY() * MIDA, hab.getW() * MIDA - 1, hab.getH() * MIDA - 1);
                 g2.setColor(Color.WHITE);
-                g2.drawString(hab.id, hab.x * MIDA + 3, hab.y * MIDA + 13);
+                g2.drawString(hab.getId(), hab.getX() * MIDA + 3, hab.getY() * MIDA + 13);
             }
 
             //rectangle temporal mentre arrossegam
@@ -291,7 +291,7 @@ public class EditorMapes {
             JPanel fila = new JPanel(new BorderLayout(4, 0));
             fila.setBackground(new Color(40, 40, 40));
             fila.setMaximumSize(new Dimension(Integer.MAX_VALUE, 22));
-            JLabel lbl = new JLabel(hab.id + " (" + hab.w + "×" + hab.h + ")");
+            JLabel lbl = new JLabel(hab.getId() + " (" + hab.getW() + "×" + hab.getH() + ")");
             lbl.setForeground(new Color(100, 200, 255));
             lbl.setFont(lbl.getFont().deriveFont(10f));
             JButton btnX = new JButton("✕");
