@@ -31,7 +31,7 @@ public class Main {
         }
 
         //mode normal
-        String fitxer = "mapes/planta1.game";
+        String fitxer = "mapes/planta1.map";
         for (int i = 0; i < args.length - 1; i++) {
             if (args[i].equals("-game") || args[i].equals("-mod")) {
                 fitxer = args[i + 1];

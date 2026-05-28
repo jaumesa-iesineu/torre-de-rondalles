@@ -222,17 +222,23 @@ public class Joc extends Motor {
         }
     }
 
-    //cerca la primera casella de terra on posar es jugador
-    private int trobaInicialX() { // cerca la primera casella de terra on posar es jugador (x)
+    // Cerca '@' al mapa per la posició inicial del jugador; si no n'hi ha, usa la primera casella lliure
+    private int trobaInicialX() {
         char[][] celles = mapa.getCelles();
+        for (int y = 0; y < celles.length; y++)
+            for (int x = 0; x < celles[y].length; x++)
+                if (celles[y][x] == '@') { mapa.setCella(x, y, '.'); return x; }
         for (int y = 0; y < celles.length; y++)
             for (int x = 0; x < celles[y].length; x++)
                 if (celles[y][x] == '.') return x;
         return 1;
     }
 
-    private int trobaInicialY() { // cerca la primera casella de terra on posar es jugador (y)
+    private int trobaInicialY() {
         char[][] celles = mapa.getCelles();
+        for (int y = 0; y < celles.length; y++)
+            for (int x = 0; x < celles[y].length; x++)
+                if (celles[y][x] == '@') return y;
         for (int y = 0; y < celles.length; y++)
             for (int x = 0; x < celles[y].length; x++)
                 if (celles[y][x] == '.') return y;
