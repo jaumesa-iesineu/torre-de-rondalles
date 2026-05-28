@@ -4,10 +4,13 @@
  */
 package com.iessineu.rondalles.mapa;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
@@ -22,10 +25,53 @@ import org.w3c.dom.NodeList;
  */
 public class CarregadorMapa {
 
-    //carrega un mapa des d'un fitxer .game en format xml
-    //primer intenta trobar es fitxer i si no throw Exception
+    // Carrega un mapa detectant automàticament el format:
+    // - si el fitxer acaba en .map → text pla
+    // - si no → XML (format antic .game)
     public static Mapa carrega(String rutaFitxer) throws Exception {
+        if (rutaFitxer.endsWith(".map")) return carregaPlà(rutaFitxer);
         return parsejaDocument(parsejaFitxer(rutaFitxer));
+    }
+
+    // Carrega un mapa des d'un fitxer .map de text pla.
+    // Format:
+    //   nom: <nom del mapa>        ← primera línia (obligatòria)
+    //   # comentari                ← línies ignorades
+    //   ##########                 ← graella ASCII: # paret, . terra, e enemic, i item, @ inici jugador
+    public static Mapa carregaPlà(String rutaFitxer) throws Exception {
+        List<String> files = new ArrayList<>();
+        String nom = "sense nom";
+
+        InputStream in = obriStream(rutaFitxer);
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+            String linia;
+            while ((linia = br.readLine()) != null) {
+                if (linia.startsWith("nom:")) {
+                    nom = linia.substring(4).trim();
+                    continue;
+                }
+                if (linia.startsWith("#") && files.isEmpty()) continue; // comentari abans del mapa
+                files.add(linia);
+            }
+        }
+
+        int alcada  = files.size();
+        int amplada = files.stream().mapToInt(String::length).max().orElse(0);
+        char[][] celles = new char[alcada][amplada];
+        for (int y = 0; y < alcada; y++) {
+            String row = files.get(y);
+            for (int x = 0; x < amplada; x++)
+                celles[y][x] = x < row.length() ? row.charAt(x) : '#';
+        }
+        return new Mapa(celles, nom);
+    }
+
+    private static InputStream obriStream(String rutaFitxer) throws Exception {
+        File fitxer = new File(rutaFitxer);
+        if (fitxer.exists()) return new java.io.FileInputStream(fitxer);
+        InputStream is = CarregadorMapa.class.getResourceAsStream("/" + rutaFitxer);
+        if (is == null) throw new Exception("no trobat el fitxer: " + rutaFitxer);
+        return is;
     }
 
     //retorna les habitacions definides al fitxer (per a l'editor)
