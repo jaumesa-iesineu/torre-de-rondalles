@@ -5,7 +5,11 @@
 package com.iessineu.rondalles.joc;
 
 import com.iessineu.rondalles.combat.SistemaCombat;
+import com.iessineu.rondalles.entitats.Bubota;
 import com.iessineu.rondalles.entitats.DimoniBoiet;
+import com.iessineu.rondalles.entitats.Drac;
+import com.iessineu.rondalles.entitats.Gegant;
+import com.iessineu.rondalles.entitats.NaMariaEnganxa;
 import com.iessineu.rondalles.entitats.Enemic;
 import com.iessineu.rondalles.entitats.Entitat;
 import com.iessineu.rondalles.entitats.Jugador;
@@ -196,13 +200,21 @@ public class Joc extends Motor {
         }
     }
 
-    private void carregaEnemics() { //escana les 'e' del mapa i crea un DimoniBoiet per cada una
+    private void carregaEnemics() {
         char[][] celles = mapa.getCelles();
         for (int y = 0; y < celles.length; y++) {
             for (int x = 0; x < celles[y].length; x++) {
-                if (celles[y][x] == 'e') {
-                    enemics.add(new DimoniBoiet(x, y));
-                    mapa.setCella(x, y, '.'); //el renderitzador el pinta des de la llista
+                Enemic enemic = switch (celles[y][x]) {
+                    case 'e', 'd' -> new DimoniBoiet(x, y);
+                    case 'B'      -> new Bubota(x, y);
+                    case 'D'      -> new Drac(x, y);
+                    case 'G'      -> new Gegant(x, y);
+                    case 'M'      -> new NaMariaEnganxa(x, y);
+                    default       -> null;
+                };
+                if (enemic != null) {
+                    enemics.add(enemic);
+                    mapa.setCella(x, y, '.');
                 }
             }
         }
