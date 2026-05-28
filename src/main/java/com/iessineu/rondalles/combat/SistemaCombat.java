@@ -9,11 +9,15 @@ public class SistemaCombat {
         return Math.max(1, atac - defensa);
     }
 
-    public static void atacaEnemic(Jugador jugador, Enemic enemic) { //jugador pega a l'enemic
-        enemic.rebreDany(calculaDany(jugador.getAtacTotal(), 0));
+    public static int atacaEnemic(Jugador jugador, Enemic enemic) { //jugador pega a l'enemic, retorna dany real
+        int dany = calculaDany(jugador.getAtacTotal(), 0);
+        enemic.rebreDany(dany);
+        return dany;
     }
 
-    public static void atacaJugador(Enemic enemic, Jugador jugador) { //enemic pega al jugador
-        jugador.rebreDany(calculaDany(enemic.getAtac(), jugador.getDefensaTotal()));
+    public static int atacaJugador(Enemic enemic, Jugador jugador) { //enemic pega al jugador, retorna dany real
+        int dany = calculaDany(enemic.getAtac(), jugador.getDefensaTotal());
+        jugador.rebreDany(dany);
+        return dany;
     }
 }

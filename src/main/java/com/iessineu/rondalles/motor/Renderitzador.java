@@ -163,46 +163,151 @@ public class Renderitzador { // classe per gestionar la pantalla
         }
     }
 
-    public void dibuixaCombat(Enemic enemic, com.iessineu.rondalles.entitats.Jugador jugador) throws IOException {
+    private static final String[] DRAC_ART = {
+        "      ^                       ^",
+        "      |\\   \\        /        /|",
+        "     /  \\  |\\__  __/|       /  \\",
+        "    / /\\ \\ \\ _ \\/ _ /      /    \\",
+        "   / / /\\ \\ {*}\\/{*}      /  / \\ \\",
+        "   | | | \\ \\( (00) )     /  // |\\ \\",
+        "   | | | |\\ \\(V\"\"V)\\    /  / | || \\|",
+        "   | | | | \\ |^--^| \\  /  / || || ||",
+        "  / / /  | |( WWWW__ \\/  /| || || ||",
+        " | | | | | |  \\______\\  / / || || ||",
+        " | | | / | | )|______\\ ) | / | || ||",
+        " / / /  / /  /______/   /| \\ \\ || ||",
+        "/ / /  / /  /\\_____/  |/ /__\\ \\ \\ \\ \\",
+        "| | | / /  /\\______/    \\   \\__| \\ \\ \\",
+        "| | | | | |\\______ __    \\_    \\__|_| \\",
+        "| | ,___ /\\______ _  _     \\_       \\  |",
+        "| |/    /\\_____  /    \\      \\__     \\ |    /\\",
+        "|/ |   |\\______ |      |        \\___  \\ |__/  \\",
+        "v  |   |\\______ |      |            \\___/     |",
+        "   |   |\\______ |      |                    __/",
+        "    \\   \\________\\_    _\\               ____/",
+        "  __/   /\\_____ __/   /   )\\_,      _____/",
+        " /  ___/  \\uuuu/  ___/___)    \\______/",
+        " VVV  V        VVV  V"
+    };
+
+    public void dibuixaCombat(Enemic enemic, com.iessineu.rondalles.entitats.Jugador jugador, List<String> log) throws IOException {
         screen.clear();
 
         int cols = screen.getTerminalSize().getColumns();
-        int files = screen.getTerminalSize().getRows();
-        int ample = 36;
-        int alcada = 12;
-        int ox = (cols - ample) / 2; //centram el quadre
-        int oy = (files - alcada) / 2;
+        int rows = screen.getTerminalSize().getRows();
 
-        //marc del quadre de combat
-        TextColor blanc = new TextColor.RGB(220, 220, 220);
-        TextColor vermell = new TextColor.RGB(220, 60, 60);
-        TextColor verd = new TextColor.RGB(80, 200, 100);
-        TextColor groc = new TextColor.RGB(220, 180, 50);
+        TextColor blanc   = new TextColor.RGB(220, 220, 220);
+        TextColor gris    = new TextColor.RGB(110, 110, 110);
+        TextColor daurat  = new TextColor.RGB(220, 180, 50);
+        TextColor vermell = new TextColor.RGB(220, 70, 70);
 
-        pintaText(ox, oy,           "╔" + "═".repeat(ample - 2) + "╗", blanc);
-        for (int i = 1; i < alcada - 1; i++)
-            pintaText(ox, oy + i,   "║" + " ".repeat(ample - 2) + "║", blanc);
-        pintaText(ox, oy + alcada - 1, "╚" + "═".repeat(ample - 2) + "╝", blanc);
+        //marc exterior complet
+        pintaText(0, 0,        "╔" + "═".repeat(cols - 2) + "╗", blanc);
+        for (int i = 1; i < rows - 1; i++)
+            pintaText(0, i,    "║" + " ".repeat(cols - 2) + "║", gris);
+        pintaText(0, rows - 1, "╚" + "═".repeat(cols - 2) + "╝", blanc);
 
-        //nom i vida de l'enemic
+        //títol centrat
+        String titol = "T O R R E   D E   R O N D A L L E S   —   C O M B A T";
+        pintaText((cols - titol.length()) / 2, 1, titol, daurat);
+
+        //línia separadora sota el títol
+        pintaText(0, 2, "╠" + "═".repeat(cols - 2) + "╣", blanc);
+
+        //separador vertical: 2/3 esquerra per al drac, 1/3 dreta per al HUD
+        int colSep = cols * 2 / 3;
+        pintaText(colSep, 2, "╦", blanc);
+        for (int i = 3; i < rows - 6; i++)
+            pintaText(colSep, i, "║", gris);
+        pintaText(colSep, rows - 6, "╩", blanc);
+
+        //--- ZONA ESQUERRA: enemic + art ---
         String nomEnemic = enemic.getClass().getSimpleName().toUpperCase();
-        pintaText(ox + 2, oy + 1, nomEnemic, vermell);
-        String hpEnemic = "HP: " + enemic.getVida() + "/" + enemic.getVidaMaxima();
-        pintaText(ox + ample - 2 - hpEnemic.length(), oy + 1, hpEnemic, verd);
+        pintaText(4, 4, nomEnemic, vermell);
 
-        //opcions
-        pintaText(ox + 2, oy + 3, "[A] Atacar", blanc);
-        for (int i = 0; i < jugador.getInventari().mida(); i++) {
-            String linia = "[" + (i + 1) + "] " + jugador.getInventari().get(i).getNom();
-            pintaText(ox + 2, oy + 4 + i, linia, groc);
+        int filaDrac = 5;
+        for (String linia : DRAC_ART) {
+            if (filaDrac >= rows - 8) break;
+            pintaText(4, filaDrac, linia, new TextColor.RGB(200, 70, 70));
+            filaDrac++;
         }
-        pintaText(ox + 2, oy + alcada - 3, "[F] Fugir", blanc);
 
-        //vida del jugador
-        String hpJugador = "El teu HP: " + jugador.getVida() + "/" + jugador.getVidaMaxima();
-        pintaText(ox + 2, oy + alcada - 2, hpJugador, verd);
+        int filaHpEnemic = filaDrac + 1;
+        if (filaHpEnemic < rows - 7) {
+            pintaText(4, filaHpEnemic, barraVida(enemic.getVida(), enemic.getVidaMaxima(), 22),
+                colorVida(enemic.getVida(), enemic.getVidaMaxima()));
+        }
+
+        //--- ZONA DRETA: HUD del jugador ---
+        int cHud = colSep + 3;
+        int fHud = 4;
+
+        //títol del panell
+        pintaText(cHud, fHud, "[ AVENTURER ]", new TextColor.RGB(80, 200, 120));
+        fHud += 2;
+
+        //barra de vida
+        pintaText(cHud, fHud, barraVida(jugador.getVida(), jugador.getVidaMaxima(), 18),
+            colorVida(jugador.getVida(), jugador.getVidaMaxima()));
+        fHud += 2;
+
+        //stats
+        pintaText(cHud, fHud,     "ATAC  " + jugador.getAtacTotal(), new TextColor.RGB(220, 130, 50));
+        pintaText(cHud, fHud + 1, "DEF   " + jugador.getDefensaTotal(), new TextColor.RGB(100, 160, 220));
+        if (jugador.getTornsVeri() > 0)
+            pintaText(cHud, fHud + 2, "VERI  " + jugador.getTornsVeri() + " torns", new TextColor.RGB(100, 220, 80));
+        fHud += 4;
+
+        //separador
+        pintaText(cHud, fHud, "─".repeat(cols - colSep - 5), gris);
+        fHud += 2;
+
+        //accions
+        pintaText(cHud, fHud, "ACCIONS", new TextColor.RGB(160, 160, 160));
+        fHud++;
+        pintaText(cHud, fHud, "[ A ]  Atacar", blanc);
+        fHud++;
+        for (int i = 0; i < jugador.getInventari().mida(); i++) {
+            pintaText(cHud, fHud, "[ " + (i + 1) + " ]  " + jugador.getInventari().get(i).getNom(), daurat);
+            fHud++;
+        }
+        pintaText(cHud, fHud, "[ F ]  Fugir", gris);
+
+        //--- CAIXA DE LOG (amplada total, sota tot) ---
+        int filaLog = rows - 6;
+        int ampleLog = cols - 4;
+        pintaText(1, filaLog,     "╔" + "═".repeat(ampleLog) + "╗", blanc);
+        for (int i = 1; i <= 3; i++)
+            pintaText(1, filaLog + i, "║" + " ".repeat(ampleLog) + "║", gris);
+        pintaText(1, filaLog + 4, "╚" + "═".repeat(ampleLog) + "╝", blanc);
+
+        for (int i = 0; i < log.size() && i < 3; i++) {
+            String msg = "> " + log.get(i);
+            if (msg.length() > ampleLog - 2) msg = msg.substring(0, ampleLog - 2);
+            pintaText(3, filaLog + 1 + i, msg, colorMissatge(log.get(i)));
+        }
 
         screen.refresh();
+    }
+
+    private String barraVida(int vida, int max, int ample) {
+        int plens = max > 0 ? (int)((double)vida / max * ample) : 0;
+        plens = Math.max(0, Math.min(ample, plens));
+        return "HP  [" + "█".repeat(plens) + "░".repeat(ample - plens) + "]  " + vida + " / " + max;
+    }
+
+    private TextColor colorVida(int vida, int max) {
+        double pct = max > 0 ? (double)vida / max : 0;
+        if (pct > 0.50) return new TextColor.RGB(80,  200, 80);
+        if (pct > 0.25) return new TextColor.RGB(220, 180, 50);
+        return new TextColor.RGB(220, 60, 60);
+    }
+
+    private TextColor colorMissatge(String msg) {
+        if (msg.startsWith("Has atacat"))                             return new TextColor.RGB(220, 180, 50);
+        if (msg.contains("contraataca"))                              return new TextColor.RGB(220, 80,  80);
+        if (msg.contains("caigut") || msg.startsWith("T'enfrentes")) return new TextColor.RGB(160, 180, 255);
+        return new TextColor.RGB(180, 180, 180);
     }
 
     //espera que l'usuari premi una tecla (bloquejant)

@@ -36,6 +36,8 @@ public class Joc extends Motor {
     private List<Enemic> enemics; //tots els enemics carregats al mapa
     private List<ItemMapa> itemsMapa = new ArrayList<>(); //items que hi ha al terra
     private Enemic enemicCombat = null; //l'enemic amb qui estam lluitant ara mateix
+    private List<String> logCombat = new ArrayList<>();
+    private static final int MAX_LOG = 3;
 
     //el fitxer .game que hem de carregar
     private String fitxerMapa;
@@ -94,16 +96,25 @@ public class Joc extends Motor {
         }
 
         if (c == 'a' || c == 'A') { //atacar
-            SistemaCombat.atacaEnemic(jugador, enemicCombat);
-            if (enemicCombat.esMort()) { //si l'enemic mor, torna al mapa
+            String nom = enemicCombat.getClass().getSimpleName().toUpperCase();
+            int danyFet = SistemaCombat.atacaEnemic(jugador, enemicCombat);
+            afegeixLog("Has atacat! " + nom + " ha rebut " + danyFet + " de dany.");
+            if (enemicCombat.esMort()) {
+                afegeixLog(nom + " ha caigut!");
                 enemics.remove(enemicCombat);
                 enemicCombat = null;
                 estat = Estat.MON;
                 return;
             }
-            SistemaCombat.atacaJugador(enemicCombat, jugador); //contraatac
+            int danyRebut = SistemaCombat.atacaJugador(enemicCombat, jugador);
+            afegeixLog(nom + " contraataca! Has rebut " + danyRebut + " de dany.");
             if (jugador.esMort()) corrent = false;
         }
+    }
+
+    private void afegeixLog(String msg) {
+        logCombat.add(msg);
+        if (logCombat.size() > MAX_LOG) logCombat.remove(0);
     }
 
     private void gestionaMoviment(KeyStroke tecla) { //gestiona el moviment pel mapa
@@ -131,6 +142,8 @@ public class Joc extends Motor {
         Enemic enemic = trobaEnemicA(nx, ny); //si hi ha un enemic, iniciam combat
         if (enemic != null) {
             enemicCombat = enemic;
+            logCombat.clear();
+            afegeixLog("T'enfrentes al " + enemic.getClass().getSimpleName().toUpperCase() + "!");
             estat = Estat.COMBAT;
             return;
         }
@@ -200,7 +213,7 @@ public class Joc extends Motor {
         try {
             List<Entitat> totes = new ArrayList<>(enemics);
             if (estat == Estat.COMBAT) {
-                renderer.dibuixaCombat(enemicCombat, jugador);
+                renderer.dibuixaCombat(enemicCombat, jugador, logCombat);
             } else {
                 renderer.dibuixa(mapa, jugador.getX(), jugador.getY(), totes, jugador);
             }
