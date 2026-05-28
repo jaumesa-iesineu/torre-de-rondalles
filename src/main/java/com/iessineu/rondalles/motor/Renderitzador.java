@@ -40,7 +40,7 @@ public class Renderitzador { // classe per gestionar la pantalla
         SwingTerminalFontConfiguration font = SwingTerminalFontConfiguration
                 .newInstance(new Font("Monospaced", Font.PLAIN, 18));
         SwingTerminalFrame terminal = new DefaultTerminalFactory()
-                .setInitialTerminalSize(new TerminalSize(120, 40))
+                .setInitialTerminalSize(new TerminalSize(180, 40))
                 .setTerminalEmulatorFontConfiguration(font)
                 .createSwingTerminal();
         //maximitzam la finestra perquè ocupi tota la pantalla
