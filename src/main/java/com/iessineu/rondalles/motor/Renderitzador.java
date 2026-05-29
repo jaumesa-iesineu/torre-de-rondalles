@@ -85,7 +85,8 @@ public class Renderitzador { // classe per gestionar la pantalla
                 TextColor colorBase = colorPerCasella(celles[y][x]);
                 TextColor colorFinal = fosqueix(colorBase, factor);
 
-                screen.setCharacter(offsetX + x, offsetY + y, new TextCharacter(celles[y][x], colorFinal, TextColor.ANSI.BLACK));
+                TextColor fonsFinal = fosqueix(fonsCasella(celles[y][x]), factor);
+                screen.setCharacter(offsetX + x, offsetY + y, new TextCharacter(celles[y][x], colorFinal, fonsFinal));
             }
         }
 
@@ -118,6 +119,14 @@ public class Renderitzador { // classe per gestionar la pantalla
             case 'i' -> new TextColor.RGB(220, 180, 50); //item
             case 'N' -> new TextColor.RGB(80, 200, 220); //npc
             default -> new TextColor.RGB(90, 90, 90);
+        };
+    }
+
+    private TextColor fonsCasella(char c) {
+        return switch (c) {
+            case '#' -> new TextColor.RGB(40, 40, 50);
+            case '.' -> new TextColor.RGB(30, 20, 10);
+            default  -> TextColor.ANSI.BLACK;
         };
     }
 
@@ -170,6 +179,12 @@ public class Renderitzador { // classe per gestionar la pantalla
     private void pintaText(int col, int fila, String text, TextColor color) { // pintaText es perque pinta el text a la pantalla
         for (int i = 0; i < text.length(); i++) {
             screen.setCharacter(col + i, fila, new TextCharacter(text.charAt(i), color, TextColor.ANSI.BLACK));
+        }
+    }
+
+    private void pintaTextFons(int col, int fila, String text, TextColor color, TextColor fons) {
+        for (int i = 0; i < text.length(); i++) {
+            screen.setCharacter(col + i, fila, new TextCharacter(text.charAt(i), color, fons));
         }
     }
 
@@ -286,15 +301,16 @@ public class Renderitzador { // classe per gestionar la pantalla
         //--- CAIXA DE LOG (amplada total, sota tot) ---
         int filaLog = rows - 6;
         int ampleLog = cols - 4;
+        TextColor fonsLog = new TextColor.RGB(20, 30, 60);
         pintaText(1, filaLog,     "╔" + "═".repeat(ampleLog) + "╗", blanc);
         for (int i = 1; i <= 3; i++)
-            pintaText(1, filaLog + i, "║" + " ".repeat(ampleLog) + "║", gris);
+            pintaTextFons(1, filaLog + i, "║" + " ".repeat(ampleLog) + "║", gris, fonsLog);
         pintaText(1, filaLog + 4, "╚" + "═".repeat(ampleLog) + "╝", blanc);
 
         for (int i = 0; i < log.size() && i < 3; i++) {
             String msg = "> " + log.get(i);
             if (msg.length() > ampleLog - 2) msg = msg.substring(0, ampleLog - 2);
-            pintaText(3, filaLog + 1 + i, msg, colorMissatge(log.get(i)));
+            pintaTextFons(3, filaLog + 1 + i, msg, colorMissatge(log.get(i)), fonsLog);
         }
 
         screen.refresh();
