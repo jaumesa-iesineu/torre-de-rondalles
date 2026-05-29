@@ -17,8 +17,11 @@ import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFontConfiguration;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import java.awt.Font;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 /**
@@ -44,6 +47,13 @@ public class Renderitzador { // classe per gestionar la pantalla
                 .setTerminalEmulatorFontConfiguration(font)
                 .createSwingTerminal();
         //maximitzam la finestra perquè ocupi tota la pantalla
+        terminal.setTitle("RONDALLES");
+        try (InputStream is = getClass().getResourceAsStream("/logo.png")) {
+            if (is != null) {
+                BufferedImage icon = ImageIO.read(is);
+                terminal.setIconImage(icon);
+            }
+        } catch (IOException ignored) {}
         terminal.setExtendedState(JFrame.MAXIMIZED_BOTH);
         //la finestra ha d'estar visible abans de cridar startScreen
         //si no, les dimensions són 0x0 i peta
