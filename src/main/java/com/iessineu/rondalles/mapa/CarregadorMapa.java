@@ -34,10 +34,6 @@ public class CarregadorMapa {
     }
 
     // Carrega un mapa des d'un fitxer .map de text pla.
-    // Format:
-    //   nom: <nom del mapa>        ← primera línia (obligatòria)
-    //   # comentari                ← línies ignorades
-    //   ##########                 ← graella ASCII: # paret, . terra, e enemic, i item, @ inici jugador
     public static Mapa carregaPlà(String rutaFitxer) throws Exception {
         List<String> files = new ArrayList<>();
         String nom = "sense nom";
