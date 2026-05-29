@@ -1,3 +1,5 @@
 # id | nom | pes | simbol | tipus | valor
 pocio-vida | Poció de vida | 1 | ! | VIDA | 30
 pocio-veri | Poció de verí | 1 | ~ | VERI | 5
+pocio-foc  | Poció de foc  | 1 | ^ | FOC  | 4
+pocio-gel  | Poció de gel  | 1 | * | GEL  | 4

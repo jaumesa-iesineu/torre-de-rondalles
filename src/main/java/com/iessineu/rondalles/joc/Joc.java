@@ -174,6 +174,10 @@ public class Joc extends Motor {
                 estat = Estat.MON;
                 return;
             }
+            SistemaCombat.tickEnemics(enemicCombat);
+            jugador.tickVeri();
+            jugador.tickFoc();
+            jugador.tickGel();
             int danyRebut = SistemaCombat.atacaJugador(enemicCombat, jugador);
             afegeixLog(nom + " contraataca! Has rebut " + danyRebut + " de dany.");
             if (jugador.esMort()) corrent = false;
@@ -191,6 +195,8 @@ public class Joc extends Motor {
             if (c >= '1' && c <= '9') { //usar ítem fora de combat també gasta torn
                 jugador.usaItem(c - '1');
                 jugador.tickVeri();
+                jugador.tickFoc();
+                jugador.tickGel();
                 if (jugador.esMort()) corrent = false;
                 return;
             }
@@ -255,9 +261,13 @@ public class Joc extends Motor {
         for (int y = 0; y < celles.length; y++) {
             for (int x = 0; x < celles[y].length; x++) {
                 if (celles[y][x] == 'i') {
-                    //alternam vida i verí perquè hi hagi varietat
-                    if (comptador % 2 == 0) itemsMapa.add(new ItemMapa(x, y, RegistreItems.get().pocio("pocio-vida")));
-                    else itemsMapa.add(new ItemMapa(x, y, RegistreItems.get().pocio("pocio-veri")));
+                    String id = switch (comptador % 4) {
+                        case 0 -> "pocio-vida";
+                        case 1 -> "pocio-veri";
+                        case 2 -> "pocio-foc";
+                        default -> "pocio-gel";
+                    };
+                    itemsMapa.add(new ItemMapa(x, y, RegistreItems.get().pocio(id)));
                     comptador++;
                 }
             }
@@ -299,7 +309,7 @@ public class Joc extends Motor {
             if (estat == Estat.COMBAT) {
                 renderer.dibuixaCombat(enemicCombat, jugador, logCombat);
             } else {
-                renderer.dibuixa(mapa, jugador.getX(), jugador.getY(), totes, jugador);
+                renderer.dibuixa(mapa, jugador.getX(), jugador.getY(), totes, jugador, itemsMapa);
             }
         } catch (IOException ex) {
             corrent = false;

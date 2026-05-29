@@ -90,6 +90,25 @@ public class Inventari {
         return 2;
     }
 
+    public record GrupItem(Item item, int quantitat, int indexPrimer) {}
+
+    public List<GrupItem> getAgrupats() {
+        List<GrupItem> grups = new ArrayList<>();
+        for (int i = 0; i < items.size(); i++) {
+            Item item = items.get(i);
+            boolean trobat = false;
+            for (GrupItem g : grups) {
+                if (g.item().getNom().equals(item.getNom())) {
+                    grups.set(grups.indexOf(g), new GrupItem(g.item(), g.quantitat() + 1, g.indexPrimer()));
+                    trobat = true;
+                    break;
+                }
+            }
+            if (!trobat) grups.add(new GrupItem(item, 1, i));
+        }
+        return grups;
+    }
+
     public List<Item> getItems() { return items; }
 
     public Arma getArmaEquipada() { return armaEquipada; }

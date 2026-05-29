@@ -23,6 +23,10 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
     protected int vidaMaxima;
     protected int atac;
 
+    private int tornsVeri = 0;
+    private int tornsFoc  = 0;
+    private int tornsGel  = 0;
+
     //distancia de detecció jugador
     protected int radDeteccio;
 
@@ -74,6 +78,39 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
             actiu = false;
         }
     }
+
+    public void tickVeri() {
+        if (tornsVeri <= 0) return;
+        rebreDany(3);
+        tornsVeri--;
+    }
+
+    public void tickFoc() {
+        if (tornsFoc <= 0) return;
+        tornsFoc--;
+    }
+
+    public void tickGel() {
+        if (tornsGel <= 0) return;
+        tornsGel--;
+    }
+
+    public int getAtacEfectiu() {
+        int penalitzacio = tornsFoc > 0 ? 2 : 0;
+        return Math.max(1, atac - penalitzacio);
+    }
+
+    public int getDefensaEfectiva() {
+        return tornsGel > 0 ? 0 : 0; //enemics de moment no tenen defensa base
+    }
+
+    public void setTornsVeri(int t) { tornsVeri = t; }
+    public void setTornsFoc(int t)  { tornsFoc = t; }
+    public void setTornsGel(int t)  { tornsGel = t; }
+
+    public int getTornsVeri() { return tornsVeri; }
+    public int getTornsFoc()  { return tornsFoc; }
+    public int getTornsGel()  { return tornsGel; }
 
     // getters i setters
 

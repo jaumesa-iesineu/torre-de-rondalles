@@ -16,8 +16,14 @@ public class SistemaCombat {
     }
 
     public static int atacaJugador(Enemic enemic, Jugador jugador) { //enemic pega al jugador, retorna dany real
-        int dany = calculaDany(enemic.getAtac(), jugador.getDefensaTotal());
+        int dany = calculaDany(enemic.getAtacEfectiu(), jugador.getDefensaTotal());
         jugador.rebreDany(dany);
         return dany;
+    }
+
+    public static void tickEnemics(Enemic enemic) {
+        enemic.tickVeri();
+        enemic.tickFoc();
+        enemic.tickGel();
     }
 }

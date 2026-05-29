@@ -17,6 +17,7 @@ import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFontConfiguration;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,12 +39,14 @@ public class Renderitzador { // classe per gestionar la pantalla
     private static final int RADI_LLANTERNA = 10; 
 
     public Renderitzador() throws IOException {
-        //usam swing perquè funcioni des de netbeans i des de qualsevol màquina
-        //obre una finestra pròpia del joc, com fan els jocs reals
+        //calculam la mida de font perquè 180x50 caràcters càpiguen a la pantalla
+        java.awt.Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize();
+        int midaFont = Math.min(pantalla.width / 180, pantalla.height / 50);
+        midaFont = Math.max(8, midaFont); //mínim 8px per llegibilitat
         SwingTerminalFontConfiguration font = SwingTerminalFontConfiguration
-                .newInstance(new Font("Monospaced", Font.PLAIN, 18));
+                .newInstance(new Font("Monospaced", Font.PLAIN, midaFont));
         SwingTerminalFrame terminal = new DefaultTerminalFactory()
-                .setInitialTerminalSize(new TerminalSize(180, 40))
+                .setInitialTerminalSize(new TerminalSize(180, 50))
                 .setTerminalEmulatorFontConfiguration(font)
                 .createSwingTerminal();
         //maximitzam la finestra perquè ocupi tota la pantalla
@@ -64,8 +67,7 @@ public class Renderitzador { // classe per gestionar la pantalla
         screen.setCursorPosition(null);
     }
 
-    // CANVI 1: afegit el paràmetre "jugador" al mètode dibuixa
-    public void dibuixa(Mapa mapa, int jx, int jy, List<Entitat> entitats, com.iessineu.rondalles.entitats.Jugador jugador) throws IOException {
+    public void dibuixa(Mapa mapa, int jx, int jy, List<Entitat> entitats, com.iessineu.rondalles.entitats.Jugador jugador, List<com.iessineu.rondalles.inventari.ItemMapa> itemsMapa) throws IOException {
         screen.clear();
 
         char[][] celles = mapa.getCelles();
@@ -99,6 +101,15 @@ public class Renderitzador { // classe per gestionar la pantalla
             double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.5;
             TextColor color = fosqueix(e.getColor(), factor);
             screen.setCharacter(offsetX + e.getX(), offsetY + e.getY(), new TextCharacter(e.getSimbol(), color, TextColor.ANSI.BLACK));
+        }
+
+        //pintem els ítems del terra amb el símbol i color real
+        for (com.iessineu.rondalles.inventari.ItemMapa im : itemsMapa) {
+            double dist = Math.sqrt((im.getX() - jx) * (im.getX() - jx) + (im.getY() - jy) * (im.getY() - jy));
+            if (dist > RADI_LLANTERNA) continue;
+            double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.75;
+            TextColor color = fosqueix(im.getItem().getColor(), factor);
+            screen.setCharacter(offsetX + im.getX(), offsetY + im.getY(), new TextCharacter(im.getItem().getSimbol(), color, TextColor.ANSI.BLACK));
         }
 
         //el jugador sempre es pinta verd per damunt de tot
@@ -160,19 +171,27 @@ public class Renderitzador { // classe per gestionar la pantalla
         String armadura = "DEF:   " + jugador.getDefensaTotal();
         pintaText(col, fila + 3, armadura, new TextColor.RGB(100, 160, 220));
         
-        //cada item de l'inventari en una línia pròpia amb el seu número
-        if (jugador.getInventari().mida() == 0) {
+        var grups = jugador.getInventari().getAgrupats();
+        if (grups.isEmpty()) {
             pintaText(col, fila + 4, "INV:   (buit)", new TextColor.RGB(140, 200, 140));
         } else {
-            for (int i = 0; i < jugador.getInventari().mida(); i++) {
-                String linia = "[" + (i + 1) + "] " + jugador.getInventari().get(i).getNom();
-                pintaText(col, fila + 4 + i, linia, new TextColor.RGB(140, 200, 140));
+            for (int i = 0; i < grups.size(); i++) {
+                var g = grups.get(i);
+                String quantitat = g.quantitat() > 1 ? " x" + g.quantitat() : "";
+                String linia = "[" + (g.indexPrimer() + 1) + "] " + g.item().getSimbol() + " " + g.item().getNom() + quantitat;
+                pintaText(col, fila + 4 + i, linia, g.item().getColor());
             }
         }
 
-        if (jugador.getTornsVeri() > 0) { //si hi ha verí actiu, avisam
-            int filaVeri = fila + 4 + Math.max(1, jugador.getInventari().mida());
-            pintaText(col, filaVeri, "VERI:  " + jugador.getTornsVeri() + " torns", new TextColor.RGB(100, 220, 80));
+        int filaEstat = fila + 4 + Math.max(1, grups.size());
+        if (jugador.getTornsVeri() > 0) {
+            pintaText(col, filaEstat++, "VERI:  " + jugador.getTornsVeri() + " torns", new TextColor.RGB(100, 220, 80));
+        }
+        if (jugador.getTornsFoc() > 0) {
+            pintaText(col, filaEstat++, "FOC:   " + jugador.getTornsFoc() + " torns", new TextColor.RGB(220, 120, 30));
+        }
+        if (jugador.getTornsGel() > 0) {
+            pintaText(col, filaEstat,   "GEL:   " + jugador.getTornsGel() + " torns", new TextColor.RGB(80, 180, 220));
         }
     }
 
@@ -292,8 +311,9 @@ public class Renderitzador { // classe per gestionar la pantalla
         fHud++;
         pintaText(cHud, fHud, "[ A ]  Atacar", blanc);
         fHud++;
-        for (int i = 0; i < jugador.getInventari().mida(); i++) {
-            pintaText(cHud, fHud, "[ " + (i + 1) + " ]  " + jugador.getInventari().get(i).getNom(), daurat);
+        for (var g : jugador.getInventari().getAgrupats()) {
+            String quantitat = g.quantitat() > 1 ? " x" + g.quantitat() : "";
+            pintaText(cHud, fHud, "[ " + (g.indexPrimer() + 1) + " ]  " + g.item().getSimbol() + " " + g.item().getNom() + quantitat, daurat);
             fHud++;
         }
         pintaText(cHud, fHud, "[ F ]  Fugir", gris);

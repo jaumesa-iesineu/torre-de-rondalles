@@ -41,7 +41,9 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     private EstatJugador estatJugador; //estat actual del jugador
 
     private Inventari inventari = new Inventari(); //el que du a sobre
-    private int tornsVeri = 0; //quants torns li queden de verí
+    private int tornsVeri = 0;
+    private int tornsFoc  = 0; //baixa atac
+    private int tornsGel  = 0; //baixa defensa
 
     public Jugador(int x, int y) { // constructor de la classe Jugador
         super(x, y, '@');
@@ -76,15 +78,6 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
             return Math.max(1, velocitat - 1);
         }
         return Math.max(1, velocitat - 2);
-    }
-
-    //les stats reals sumen base + equipament (quan tinguem equipament)
-    public int getAtacTotal() {
-        return atac + atacExtra;
-    }
-
-    public int getDefensaTotal() {
-        return defensa + defensaExtra;
     }
 
     public void setAtacExtra(int atacExtra) {
@@ -125,10 +118,30 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
         inventari.elimina(index);
     }
 
-    public void tickVeri() { //cada torn que passa amb verí, fa mal
+    public void tickVeri() {
         if (tornsVeri <= 0) return;
         rebreDany(3);
         tornsVeri--;
+    }
+
+    public void tickFoc() {
+        if (tornsFoc <= 0) return;
+        tornsFoc--;
+    }
+
+    public void tickGel() {
+        if (tornsGel <= 0) return;
+        tornsGel--;
+    }
+
+    public int getAtacTotal() {
+        int penalitzacio = tornsFoc > 0 ? 2 : 0;
+        return Math.max(1, atac + atacExtra - penalitzacio);
+    }
+
+    public int getDefensaTotal() {
+        int penalitzacio = tornsGel > 0 ? 2 : 0;
+        return Math.max(0, defensa + defensaExtra - penalitzacio);
     }
 
     // getters i setters
@@ -169,8 +182,12 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     }
 
     public void setTornsVeri(int t) { tornsVeri = t; }
+    public void setTornsFoc(int t)  { tornsFoc = t; }
+    public void setTornsGel(int t)  { tornsGel = t; }
 
     public int getTornsVeri() { return tornsVeri; }
+    public int getTornsFoc()  { return tornsFoc; }
+    public int getTornsGel()  { return tornsGel; }
 
     public Inventari getInventari() { return inventari; }
 
