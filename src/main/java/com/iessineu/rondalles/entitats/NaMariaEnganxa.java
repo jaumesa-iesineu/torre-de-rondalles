@@ -10,6 +10,7 @@ public class NaMariaEnganxa extends Enemic { // trampa estàtica — no es mou, 
 
     public NaMariaEnganxa(int x, int y) { // constructor de la classe NaMariaEnganxa
         super(x, y, 'M', 30, 9999, 0); // atac 9999 = kill instantani, radDeteccio 0 = no detecta
+        this.lletra='M';
     }
 
     @Override

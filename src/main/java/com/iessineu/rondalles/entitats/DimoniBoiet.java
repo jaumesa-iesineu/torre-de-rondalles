@@ -14,6 +14,7 @@ public class DimoniBoiet extends Enemic { // extends Enemic es perque extends la
 
     public DimoniBoiet(int x, int y) { // constructor de la classe DimoniBoiet
         super(x, y, 'd', 10, 5, 5);
+        this.lletra='d';
     }
 
     @Override

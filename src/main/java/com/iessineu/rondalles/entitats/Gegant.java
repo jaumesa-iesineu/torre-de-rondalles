@@ -10,6 +10,7 @@ public class Gegant extends Enemic { // extends Enemic perquè és una subclasse
 
     public Gegant(int x, int y) { // constructor de la classe Gegant
         super(x, y, 'G', 40, 10, 4);
+        this.lletra='G';
     }
 
     @Override

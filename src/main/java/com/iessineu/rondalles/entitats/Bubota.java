@@ -10,6 +10,7 @@ public class Bubota extends Enemic { // extends Enemic perquè és una subclasse
 
     public Bubota(int x, int y) { // constructor de la classe Bubota
         super(x, y, 'B', 20, 5, 7);
+        this.lletra='B';
     }
 
     @Override

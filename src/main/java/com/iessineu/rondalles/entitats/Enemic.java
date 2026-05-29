@@ -9,7 +9,8 @@ package com.iessineu.rondalles.entitats;
  * @author jaume, dani, sergi, kanhai i pere
  */
 public abstract class Enemic extends Entitat { // extends Entitat es perque extends la classe Entitat
-
+    
+    char lletra;
     //màquina d'estats
     public enum EstatEnemic {
         PATRULLANT,
@@ -94,7 +95,10 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
         if (tornsGel <= 0) return;
         tornsGel--;
     }
-
+    
+    public char getLletra(){
+    return lletra;
+    }
     public int getAtacEfectiu() {
         int penalitzacio = tornsFoc > 0 ? 2 : 0;
         return Math.max(1, atac - penalitzacio);

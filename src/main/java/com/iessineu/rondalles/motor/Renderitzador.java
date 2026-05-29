@@ -207,6 +207,64 @@ public class Renderitzador { // classe per gestionar la pantalla
         }
     }
 
+        private static final String[] DIMONI_ART = {
+    "   , ,, ,                              ",
+    "   | || |    ,/  _____  \\.             ",
+    "   \\_||_/    ||_/     \\_||             ",
+    "     ||       \\_| . . |_/              ",
+    "     ||         |  L  |                ",
+    "    ,||         |`==='|                ",
+    "    |>|      ___`>  -<'___             ",
+    "    |>||\\    /             \\           ",
+    "    \\>| \\  /  ,    .    .  |           ",
+    "     ||  \\/  /| .  |  . |  |           ",
+    "     ||\\  ` / | ___|___ |  |     (     ",
+    "  (( || `--'  | _______ |  |     ))  ( ",
+    "(  )\\|| (  )\\ | - --- - | -| (  ( \\ ))",
+    "(\\/  || ))/ ( | -- - -- |  | )) )  \\((",
+    " ( ()||((( ())|         |  |( (( () ) "
+    };
+    private static final String[] GEGANT_ART = {
+    "                      __,='`````'=/__                    ",
+    "                     '//  (o) \\(o) \\ `'         _,-,    ",
+    "                     //|     ,_)   (`\\      ,-'`_,-\\     ",
+    "                   ,-~~~\\  `'==='  /-,      \\==```` \\__  ",
+    "                  /        `----'     `\\     \\       \\/  ",
+    "               ,-`                  ,   \\  ,.-\\       \\  ",
+    "              /      ,               \\,-`\\`_,-`\\_,..--'\\ ",
+    "             ,`    ,/,              ,>,   )     \\--`````\\ ",
+    "             (      `\\`---'`  `-,-'`_,<   \\      \\_,.--'`",
+    "              `.      `--. _,-'`_,-`  |    \\              ",
+    "               [`-.___   <`_,-'`------(    /              ",
+    "               (`` _,-\\   \\ --`````````|--`               ",
+    "                >-`_,-`\\,-` ,          |                  ",
+    "              <`_,'     ,  /\\          /                  ",
+    "               `  \\/\\,-/ `/  \\/`\\_/V\\_/                  ",
+    "                  (  ._. )    ( .__. )                   ",
+    "                  |      |    |      |                   ",
+    "                   \\,---_|    |_---./                    ",
+    "                   ooOO(_)    (_)OOoo                    "
+};
+    
+        private static final String[] BUBOTA_ART = {
+    "        .-----.",
+    "      .' -   - '.",
+    "     /  .-. .-.  \\",
+    "     |  | | | |  |",
+    "      \\ \\o/ \\o/ /",
+    "     _/    ^    \\_",
+    "    | \\  '---'  / |",
+    "    / /`--. .--`\\ \\",
+    "   / /'---` `---'\\ \\",
+    "   '.__.       .__.'",
+    "      `|     |`",
+    "       |     \\",
+    "       \\      '--.",
+    "       '.        `\\",
+    "         `'---.   |",
+    "            ,__) /",
+    "             `..'"
+};
     private static final String[] DRAC_ART = {
         "      ^                       ^",
         "      |\\   \\        /        /|",
@@ -268,15 +326,48 @@ public class Renderitzador { // classe per gestionar la pantalla
         //--- ZONA ESQUERRA: enemic + art ---
         String nomEnemic = enemic.getClass().getSimpleName().toUpperCase();
         pintaText(4, 4, nomEnemic, vermell);
-
-        int filaDrac = 5;
-        for (String linia : DRAC_ART) {
-            if (filaDrac >= rows - 8) break;
-            pintaText(4, filaDrac, linia, new TextColor.RGB(200, 70, 70));
-            filaDrac++;
+        int fila = 5;
+        switch(enemic.getLletra()){
+            case 'd'->{
+                for (String linia : DIMONI_ART) {
+                    if (fila >= rows - 8) break;
+                    pintaText(4, fila, linia, new TextColor.RGB(200, 70, 70));
+                    fila++;
+                }   
+            }
+            case 'D'->{
+                for (String linia : DRAC_ART) {
+                    if (fila >= rows - 8) break;
+                    pintaText(4, fila, linia, new TextColor.RGB(200, 70, 70));
+                    fila++;
+                }
+            }
+            case 'B'->{
+                for (String linia : BUBOTA_ART) {
+                    if (fila >= rows - 8) break;
+                    pintaText(4, fila, linia, new TextColor.RGB(200, 70, 70));
+                    fila++;
+                }
+            }
+            case 'G'->{
+                for (String linia : GEGANT_ART) {
+                    if (fila >= rows - 8) break;
+                    pintaText(4, fila, linia, new TextColor.RGB(200, 70, 70));
+                    fila++;
+                }
+            }
+            case 'M'->{
+                for (String linia : DRAC_ART) {
+                    if (fila >= rows - 8) break;
+                    pintaText(4, fila, linia, new TextColor.RGB(200, 70, 70));
+                    fila++;
+                }
+            }
+        
+        
         }
 
-        int filaHpEnemic = filaDrac + 1;
+        int filaHpEnemic = fila + 1;
         if (filaHpEnemic < rows - 7) {
             pintaText(4, filaHpEnemic, barraVida(enemic.getVida(), enemic.getVidaMaxima(), 22),
                 colorVida(enemic.getVida(), enemic.getVidaMaxima()));
@@ -311,9 +402,8 @@ public class Renderitzador { // classe per gestionar la pantalla
         fHud++;
         pintaText(cHud, fHud, "[ A ]  Atacar", blanc);
         fHud++;
-        for (var g : jugador.getInventari().getAgrupats()) {
-            String quantitat = g.quantitat() > 1 ? " x" + g.quantitat() : "";
-            pintaText(cHud, fHud, "[ " + (g.indexPrimer() + 1) + " ]  " + g.item().getSimbol() + " " + g.item().getNom() + quantitat, daurat);
+        for (int i = 0; i < jugador.getInventari().mida(); i++) {
+            pintaText(cHud, fHud, "[ " + (i + 1) + " ]  " + jugador.getInventari().get(i).getNom(), daurat);
             fHud++;
         }
         pintaText(cHud, fHud, "[ F ]  Fugir", gris);
@@ -321,16 +411,15 @@ public class Renderitzador { // classe per gestionar la pantalla
         //--- CAIXA DE LOG (amplada total, sota tot) ---
         int filaLog = rows - 6;
         int ampleLog = cols - 4;
-        TextColor fonsLog = new TextColor.RGB(20, 30, 60);
         pintaText(1, filaLog,     "╔" + "═".repeat(ampleLog) + "╗", blanc);
         for (int i = 1; i <= 3; i++)
-            pintaTextFons(1, filaLog + i, "║" + " ".repeat(ampleLog) + "║", gris, fonsLog);
+            pintaText(1, filaLog + i, "║" + " ".repeat(ampleLog) + "║", gris);
         pintaText(1, filaLog + 4, "╚" + "═".repeat(ampleLog) + "╝", blanc);
 
         for (int i = 0; i < log.size() && i < 3; i++) {
             String msg = "> " + log.get(i);
             if (msg.length() > ampleLog - 2) msg = msg.substring(0, ampleLog - 2);
-            pintaTextFons(3, filaLog + 1 + i, msg, colorMissatge(log.get(i)), fonsLog);
+            pintaText(3, filaLog + 1 + i, msg, colorMissatge(log.get(i)));
         }
 
         screen.refresh();
