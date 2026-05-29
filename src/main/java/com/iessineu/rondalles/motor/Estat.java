@@ -10,6 +10,8 @@ package com.iessineu.rondalles.motor;
  */
 public enum Estat {
     MENU, //pantalla inicial, menú principal
+    MENU_INICIAL, //pantalla de benvinguda abans de començar a jugar
+    PAUSA, //menú de pausa (reanudar, guardar, sortir)
     MON, //bucle principal: jugador explora el mapa per torns
     COMBAT, //pantalla de combat per torns, mapa congelat
     GAME_OVER, //permadeath: jugador mort, s'esborra la partida de SQLite

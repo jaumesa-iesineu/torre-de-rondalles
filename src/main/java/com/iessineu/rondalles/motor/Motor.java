@@ -62,7 +62,7 @@ public abstract class Motor {
     public void start() throws Exception {
         init();
         corrent = true;
-        estat = Estat.MON;
+        estat = Estat.MENU_INICIAL;
         iniciaMusica();
 
         //el joc és per torns: esperam que el jugador premi una tecla

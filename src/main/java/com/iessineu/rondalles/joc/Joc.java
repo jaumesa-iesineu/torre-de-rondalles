@@ -46,6 +46,10 @@ public class Joc extends Motor {
     //el fitxer .game que hem de carregar
     private String fitxerMapa;
 
+    //índex de l'opció seleccionada al menú de pausa (0=reanudar, 1=guardar, 2=sortir)
+    private int opcioMenuPausa = 0;
+    private static final String[] OPCIONS_PAUSA = {"Reanudar", "Guardar", "Sortir"};
+
     public Joc(String fitxerMapa) {
         this.fitxerMapa = fitxerMapa;
     }
@@ -59,7 +63,6 @@ public class Joc extends Motor {
         mapa = CarregadorMapa.carrega(fitxerMapa);
 
         //posam el jugador a la primera posició lliure del mapa
-        //la posició inicial hauria de venir del .game, de moment cercam la primera casella lliure
         jugador = new Jugador(trobaInicialX(), trobaInicialY());
 
         enemics = new ArrayList<>();
@@ -67,12 +70,29 @@ public class Joc extends Motor {
         carregaEnemics(); //escanejam les 'e' del mapa i cream els enemics
         carregaItemsMapa(); //escanejam les 'i' del mapa i posam els items
 
-        estat = Estat.MON;
+        //l'estat s'establirà a MENU_INICIAL des de Motor.start()
     }
 
     @Override
     protected void actualitza(KeyStroke tecla) {
-        if (tecla.getKeyType() == KeyType.Escape || tecla.getKeyType() == KeyType.EOF) {
+        if (estat == Estat.MENU_INICIAL) {
+            gestionaMenuInicial(tecla);
+            return;
+        }
+
+        if (estat == Estat.PAUSA) {
+            gestionaPausa(tecla);
+            return;
+        }
+
+        //dins del joc, ESC obre el menú de pausa
+        if (tecla.getKeyType() == KeyType.Escape) {
+            opcioMenuPausa = 0;
+            estat = Estat.PAUSA;
+            return;
+        }
+
+        if (tecla.getKeyType() == KeyType.EOF) {
             corrent = false;
             return;
         }
@@ -81,6 +101,50 @@ public class Joc extends Motor {
             gestionaCombat(tecla);
         } else {
             gestionaMoviment(tecla);
+        }
+    }
+
+    private void gestionaMenuInicial(KeyStroke tecla) {
+        //ENTER o barra espai inicia la partida
+        if (tecla.getKeyType() == KeyType.Enter) {
+            estat = Estat.MON;
+            return;
+        }
+        if (tecla.getKeyType() == KeyType.Character) {
+            char c = tecla.getCharacter();
+            if (c == ' ') { estat = Estat.MON; return; }
+            if (c == 's' || c == 'S') { corrent = false; return; } //sortir
+        }
+        //tecles de fletxa per seleccionar: 1=iniciar, 2=sortir
+        if (tecla.getKeyType() == KeyType.Escape) { corrent = false; }
+    }
+
+    private void gestionaPausa(KeyStroke tecla) {
+        if (tecla.getKeyType() == KeyType.ArrowUp) {
+            opcioMenuPausa = (opcioMenuPausa + OPCIONS_PAUSA.length - 1) % OPCIONS_PAUSA.length;
+            return;
+        }
+        if (tecla.getKeyType() == KeyType.ArrowDown) {
+            opcioMenuPausa = (opcioMenuPausa + 1) % OPCIONS_PAUSA.length;
+            return;
+        }
+        if (tecla.getKeyType() == KeyType.Escape) {
+            //ESC dins pausa torna al joc
+            estat = Estat.MON;
+            return;
+        }
+        if (tecla.getKeyType() == KeyType.Enter) {
+            switch (opcioMenuPausa) {
+                case 0 -> estat = Estat.MON;       //reanudar
+                case 1 -> { /* guardar (per implementar) */ estat = Estat.MON; }
+                case 2 -> corrent = false;          //sortir
+            }
+        }
+        //tecles ràpides: r=reanudar, g=guardar, x=sortir
+        if (tecla.getKeyType() == KeyType.Character) {
+            char c = tecla.getCharacter();
+            if (c == 'r' || c == 'R') { estat = Estat.MON; return; }
+            if (c == 'x' || c == 'X') { corrent = false; }
         }
     }
 
@@ -223,6 +287,14 @@ public class Joc extends Motor {
     @Override
     protected void renderitza() {
         try {
+            if (estat == Estat.MENU_INICIAL) {
+                renderer.dibuixaMenuInicial();
+                return;
+            }
+            if (estat == Estat.PAUSA) {
+                renderer.dibuixaPausa(opcioMenuPausa, OPCIONS_PAUSA);
+                return;
+            }
             List<Entitat> totes = new ArrayList<>(enemics);
             if (estat == Estat.COMBAT) {
                 renderer.dibuixaCombat(enemicCombat, jugador, logCombat);

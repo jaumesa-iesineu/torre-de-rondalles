@@ -316,6 +316,109 @@ public class Renderitzador { // classe per gestionar la pantalla
         return screen.readInput();
     }
 
+    //dibuixa el menú inicial amb opcions: Iniciar partida / Sortir
+    public void dibuixaMenuInicial() throws IOException {
+        screen.clear();
+        int cols = screen.getTerminalSize().getColumns();
+        int files = screen.getTerminalSize().getRows();
+        int cx = cols / 2;
+        int cy = files / 2;
+
+        //títol ASCII gran
+        String[] titol = {
+            "██████╗  ██████╗ ███╗   ██╗██████╗  █████╗ ██╗     ██╗     ███████╗███████╗",
+            "██╔══██╗██╔═══██╗████╗  ██║██╔══██╗██╔══██╗██║     ██║     ██╔════╝██╔════╝",
+            "██████╔╝██║   ██║██╔██╗ ██║██║  ██║███████║██║     ██║     █████╗  ███████╗",
+            "██╔══██╗██║   ██║██║╚██╗██║██║  ██║██╔══██║██║     ██║     ██╔══╝  ╚════██║",
+            "██║  ██║╚██████╔╝██║ ╚████║██████╔╝██║  ██║███████╗███████╗███████╗███████║",
+            "╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚══════╝"
+        };
+
+        int titolY = cy - 8;
+        for (int i = 0; i < titol.length; i++) {
+            String linia = titol[i];
+            int x = cx - linia.length() / 2;
+            for (int j = 0; j < linia.length(); j++) {
+                screen.setCharacter(x + j, titolY + i,
+                    new TextCharacter(linia.charAt(j), TextColor.ANSI.YELLOW_BRIGHT, TextColor.ANSI.BLACK));
+            }
+        }
+
+        //subtítol
+        String subtitol = "~ Un joc de rondalles mallorquines ~";
+        int sx = cx - subtitol.length() / 2;
+        for (int j = 0; j < subtitol.length(); j++) {
+            screen.setCharacter(sx + j, titolY + titol.length + 1,
+                new TextCharacter(subtitol.charAt(j), TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
+        }
+
+        //opcions del menú
+        String opcio1 = "[ ENTER ]  Iniciar partida";
+        String opcio2 = "[  S   ]   Sortir";
+        int oy = cy + 2;
+        int ox1 = cx - opcio1.length() / 2;
+        int ox2 = cx - opcio2.length() / 2;
+
+        for (int j = 0; j < opcio1.length(); j++)
+            screen.setCharacter(ox1 + j, oy,
+                new TextCharacter(opcio1.charAt(j), TextColor.ANSI.GREEN_BRIGHT, TextColor.ANSI.BLACK));
+        for (int j = 0; j < opcio2.length(); j++)
+            screen.setCharacter(ox2 + j, oy + 2,
+                new TextCharacter(opcio2.charAt(j), TextColor.ANSI.RED, TextColor.ANSI.BLACK));
+
+        screen.refresh();
+    }
+
+    //dibuixa el menú de pausa amb les opcions: Reanudar / Guardar / Sortir
+    public void dibuixaPausa(int opcioSeleccionada, String[] opcions) throws IOException {
+        screen.clear();
+        int cols = screen.getTerminalSize().getColumns();
+        int files = screen.getTerminalSize().getRows();
+        int cx = cols / 2;
+        int cy = files / 2;
+
+        //caixa de fons del menú de pausa
+        int ampladaCaixa = 30;
+        int altCaixa = opcions.length + 4;
+        int boxX = cx - ampladaCaixa / 2;
+        int boxY = cy - altCaixa / 2;
+
+        //títol pausa
+        String titolPausa = "  *** PAUSA ***  ";
+        int tx = cx - titolPausa.length() / 2;
+        for (int j = 0; j < titolPausa.length(); j++)
+            screen.setCharacter(tx + j, boxY,
+                new TextCharacter(titolPausa.charAt(j), TextColor.ANSI.CYAN_BRIGHT, TextColor.ANSI.BLACK));
+
+        //instruccions
+        String instruccions = "Fletxes + ENTER per seleccionar";
+        int ix = cx - instruccions.length() / 2;
+        for (int j = 0; j < instruccions.length(); j++)
+            screen.setCharacter(ix + j, boxY + 1,
+                new TextCharacter(instruccions.charAt(j), TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
+
+        //opcions del menú
+        for (int i = 0; i < opcions.length; i++) {
+            boolean seleccionada = (i == opcioSeleccionada);
+            String prefix = seleccionada ? " > " : "   ";
+            String text = prefix + opcions[i];
+            int ox = cx - text.length() / 2;
+            TextColor color = seleccionada ? TextColor.ANSI.YELLOW_BRIGHT : TextColor.ANSI.WHITE;
+            for (int j = 0; j < text.length(); j++)
+                screen.setCharacter(ox + j, boxY + 3 + i,
+                    new TextCharacter(text.charAt(j), color, TextColor.ANSI.BLACK));
+        }
+
+        //nota de tecla ràpida ESC
+        String escNota = "[ ESC ] Reanudar";
+        int en = cx - escNota.length() / 2;
+        for (int j = 0; j < escNota.length(); j++)
+            screen.setCharacter(en + j, boxY + 3 + opcions.length + 1,
+                new TextCharacter(escNota.charAt(j), TextColor.ANSI.CYAN, TextColor.ANSI.BLACK));
+
+        screen.refresh();
+    }
+
     public void tanca() throws IOException { // tanca es perque tanca la pantalla
         screen.close();
     }
