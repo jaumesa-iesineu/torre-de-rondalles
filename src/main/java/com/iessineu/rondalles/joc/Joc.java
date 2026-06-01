@@ -61,6 +61,11 @@ public class Joc extends Motor {
         this.fitxerMapa = fitxerMapa;
     }
 
+    public Joc(String fitxerMapa, boolean mut) {
+        this.fitxerMapa = fitxerMapa;
+        this.mut = mut;
+    }
+
     @Override
     protected void init() throws Exception {
         //creim el renderitzador que gestiona la pantalla

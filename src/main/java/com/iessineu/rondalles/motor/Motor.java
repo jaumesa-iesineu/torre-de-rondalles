@@ -26,6 +26,9 @@ public abstract class Motor {
     //reproductor de música de fons
     private Sequencer sequencer;
 
+    //si true no es reprodueix música (argument -mute)
+    protected boolean mut = false;
+
     //cada joc sap com inicialitzar-se (carregar mapa, crear jugador...)
     protected abstract void init() throws Exception;
 
@@ -37,6 +40,7 @@ public abstract class Motor {
 
     //carrega i reprodueix el fitxer musica/musica_fons.mid en bucle infinit
     private void iniciaMusica() {
+        if (mut) return;
         try {
             File fitxer = new File("musica/musica_fons.mid");
             if (!fitxer.exists()) return;

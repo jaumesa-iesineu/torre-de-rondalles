@@ -36,7 +36,10 @@ public class Renderitzador { // classe per gestionar la pantalla
 
     //el radi de la llanterna en caselles
     //tot el que quedi fora d'aquest radi es veu negre
-    private static final int RADI_LLANTERNA = 10; 
+    private static final int RADI_LLANTERNA = 10;
+
+    //amplada del panell dret d'estadístiques (columnes)
+    private static final int AMPLE_HUD = 24;
 
     public Renderitzador() throws IOException {
         java.awt.Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize();
@@ -70,60 +73,103 @@ public class Renderitzador { // classe per gestionar la pantalla
     public void dibuixa(Mapa mapa, int jx, int jy, List<Entitat> entitats, com.iessineu.rondalles.entitats.Jugador jugador, List<com.iessineu.rondalles.inventari.ItemMapa> itemsMapa, boolean[][] visible, boolean[][] explorat, char[][] mapaRecord) throws IOException {
         screen.clear();
 
+        int cols   = screen.getTerminalSize().getColumns();
+        int files  = screen.getTerminalSize().getRows();
+        int colSep = cols - AMPLE_HUD; //columna on comença el panell dret
+
+        TextColor blanc    = new TextColor.RGB(180, 180, 195);
+        TextColor grisMarc = new TextColor.RGB(70, 70, 85);
+        TextColor daurat   = new TextColor.RGB(220, 180, 50);
+
+        //marc: fila superior
+        pintaText(0, 0, "╔" + "═".repeat(colSep - 1) + "╦" + "═".repeat(AMPLE_HUD - 2) + "╗", blanc);
+        //fila del títol
+        pintaText(0, 1, "║", grisMarc);
+        String titol = " TORRE DE RONDALLES  ~  " + mapa.getNom();
+        if (titol.length() > colSep - 2) titol = titol.substring(0, colSep - 2);
+        pintaText(1, 1, titol, daurat);
+        pintaText(colSep, 1, "║", grisMarc);
+        String titolHud = "PERSONATGE";
+        pintaText(colSep + (AMPLE_HUD - 1 - titolHud.length()) / 2, 1, titolHud, new TextColor.RGB(80, 200, 120));
+        pintaText(cols - 1, 1, "║", grisMarc);
+        //separador davall el títol
+        pintaText(0, 2, "╠" + "═".repeat(colSep - 1) + "╣" + " ".repeat(AMPLE_HUD - 2) + "║", blanc);
+        //bordes laterals
+        for (int i = 3; i < files - 1; i++) {
+            pintaText(0, i,        "║", grisMarc);
+            pintaText(colSep, i,   "║", grisMarc);
+            pintaText(cols - 1, i, "║", grisMarc);
+        }
+        //fila inferior
+        pintaText(0, files - 1, "╚" + "═".repeat(colSep - 1) + "╩" + "═".repeat(AMPLE_HUD - 2) + "╝", blanc);
+
+        //zona visible del mapa: files 3..files-2, cols 1..colSep-1
+        int vpW = colSep - 2;
+        int vpH = files - 4;
+
+        //càmera: si el mapa cap, el centram; si no, seguim el jugador
+        int camX, camY;
+        if (mapa.getAmplada() <= vpW) {
+            camX = -((vpW - mapa.getAmplada()) / 2);
+        } else {
+            camX = Math.max(0, Math.min(mapa.getAmplada() - vpW, jx - vpW / 2));
+        }
+        if (mapa.getAlcada() <= vpH) {
+            camY = -((vpH - mapa.getAlcada()) / 2);
+        } else {
+            camY = Math.max(0, Math.min(mapa.getAlcada() - vpH, jy - vpH / 2));
+        }
+
         char[][] celles = mapa.getCelles();
-
-        //calculam quant hem de desplaçar el mapa per centrar-lo a la pantalla
-        int cols = screen.getTerminalSize().getColumns();
-        int files = screen.getTerminalSize().getRows();
-        int offsetX = Math.max(0, (cols - mapa.getAmplada()) / 2);
-        int offsetY = Math.max(0, (files - mapa.getAlcada()) / 2);
-
         TextColor colorMemoria = new TextColor.RGB(45, 45, 55);
 
-        for (int y = 0; y < celles.length; y++) {
-            for (int x = 0; x < celles[y].length; x++) {
-                if (visible[y][x]) {
-                    double dist = Math.sqrt((x - jx) * (x - jx) + (y - jy) * (y - jy));
+        for (int my = 0; my < celles.length; my++) {
+            for (int mx = 0; mx < celles[my].length; mx++) {
+                int sc = 1 + (mx - camX);
+                int sf = 3 + (my - camY);
+                if (sc < 1 || sc >= colSep || sf < 3 || sf >= files - 1) continue;
+                if (visible[my][mx]) {
+                    double dist   = Math.sqrt((mx - jx) * (mx - jx) + (my - jy) * (my - jy));
                     double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.75;
-                    TextColor colorFinal = fosqueix(colorPerCasella(celles[y][x]), factor);
-                    TextColor fonsFinal = fosqueix(fonsCasella(celles[y][x]), factor);
-                    screen.setCharacter(offsetX + x, offsetY + y, new TextCharacter(celles[y][x], colorFinal, fonsFinal));
-                } else if (explorat[y][x]) {
-                    //casella recordada: mostram l'últim que el jugador va veure
-                    screen.setCharacter(offsetX + x, offsetY + y, new TextCharacter(mapaRecord[y][x], colorMemoria, TextColor.ANSI.BLACK));
+                    screen.setCharacter(sc, sf, new TextCharacter(celles[my][mx], fosqueix(colorPerCasella(celles[my][mx]), factor), fosqueix(fonsCasella(celles[my][mx]), factor)));
+                } else if (explorat[my][mx]) {
+                    screen.setCharacter(sc, sf, new TextCharacter(mapaRecord[my][mx], colorMemoria, TextColor.ANSI.BLACK));
                 }
-                //si no explorada: negre (no dibuixam res)
             }
         }
 
-        //pintem les entitats actives per damunt del mapa (només si el jugador les veu ara)
+        //entitats per damunt (només si visibles)
         for (Entitat e : entitats) {
             if (!e.isActiu()) continue;
             if (e.getY() >= visible.length || e.getX() >= visible[e.getY()].length) continue;
             if (!visible[e.getY()][e.getX()]) continue;
-
-            double dist = Math.sqrt((e.getX() - jx) * (e.getX() - jx) + (e.getY() - jy) * (e.getY() - jy));
+            int sc = 1 + (e.getX() - camX);
+            int sf = 3 + (e.getY() - camY);
+            if (sc < 1 || sc >= colSep || sf < 3 || sf >= files - 1) continue;
+            double dist   = Math.sqrt((e.getX() - jx) * (e.getX() - jx) + (e.getY() - jy) * (e.getY() - jy));
             double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.5;
-            TextColor color = fosqueix(e.getColor(), factor);
-            screen.setCharacter(offsetX + e.getX(), offsetY + e.getY(), new TextCharacter(e.getSimbol(), color, TextColor.ANSI.BLACK));
+            screen.setCharacter(sc, sf, new TextCharacter(e.getSimbol(), fosqueix(e.getColor(), factor), TextColor.ANSI.BLACK));
         }
 
-        //pintem els ítems del terra (només si el jugador els veu ara)
+        //ítems del terra (només si visibles)
         for (com.iessineu.rondalles.inventari.ItemMapa im : itemsMapa) {
             if (im.getY() >= visible.length || im.getX() >= visible[im.getY()].length) continue;
             if (!visible[im.getY()][im.getX()]) continue;
-            double dist = Math.sqrt((im.getX() - jx) * (im.getX() - jx) + (im.getY() - jy) * (im.getY() - jy));
+            int sc = 1 + (im.getX() - camX);
+            int sf = 3 + (im.getY() - camY);
+            if (sc < 1 || sc >= colSep || sf < 3 || sf >= files - 1) continue;
+            double dist   = Math.sqrt((im.getX() - jx) * (im.getX() - jx) + (im.getY() - jy) * (im.getY() - jy));
             double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.75;
-            TextColor color = fosqueix(im.getItem().getColor(), factor);
-            screen.setCharacter(offsetX + im.getX(), offsetY + im.getY(), new TextCharacter(im.getItem().getSimbol(), color, TextColor.ANSI.BLACK));
+            screen.setCharacter(sc, sf, new TextCharacter(im.getItem().getSimbol(), fosqueix(im.getItem().getColor(), factor), TextColor.ANSI.BLACK));
         }
 
-        //el jugador sempre es pinta verd per damunt de tot
-        screen.setCharacter(offsetX + jx, offsetY + jy, new TextCharacter('@', TextColor.ANSI.GREEN_BRIGHT, TextColor.ANSI.BLACK));
+        //jugador sempre verd per damunt de tot
+        int psc = 1 + (jx - camX);
+        int psf = 3 + (jy - camY);
+        if (psc >= 1 && psc < colSep && psf >= 3 && psf < files - 1)
+            screen.setCharacter(psc, psf, new TextCharacter('@', TextColor.ANSI.GREEN_BRIGHT, TextColor.ANSI.BLACK));
 
-        // CANVI 2: cridam el HUD just abans de fer refresh
-        dibuixaHUD(jugador);
-
+        dibuixaHUD(jugador, colSep + 1, 3, files - 1);
         screen.refresh();
     }
 
@@ -156,60 +202,81 @@ public class Renderitzador { // classe per gestionar la pantalla
         return new TextColor.RGB(r, g, b);
     }
 
-    // CANVI 3: mètodes nous per pintar el HUD
-    private void dibuixaHUD(com.iessineu.rondalles.entitats.Jugador jugador) { 
-        int col = 1;
-        int fila = 1;
-        
-        //Bloc de vida:
-        String vida = "VIDA:  " + jugador.getVida() + " / " + jugador.getVidaMaxima();
-        pintaText(col, fila, vida, new TextColor.RGB(220, 50, 50)); 
-        
-        //Bloc de pes:
-        String pes = "PES:   " + jugador.getPes() + " / " + jugador.getpesMaxim();
-        pintaText(col, fila + 1, pes, new TextColor.RGB(180, 160, 80));
-        
-         //Bloc d'atac:
-        String armes = "ATAC:  " + jugador.getAtacTotal();
-        pintaText(col, fila + 2, armes, new TextColor.RGB(200, 120, 50));
-        
-         //Bloc de defensa:
-        String armadura = "DEF:   " + jugador.getDefensaTotal();
-        pintaText(col, fila + 3, armadura, new TextColor.RGB(100, 160, 220));
-        
-        int slotsUsats = 0;
+    private void dibuixaHUD(com.iessineu.rondalles.entitats.Jugador jugador, int col, int fila, int filaMax) { //dibuixaHUD pinta les estadistiques al panell dret
+        int innerW = AMPLE_HUD - 2;
+
+        TextColor vermell = new TextColor.RGB(220, 60, 60);
+        TextColor groc    = new TextColor.RGB(180, 160, 80);
+        TextColor taronja = new TextColor.RGB(200, 120, 50);
+        TextColor blau    = new TextColor.RGB(100, 160, 220);
+        TextColor gris    = new TextColor.RGB(100, 100, 115);
+
+        //barra de vida
+        int barW = 12;
+        int plens = jugador.getVidaMaxima() > 0
+            ? Math.max(0, Math.min(barW, (int)((double)jugador.getVida() / jugador.getVidaMaxima() * barW)))
+            : 0;
+        pintaText(col, fila, "HP [" + "█".repeat(plens) + "░".repeat(barW - plens) + "]", colorVida(jugador.getVida(), jugador.getVidaMaxima()));
+        fila++;
+        String vidaStr = jugador.getVida() + " / " + jugador.getVidaMaxima();
+        pintaText(col + innerW - vidaStr.length(), fila, vidaStr, vermell);
+        fila += 2;
+
+        //estadistiques bàsiques
+        pintaText(col, fila++, "ATK  " + jugador.getAtacTotal(),    taronja);
+        pintaText(col, fila++, "DEF  " + jugador.getDefensaTotal(), blau);
+        pintaText(col, fila++, "PES  " + jugador.getPes() + " / " + jugador.getpesMaxim(), groc);
+        fila++;
+
+        //inventari
+        pintaText(col, fila++, "--- INVENTARI ---", gris);
         for (int i = 0; i < com.iessineu.rondalles.inventari.Inventari.MAX_SLOTS; i++) {
+            if (fila >= filaMax - 2) break;
             var slot = jugador.getInventari().getSlot(i);
             if (slot != null) {
-                String quantitat = slot.quantitat() > 1 ? " x" + slot.quantitat() : "";
-                String linia = "[" + (i + 1) + "] " + slot.item().getSimbol() + " " + slot.item().getNom() + quantitat;
-                pintaText(col, fila + 4 + slotsUsats, linia, slot.item().getColor());
-                slotsUsats++;
+                String q = slot.quantitat() > 1 ? " x" + slot.quantitat() : "";
+                String linia = "[" + (i + 1) + "] " + slot.item().getSimbol() + " " + slot.item().getNom() + q;
+                if (linia.length() > innerW) linia = linia.substring(0, innerW);
+                pintaText(col, fila, linia, slot.item().getColor());
+            } else {
+                pintaText(col, fila, "[" + (i + 1) + "] -", gris);
             }
+            fila++;
         }
-        if (slotsUsats == 0) pintaText(col, fila + 4, "INV:   (buit)", new TextColor.RGB(140, 200, 140));
 
-        int filaEstat = fila + 4 + Math.max(1, slotsUsats);
-        if (jugador.getTornsVeri() > 0) {
-            pintaText(col, filaEstat++, "VERI:  " + jugador.getTornsVeri() + " torns", new TextColor.RGB(100, 220, 80));
-        }
-        if (jugador.getTornsFoc() > 0) {
-            pintaText(col, filaEstat++, "FOC:   " + jugador.getTornsFoc() + " torns", new TextColor.RGB(220, 120, 30));
-        }
-        if (jugador.getTornsGel() > 0) {
-            pintaText(col, filaEstat,   "GEL:   " + jugador.getTornsGel() + " torns", new TextColor.RGB(80, 180, 220));
+        //estats temporals (verí, foc, gel)
+        boolean anyEstat = jugador.getTornsVeri() > 0 || jugador.getTornsFoc() > 0 || jugador.getTornsGel() > 0;
+        if (anyEstat && fila < filaMax - 1) {
+            fila++;
+            pintaText(col, fila++, "--- ESTATS ---", gris);
+            if (jugador.getTornsVeri() > 0 && fila < filaMax - 1)
+                pintaText(col, fila++, "VERI  " + jugador.getTornsVeri() + " torns", new TextColor.RGB(100, 220, 80));
+            if (jugador.getTornsFoc() > 0 && fila < filaMax - 1)
+                pintaText(col, fila++, "FOC   " + jugador.getTornsFoc() + " torns", new TextColor.RGB(220, 120, 30));
+            if (jugador.getTornsGel() > 0 && fila < filaMax - 1)
+                pintaText(col, fila, "GEL   " + jugador.getTornsGel() + " torns", new TextColor.RGB(80, 180, 220));
         }
     }
 
-    private void pintaText(int col, int fila, String text, TextColor color) { // pintaText es perque pinta el text a la pantalla
+    private void pintaText(int col, int fila, String text, TextColor color) { //pintaText pinta text a la pantalla sense sortir dels límits
+        int maxC = screen.getTerminalSize().getColumns();
+        int maxF = screen.getTerminalSize().getRows();
+        if (fila < 0 || fila >= maxF) return;
         for (int i = 0; i < text.length(); i++) {
-            screen.setCharacter(col + i, fila, new TextCharacter(text.charAt(i), color, TextColor.ANSI.BLACK));
+            int c = col + i;
+            if (c >= 0 && c < maxC)
+                screen.setCharacter(c, fila, new TextCharacter(text.charAt(i), color, TextColor.ANSI.BLACK));
         }
     }
 
     private void pintaTextFons(int col, int fila, String text, TextColor color, TextColor fons) {
+        int maxC = screen.getTerminalSize().getColumns();
+        int maxF = screen.getTerminalSize().getRows();
+        if (fila < 0 || fila >= maxF) return;
         for (int i = 0; i < text.length(); i++) {
-            screen.setCharacter(col + i, fila, new TextCharacter(text.charAt(i), color, fons));
+            int c = col + i;
+            if (c >= 0 && c < maxC)
+                screen.setCharacter(c, fila, new TextCharacter(text.charAt(i), color, fons));
         }
     }
 
