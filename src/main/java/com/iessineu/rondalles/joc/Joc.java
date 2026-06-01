@@ -360,7 +360,7 @@ public class Joc extends Motor {
         };
         if (enemic != null && config != null) {
             TipusEnemic def = config.getTipusEnemic(simbol);
-            if (def != null) enemic.aplicaDefinicio(def.vida, def.atac, def.radi, def.colorR, def.colorG, def.colorB);
+            if (def != null) enemic.aplicaDefinicio(def.vida, def.atac, def.radi, def.colorR, def.colorG, def.colorB, def.artAscii);
         }
         return enemic;
     }

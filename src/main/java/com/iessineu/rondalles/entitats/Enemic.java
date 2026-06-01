@@ -12,8 +12,9 @@ import com.googlecode.lanterna.TextColor;
  */
 public abstract class Enemic extends Entitat { // extends Entitat es perque extends la classe Entitat
 
-    //color carregat des del game.json; null = usa el color hardcoded de la subclasse
+    //color i art carregats des del game.json; null = usa els valors hardcoded de la subclasse
     protected TextColor colorDef = null;
+    protected String[] artAscii = null;
 
     char lletra;
     //màquina d'estats
@@ -160,12 +161,15 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
 
     public int getVidaMaxima() { return vidaMaxima; }
 
-    //aplica stats i color del game.json sobreescrivint els valors hardcoded
-    public void aplicaDefinicio(int vida, int atac, int radi, int r, int g, int b) {
+    //aplica stats, color i art del game.json sobreescrivint els valors hardcoded
+    public void aplicaDefinicio(int vida, int atac, int radi, int r, int g, int b, String[] art) {
         this.vida = vida;
         this.vidaMaxima = vida;
         this.atac = atac;
         this.radDeteccio = radi;
         this.colorDef = new TextColor.RGB(r, g, b);
+        this.artAscii = art;
     }
+
+    public String[] getArtAscii() { return artAscii; }
 }

@@ -428,17 +428,20 @@ public class Renderitzador { // classe per gestionar la pantalla
         pintaText(xBoxEn + wBoxEn - 1, 4, "║", vermell);
         pintaText(xBoxEn, 5, "╚" + "═".repeat(wBoxEn - 2) + "╝", vermell);
 
-        //art ascii de l'enemic amb el seu color real
+        //art ascii de l'enemic: primer mira si en té del game.json, sinó usa el hardcoded
         TextColor colorEnemic = enemic.getColor();
         int fila = 7;
-        String[] art = switch (enemic.getLletra()) {
-            case 'd', 'e' -> DIMONI_ART;
-            case 'D'      -> DRAC_ART;
-            case 'B'      -> BUBOTA_ART;
-            case 'G'      -> GEGANT_ART;
-            case 'M'      -> MARIA_ART;
-            default       -> new String[]{};
-        };
+        String[] art = enemic.getArtAscii();
+        if (art == null) {
+            art = switch (enemic.getLletra()) {
+                case 'd', 'e' -> DIMONI_ART;
+                case 'D'      -> DRAC_ART;
+                case 'B'      -> BUBOTA_ART;
+                case 'G'      -> GEGANT_ART;
+                case 'M'      -> MARIA_ART;
+                default       -> new String[]{};
+            };
+        }
         for (String linia : art) {
             if (fila >= rows - 8) break;
             pintaText(4, fila, linia, colorEnemic);

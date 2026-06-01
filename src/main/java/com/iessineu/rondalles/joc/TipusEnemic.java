@@ -11,4 +11,5 @@ public class TipusEnemic {
     public int colorG;
     public int colorB;
     public boolean estatica;
+    public String[] artAscii;
 }

@@ -34,15 +34,16 @@ public class PartidaRepository {
 
             st.executeUpdate("""
                 CREATE TABLE IF NOT EXISTS tipus_enemics (
-                    simbol   TEXT PRIMARY KEY,
-                    nom      TEXT NOT NULL,
-                    vida     INTEGER NOT NULL,
-                    atac     INTEGER NOT NULL,
-                    radi     INTEGER NOT NULL,
-                    color_r  INTEGER NOT NULL,
-                    color_g  INTEGER NOT NULL,
-                    color_b  INTEGER NOT NULL,
-                    estatica INTEGER NOT NULL
+                    simbol    TEXT PRIMARY KEY,
+                    nom       TEXT NOT NULL,
+                    vida      INTEGER NOT NULL,
+                    atac      INTEGER NOT NULL,
+                    radi      INTEGER NOT NULL,
+                    color_r   INTEGER NOT NULL,
+                    color_g   INTEGER NOT NULL,
+                    color_b   INTEGER NOT NULL,
+                    estatica  INTEGER NOT NULL,
+                    art_ascii TEXT
                 )""");
 
             st.executeUpdate("""
@@ -95,7 +96,7 @@ public class PartidaRepository {
     private static void ompleEnemics(Connection conn, ConfigGame config) throws Exception {
         if (config.enemics == null || config.enemics.tipus == null) return;
         try (PreparedStatement ps = conn.prepareStatement(
-                "INSERT OR IGNORE INTO tipus_enemics VALUES (?,?,?,?,?,?,?,?,?)")) {
+                "INSERT OR IGNORE INTO tipus_enemics VALUES (?,?,?,?,?,?,?,?,?,?)")) {
             for (TipusEnemic t : config.enemics.tipus) {
                 ps.setString(1, t.simbol);
                 ps.setString(2, t.nom);
@@ -106,6 +107,9 @@ public class PartidaRepository {
                 ps.setInt(7, t.colorG);
                 ps.setInt(8, t.colorB);
                 ps.setInt(9, t.estatica ? 1 : 0);
+                //art ascii guardat com a text amb \n entre línies
+                String art = t.artAscii != null ? String.join("\n", t.artAscii) : null;
+                ps.setString(10, art);
                 ps.executeUpdate();
             }
         }
