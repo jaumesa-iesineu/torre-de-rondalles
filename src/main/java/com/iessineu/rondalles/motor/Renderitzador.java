@@ -39,16 +39,16 @@ public class Renderitzador { // classe per gestionar la pantalla
     private static final int RADI_LLANTERNA = 10; 
 
     public Renderitzador() throws IOException {
-        //calculam la mida de font perquè 180x50 caràcters càpiguen a la pantalla
         java.awt.Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize();
-        int midaFont = Math.min(pantalla.width / 180, pantalla.height / 50);
-        midaFont = Math.max(8, midaFont); //mínim 8px per llegibilitat
+        int midaFont = Math.min(pantalla.width / 120, pantalla.height / 36);
+        midaFont = Math.max(14, midaFont);
         SwingTerminalFontConfiguration font = SwingTerminalFontConfiguration
                 .newInstance(new Font("Monospaced", Font.PLAIN, midaFont));
         SwingTerminalFrame terminal = new DefaultTerminalFactory()
-                .setInitialTerminalSize(new TerminalSize(180, 50))
+                .setInitialTerminalSize(new TerminalSize(120, 36))
                 .setTerminalEmulatorFontConfiguration(font)
                 .createSwingTerminal();
+        terminal.setResizable(false);
         //maximitzam la finestra perquè ocupi tota la pantalla
         terminal.setTitle("RONDALLES");
         try (InputStream is = getClass().getResourceAsStream("/logo.png")) {
@@ -171,19 +171,19 @@ public class Renderitzador { // classe per gestionar la pantalla
         String armadura = "DEF:   " + jugador.getDefensaTotal();
         pintaText(col, fila + 3, armadura, new TextColor.RGB(100, 160, 220));
         
-        var grups = jugador.getInventari().getAgrupats();
-        if (grups.isEmpty()) {
-            pintaText(col, fila + 4, "INV:   (buit)", new TextColor.RGB(140, 200, 140));
-        } else {
-            for (int i = 0; i < grups.size(); i++) {
-                var g = grups.get(i);
-                String quantitat = g.quantitat() > 1 ? " x" + g.quantitat() : "";
-                String linia = "[" + (g.indexPrimer() + 1) + "] " + g.item().getSimbol() + " " + g.item().getNom() + quantitat;
-                pintaText(col, fila + 4 + i, linia, g.item().getColor());
+        int slotsUsats = 0;
+        for (int i = 0; i < com.iessineu.rondalles.inventari.Inventari.MAX_SLOTS; i++) {
+            var slot = jugador.getInventari().getSlot(i);
+            if (slot != null) {
+                String quantitat = slot.quantitat() > 1 ? " x" + slot.quantitat() : "";
+                String linia = "[" + (i + 1) + "] " + slot.item().getSimbol() + " " + slot.item().getNom() + quantitat;
+                pintaText(col, fila + 4 + slotsUsats, linia, slot.item().getColor());
+                slotsUsats++;
             }
         }
+        if (slotsUsats == 0) pintaText(col, fila + 4, "INV:   (buit)", new TextColor.RGB(140, 200, 140));
 
-        int filaEstat = fila + 4 + Math.max(1, grups.size());
+        int filaEstat = fila + 4 + Math.max(1, slotsUsats);
         if (jugador.getTornsVeri() > 0) {
             pintaText(col, filaEstat++, "VERI:  " + jugador.getTornsVeri() + " torns", new TextColor.RGB(100, 220, 80));
         }
@@ -298,9 +298,9 @@ public class Renderitzador { // classe per gestionar la pantalla
         int cols = screen.getTerminalSize().getColumns();
         int rows = screen.getTerminalSize().getRows();
 
-        TextColor blanc   = new TextColor.RGB(220, 220, 220);
-        TextColor gris    = new TextColor.RGB(110, 110, 110);
-        TextColor daurat  = new TextColor.RGB(220, 180, 50);
+        TextColor blanc = new TextColor.RGB(220, 220, 220);
+        TextColor gris = new TextColor.RGB(110, 110, 110);
+        TextColor daurat = new TextColor.RGB(220, 180, 50);
         TextColor vermell = new TextColor.RGB(220, 70, 70);
 
         //marc exterior complet
@@ -402,8 +402,11 @@ public class Renderitzador { // classe per gestionar la pantalla
         fHud++;
         pintaText(cHud, fHud, "[ A ]  Atacar", blanc);
         fHud++;
-        for (int i = 0; i < jugador.getInventari().mida(); i++) {
-            pintaText(cHud, fHud, "[ " + (i + 1) + " ]  " + jugador.getInventari().get(i).getNom(), daurat);
+        for (int i = 0; i < com.iessineu.rondalles.inventari.Inventari.MAX_SLOTS; i++) {
+            var slot = jugador.getInventari().getSlot(i);
+            if (slot == null) continue;
+            String quant = slot.quantitat() > 1 ? " x" + slot.quantitat() : "";
+            pintaText(cHud, fHud, "[ " + (i + 1) + " ]  " + slot.item().getSimbol() + " " + slot.item().getNom() + quant, daurat);
             fHud++;
         }
         pintaText(cHud, fHud, "[ F ]  Fugir", gris);
@@ -443,6 +446,75 @@ public class Renderitzador { // classe per gestionar la pantalla
         if (msg.contains("contraataca"))                              return new TextColor.RGB(220, 80,  80);
         if (msg.contains("caigut") || msg.startsWith("T'enfrentes")) return new TextColor.RGB(160, 180, 255);
         return new TextColor.RGB(180, 180, 180);
+    }
+
+    public void dibuixaInventari(Mapa mapa, int jx, int jy, List<Entitat> entitats, com.iessineu.rondalles.entitats.Jugador jugador, List<com.iessineu.rondalles.inventari.ItemMapa> itemsMapa) throws IOException {
+        dibuixa(mapa, jx, jy, entitats, jugador, itemsMapa);
+
+        int cols = screen.getTerminalSize().getColumns();
+        int rows = screen.getTerminalSize().getRows();
+
+        TextColor blanc = new TextColor.RGB(220, 220, 220);
+        TextColor gris = new TextColor.RGB(110, 110, 110);
+        TextColor daurat = new TextColor.RGB(220, 180, 50);
+        TextColor fonsPanell = new TextColor.RGB(20, 20, 35);
+
+        int amplePanel = 60;
+        int alcadaPanel = 12;
+        int colIni = (cols - amplePanel) / 2;
+        int filaIni = (rows - alcadaPanel) / 2;
+
+        //fons del panell
+        for (int f = filaIni; f < filaIni + alcadaPanel; f++)
+            for (int c = colIni; c < colIni + amplePanel; c++)
+                screen.setCharacter(c, f, new TextCharacter(' ', blanc, fonsPanell));
+
+        //marc
+        pintaTextFons(colIni, filaIni, "╔" + "═".repeat(amplePanel - 2) + "╗", blanc, fonsPanell);
+        pintaTextFons(colIni, filaIni + alcadaPanel - 1, "╚" + "═".repeat(amplePanel - 2) + "╝", blanc, fonsPanell);
+        for (int f = filaIni + 1; f < filaIni + alcadaPanel - 1; f++) {
+            screen.setCharacter(colIni, f, new TextCharacter('║', blanc, fonsPanell));
+            screen.setCharacter(colIni + amplePanel - 1, f, new TextCharacter('║', blanc, fonsPanell));
+        }
+
+        //títol
+        String titol = "[ INVENTARI ]";
+        pintaTextFons(colIni + (amplePanel - titol.length()) / 2, filaIni + 1, titol, daurat, fonsPanell);
+
+        //4 slots en una fila
+        int filaSlots = filaIni + 4;
+        int colSlots = colIni + 3;
+        for (int i = 0; i < com.iessineu.rondalles.inventari.Inventari.MAX_SLOTS; i++) {
+            int c = colSlots + i * 12;
+            var slot = jugador.getInventari().getSlot(i);
+            pintaTextFons(c, filaSlots - 1, " [" + (i + 1) + "] ", gris, fonsPanell);
+            if (slot != null) {
+                String quant = slot.quantitat() > 1 ? "x" + slot.quantitat() : " ";
+                pintaTextFons(c + 1, filaSlots,     String.valueOf(slot.item().getSimbol()), slot.item().getColor(), fonsPanell);
+                pintaTextFons(c + 3, filaSlots,     quant, blanc, fonsPanell);
+                String nom = slot.item().getNom().length() > 9 ? slot.item().getNom().substring(0, 9) : slot.item().getNom();
+                pintaTextFons(c, filaSlots + 1, nom, gris, fonsPanell);
+            } else {
+                pintaTextFons(c + 1, filaSlots, "·", gris, fonsPanell);
+            }
+        }
+
+        //slots d'armadura
+        int colArm = colIni + 3;
+        int filaArm = filaIni + 8;
+        String[] slots = {"CAP", "PIT", "CAM", "PEU"};
+        var armadures = jugador.getInventari().getArmaduresEquipades();
+        for (int i = 0; i < 4; i++) {
+            com.iessineu.rondalles.inventari.Armadura.Slot slot = com.iessineu.rondalles.inventari.Armadura.Slot.values()[i];
+            com.iessineu.rondalles.inventari.Armadura arm = armadures.get(slot);
+            String txt = slots[i] + ": " + (arm != null ? arm.getSimbol() + " " + arm.getNom() : "---");
+            pintaTextFons(colArm + i * 14, filaArm, txt, arm != null ? arm.getColor() : gris, fonsPanell);
+        }
+
+        //instruccions
+        pintaTextFons(colIni + 2, filaIni + alcadaPanel - 2, "ESC / E per tancar", gris, fonsPanell);
+
+        screen.refresh();
     }
 
     //espera que l'usuari premi una tecla (bloquejant)

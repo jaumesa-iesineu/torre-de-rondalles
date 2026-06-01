@@ -42,8 +42,8 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
 
     private Inventari inventari = new Inventari(); //el que du a sobre
     private int tornsVeri = 0;
-    private int tornsFoc  = 0; //baixa atac
-    private int tornsGel  = 0; //baixa defensa
+    private int tornsFoc = 0; //baixa atac
+    private int tornsGel = 0; //baixa defensa
 
     public Jugador(int x, int y) { // constructor de la classe Jugador
         super(x, y, '@');
@@ -111,7 +111,8 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     }
 
     public void usaItem(int index) { //usa l'item del slot indicat (0-based)
-        if (index < 0 || index >= inventari.mida()) return;
+        if (index < 0 || index >= com.iessineu.rondalles.inventari.Inventari.MAX_SLOTS) return;
+        if (inventari.get(index) == null) return;
         Item item = inventari.get(index);
         item.aplicaEfecte(this);
         pes -= item.getPes();

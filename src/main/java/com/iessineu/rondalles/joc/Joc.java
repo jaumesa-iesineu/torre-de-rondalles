@@ -97,10 +97,25 @@ public class Joc extends Motor {
             return;
         }
 
+        if (estat == Estat.INVENTARI) {
+            gestionaInventari(tecla);
+            return;
+        }
+
         if (estat == Estat.COMBAT) {
             gestionaCombat(tecla);
         } else {
             gestionaMoviment(tecla);
+        }
+    }
+
+    private void gestionaInventari(KeyStroke tecla) {
+        if (tecla.getKeyType() == KeyType.Escape) {
+            estat = Estat.MON;
+            return;
+        }
+        if (tecla.getKeyType() == KeyType.Character && (tecla.getCharacter() == 'e' || tecla.getCharacter() == 'E')) {
+            estat = Estat.MON;
         }
     }
 
@@ -192,6 +207,11 @@ public class Joc extends Motor {
     private void gestionaMoviment(KeyStroke tecla) { //gestiona el moviment pel mapa
         if (tecla.getKeyType() == KeyType.Character) {
             char c = tecla.getCharacter();
+            if (c == 'e' || c == 'E') {
+                for (Enemic e : enemics) if (e.isActiu()) e.actualitzaIA(jugador);
+                estat = Estat.INVENTARI;
+                return;
+            }
             if (c >= '1' && c <= '9') { //usar ítem fora de combat també gasta torn
                 jugador.usaItem(c - '1');
                 jugador.tickVeri();
@@ -308,6 +328,8 @@ public class Joc extends Motor {
             List<Entitat> totes = new ArrayList<>(enemics);
             if (estat == Estat.COMBAT) {
                 renderer.dibuixaCombat(enemicCombat, jugador, logCombat);
+            } else if (estat == Estat.INVENTARI) {
+                renderer.dibuixaInventari(mapa, jugador.getX(), jugador.getY(), totes, jugador, itemsMapa);
             } else {
                 renderer.dibuixa(mapa, jugador.getX(), jugador.getY(), totes, jugador, itemsMapa);
             }

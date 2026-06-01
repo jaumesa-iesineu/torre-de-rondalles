@@ -15,5 +15,6 @@ public enum Estat {
     MON, //bucle principal: jugador explora el mapa per torns
     COMBAT, //pantalla de combat per torns, mapa congelat
     GAME_OVER, //permadeath: jugador mort, s'esborra la partida de SQLite
+    INVENTARI, //overlay d'inventari, mapa de fons, costa 1 torn
     VICTORIA //jugador ha derrotat Es Drac a la planta 5
 }
