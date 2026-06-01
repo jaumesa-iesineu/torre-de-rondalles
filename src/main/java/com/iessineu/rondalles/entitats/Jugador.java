@@ -34,7 +34,7 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     private int pes; // pes actual del jugador
     private int pesMaxim; // pes maxim del jugador
 
-    private int velocitat; // velocitat actual del jugador
+    private int velocitat;// velocitat actual del jugador
 
     private int visio; //visio actual del jugador
 

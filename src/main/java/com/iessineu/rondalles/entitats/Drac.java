@@ -15,9 +15,9 @@ public class Drac extends Enemic { // boss final de la planta 5
     }
 
     @Override
-    public void actualitzaIA(Jugador jugador) { // actualitzaIA actualitza la IA del Drac cada torn
-        if (distanciaAl(jugador) < radDeteccio) {
-            canviaEstat(EstatEnemic.PERSEGUINT); // si el jugador entra al radi de detecció, persegueix
+    public void actualitzaIA(Jugador jugador, char[][] celles) { // actualitzaIA actualitza la IA del Drac cada torn
+        if (distanciaAl(jugador) < radDeteccio && potVeure(jugador, celles)) {
+            canviaEstat(EstatEnemic.PERSEGUINT); // si el jugador entra al radi de detecció i el veu, persegueix
         } else {
             canviaEstat(EstatEnemic.PATRULLANT); // si no, patrulla
         }

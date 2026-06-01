@@ -208,7 +208,7 @@ public class Joc extends Motor {
         if (tecla.getKeyType() == KeyType.Character) {
             char c = tecla.getCharacter();
             if (c == 'e' || c == 'E') {
-                for (Enemic e : enemics) if (e.isActiu()) e.actualitzaIA(jugador);
+                for (Enemic e : enemics) if (e.isActiu()) e.actualitzaIA(jugador, mapa.getCelles());
                 estat = Estat.INVENTARI;
                 return;
             }
@@ -251,7 +251,7 @@ public class Joc extends Motor {
             jugador.tickVeri();
 
             for (Enemic e : enemics) {
-                if (e.isActiu()) e.actualitzaIA(jugador);
+                if (e.isActiu()) e.actualitzaIA(jugador, mapa.getCelles());
             }
         }
 

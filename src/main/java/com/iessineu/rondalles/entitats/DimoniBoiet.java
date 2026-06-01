@@ -18,9 +18,9 @@ public class DimoniBoiet extends Enemic { // extends Enemic es perque extends la
     }
 
     @Override
-    public void actualitzaIA(Jugador jugador) { // actualitzaIA es perque actualitza la IA del Dimoni Boiet
-        if (distanciaAl(jugador) < radDeteccio) {
-            canviaEstat(EstatEnemic.PERSEGUINT); // si entres al radi de deteccio, canvia a PERSEGUINT
+    public void actualitzaIA(Jugador jugador, char[][] celles) { // actualitzaIA es perque actualitza la IA del Dimoni Boiet
+        if (distanciaAl(jugador) < radDeteccio && potVeure(jugador, celles)) {
+            canviaEstat(EstatEnemic.PERSEGUINT); // si entres al radi de deteccio i te veu, canvia a PERSEGUINT
         } else {
             canviaEstat(EstatEnemic.PATRULLANT); // si no entres al radi de deteccio, canvia a PATRULLANT
         }

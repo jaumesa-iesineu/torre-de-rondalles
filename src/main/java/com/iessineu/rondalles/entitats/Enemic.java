@@ -45,7 +45,28 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
 
     //cada tipus d'enemic té sa seva pròpia IA
     //es crida quan el jugador fa un moviment (és el seu torn)
-    public abstract void actualitzaIA(Jugador jugador);
+    public abstract void actualitzaIA(Jugador jugador, char[][] celles);
+
+    //Bresenham: comprova si hi ha línia de visió directa fins al jugador sense parets
+    protected boolean potVeure(Jugador jugador, char[][] celles) {
+        int x0 = this.x, y0 = this.y;
+        int x1 = jugador.getX(), y1 = jugador.getY();
+        int dx = Math.abs(x1 - x0);
+        int dy = Math.abs(y1 - y0);
+        int sx = x0 < x1 ? 1 : -1;
+        int sy = y0 < y1 ? 1 : -1;
+        int err = dx - dy;
+        int cx = x0, cy = y0;
+        while (cx != x1 || cy != y1) {
+            int e2 = 2 * err;
+            if (e2 > -dy) { err -= dy; cx += sx; }
+            if (e2 < dx)  { err += dx; cy += sy; }
+            if (cx == x1 && cy == y1) break; //el jugador no és una paret
+            if (cy >= 0 && cy < celles.length && cx >= 0 && cx < celles[cy].length)
+                if (celles[cy][cx] == '#') return false;
+        }
+        return true;
+    }
 
     @Override
     public void actualitza() {

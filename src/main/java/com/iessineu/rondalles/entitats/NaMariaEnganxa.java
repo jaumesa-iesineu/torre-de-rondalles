@@ -14,7 +14,7 @@ public class NaMariaEnganxa extends Enemic { // trampa estàtica — no es mou, 
     }
 
     @Override
-    public void actualitzaIA(Jugador jugador) { // trampa: no té IA, no es mou mai
+    public void actualitzaIA(Jugador jugador, char[][] celles) { // trampa: no té IA, no es mou mai
     }
 
     @Override
