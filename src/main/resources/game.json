@@ -1,7 +1,6 @@
 {
   "configuracio": {
-    "mapaInicial": "planta1",
-    "mapaPerdre": "perduda"
+    "mapaInicial": "planta1"
   },
   "mapes": {
     "ordre": ["planta1", "planta2", "planta3", "planta4", "planta5"],
@@ -10,8 +9,7 @@
       {"id": "planta2", "fitxer": "mapes/planta2.xml"},
       {"id": "planta3", "fitxer": "mapes/planta3.xml"},
       {"id": "planta4", "fitxer": "mapes/planta4.xml"},
-      {"id": "planta5", "fitxer": "mapes/planta5.xml"},
-      {"id": "perduda", "fitxer": "mapes/planta1.map"}
+      {"id": "planta5", "fitxer": "mapes/planta5.xml"}
     ]
   },
   "enemics": {

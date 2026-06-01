@@ -74,7 +74,6 @@ public class PartidaRepository {
     private static void ompleConfiguracio(Connection conn, ConfigGame config) throws Exception {
         try (PreparedStatement ps = conn.prepareStatement("INSERT INTO configuracio VALUES (?,?)")) {
             ps.setString(1, "mapaInicial"); ps.setString(2, config.getMapaInicial()); ps.executeUpdate();
-            ps.setString(1, "mapaPerdre");  ps.setString(2, config.getMapaPerdre());  ps.executeUpdate();
         }
     }
 

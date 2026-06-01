@@ -13,7 +13,6 @@ public class ConfigGame {
     //grups niats que reflecteixen l'estructura del JSON
     public static class Configuracio {
         public String mapaInicial;
-        public String mapaPerdre;
     }
 
     public static class MapesGroup {
@@ -51,9 +50,5 @@ public class ConfigGame {
 
     public String getMapaInicial() {
         return configuracio != null ? configuracio.mapaInicial : "planta1";
-    }
-
-    public String getMapaPerdre() {
-        return configuracio != null ? configuracio.mapaPerdre : "perduda";
     }
 }
