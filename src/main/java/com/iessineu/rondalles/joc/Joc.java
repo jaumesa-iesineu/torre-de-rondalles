@@ -5,6 +5,7 @@
 package com.iessineu.rondalles.joc;
 
 import com.iessineu.rondalles.combat.SistemaCombat;
+import com.iessineu.rondalles.db.PartidaRepository;
 import com.iessineu.rondalles.entitats.Bubota;
 import com.iessineu.rondalles.entitats.DimoniBoiet;
 import com.iessineu.rondalles.entitats.Drac;
@@ -35,27 +36,28 @@ public class Joc extends Motor {
     //el mapa actual carregat des fitxer .game
     private Mapa mapa;
 
-    private Jugador jugador;
+    //package-private perquè GestorPartida (mateix paquet) hi accedeixi directament
+    Jugador jugador;
+    List<Enemic> enemics;
+    List<int[]> enemicsMorts = new ArrayList<>(); //posicions originals dels enemics morts
+    boolean[][] explorat;
+    String idMapaActual;
 
-    private List<Enemic> enemics; //tots els enemics carregats al mapa
-    private List<ItemMapa> itemsMapa = new ArrayList<>(); //items que hi ha al terra
-    private Enemic enemicCombat = null; //l'enemic amb qui estam lluitant ara mateix
+    private List<ItemMapa> itemsMapa = new ArrayList<>();
+    private Enemic enemicCombat = null;
     private List<String> logCombat = new ArrayList<>();
     private static final int MAX_LOG = 3;
 
-    //el fitxer .game que hem de carregar
     private String fitxerMapa;
-
-    //fog of war: caselles que el jugador ja ha vist alguna vegada
-    private boolean[][] explorat;
-    //últim caràcter vist a cada casella (inclou items i enemics)
     private char[][] mapaRecord;
+
+    //configuració carregada del game.json
+    private ConfigGame config;
 
     private static final int RADI_VISIO = 10;
 
-    //índex de l'opció seleccionada al menú de pausa (0=reanudar, 1=guardar, 2=sortir)
     private int opcioMenuPausa = 0;
-    private static final String[] OPCIONS_PAUSA = {"Reanudar", "Guardar", "Sortir"};
+    private static final String[] OPCIONS_PAUSA = {"Reanudar", "Guardar", "Carregar", "Sortir"};
 
     public Joc(String fitxerMapa) {
         this.fitxerMapa = fitxerMapa;
@@ -68,25 +70,38 @@ public class Joc extends Motor {
 
     @Override
     protected void init() throws Exception {
-        //creim el renderitzador que gestiona la pantalla
         renderer = new Renderitzador();
 
-        //carregam el mapa des del fitxer
+        //carregam la configuració del game.json i inicialitzam la BD
+        try {
+            config = CarregadorGame.carrega("game.json");
+            PartidaRepository.inicialitza(config);
+            //si el fitxerMapa és un id de config, en cercam el fitxer real
+            MapaConfig mc = config.getMapaConfig(fitxerMapa);
+            if (mc != null) {
+                idMapaActual = fitxerMapa;
+                fitxerMapa = mc.fitxer;
+            } else {
+                idMapaActual = config.mapaInicial;
+                MapaConfig inicial = config.getMapaConfig(idMapaActual);
+                if (inicial != null) fitxerMapa = inicial.fitxer;
+            }
+        } catch (Exception e) {
+            //si no hi ha game.json, usam el mapa per defecte directament
+            idMapaActual = "planta1";
+            fitxerMapa = "mapes/planta1.map";
+        }
+
         mapa = CarregadorMapa.carrega(fitxerMapa);
-
-        //posam el jugador a la primera posició lliure del mapa
         jugador = new Jugador(trobaInicialX(), trobaInicialY());
-
         enemics = new ArrayList<>();
 
-        carregaEnemics(); //escanejam les 'e' del mapa i cream els enemics
-        carregaItemsMapa(); //escanejam les 'i' del mapa i posam els items
+        carregaEnemics();
+        carregaItemsMapa();
 
         explorat = new boolean[mapa.getAlcada()][mapa.getAmplada()];
         mapaRecord = new char[mapa.getAlcada()][mapa.getAmplada()];
         for (char[] fila : mapaRecord) java.util.Arrays.fill(fila, ' ');
-
-        //l'estat s'establirà a MENU_INICIAL des de Motor.start()
     }
 
     @Override
@@ -101,7 +116,6 @@ public class Joc extends Motor {
             return;
         }
 
-        //dins del joc, ESC obre el menú de pausa
         if (tecla.getKeyType() == KeyType.Escape) {
             opcioMenuPausa = 0;
             estat = Estat.PAUSA;
@@ -136,7 +150,6 @@ public class Joc extends Motor {
     }
 
     private void gestionaMenuInicial(KeyStroke tecla) {
-        //ENTER o barra espai inicia la partida
         if (tecla.getKeyType() == KeyType.Enter) {
             estat = Estat.MON;
             return;
@@ -144,9 +157,8 @@ public class Joc extends Motor {
         if (tecla.getKeyType() == KeyType.Character) {
             char c = tecla.getCharacter();
             if (c == ' ') { estat = Estat.MON; return; }
-            if (c == 's' || c == 'S') { corrent = false; return; } //sortir
+            if (c == 's' || c == 'S') { corrent = false; return; }
         }
-        //tecles de fletxa per seleccionar: 1=iniciar, 2=sortir
         if (tecla.getKeyType() == KeyType.Escape) { corrent = false; }
     }
 
@@ -160,18 +172,17 @@ public class Joc extends Motor {
             return;
         }
         if (tecla.getKeyType() == KeyType.Escape) {
-            //ESC dins pausa torna al joc
             estat = Estat.MON;
             return;
         }
         if (tecla.getKeyType() == KeyType.Enter) {
             switch (opcioMenuPausa) {
-                case 0 -> estat = Estat.MON;       //reanudar
-                case 1 -> { /* guardar (per implementar) */ estat = Estat.MON; }
-                case 2 -> corrent = false;          //sortir
+                case 0 -> estat = Estat.MON;
+                case 1 -> { GestorPartida.desa(this); estat = Estat.MON; }
+                case 2 -> { if (GestorPartida.existeix()) GestorPartida.carrega(this); estat = Estat.MON; }
+                case 3 -> corrent = false;
             }
         }
-        //tecles ràpides: r=reanudar, g=guardar, x=sortir
         if (tecla.getKeyType() == KeyType.Character) {
             char c = tecla.getCharacter();
             if (c == 'r' || c == 'R') { estat = Estat.MON; return; }
@@ -179,27 +190,29 @@ public class Joc extends Motor {
         }
     }
 
-    private void gestionaCombat(KeyStroke tecla) { //gestiona les tecles durant el combat
+    private void gestionaCombat(KeyStroke tecla) {
         if (tecla.getKeyType() != KeyType.Character) return;
         char c = tecla.getCharacter();
 
-        if (c >= '1' && c <= '9') { //usar ítem no gasta torn de l'enemic
+        if (c >= '1' && c <= '9') {
             jugador.usaItem(c - '1');
             return;
         }
 
-        if (c == 'f' || c == 'F') { //fugir torna al mapa
+        if (c == 'f' || c == 'F') {
             enemicCombat = null;
             estat = Estat.MON;
             return;
         }
 
-        if (c == 'a' || c == 'A') { //atacar
+        if (c == 'a' || c == 'A') {
             String nom = enemicCombat.getClass().getSimpleName().toUpperCase();
             int danyFet = SistemaCombat.atacaEnemic(jugador, enemicCombat);
             afegeixLog("Has atacat! " + nom + " ha rebut " + danyFet + " de dany.");
             if (enemicCombat.esMort()) {
                 afegeixLog(nom + " ha caigut!");
+                //guardam la posició original per persistir-la al fitxer de partida
+                enemicsMorts.add(new int[]{enemicCombat.getX(), enemicCombat.getY()});
                 enemics.remove(enemicCombat);
                 enemicCombat = null;
                 estat = Estat.MON;
@@ -220,7 +233,7 @@ public class Joc extends Motor {
         if (logCombat.size() > MAX_LOG) logCombat.remove(0);
     }
 
-    private void gestionaMoviment(KeyStroke tecla) { //gestiona el moviment pel mapa
+    private void gestionaMoviment(KeyStroke tecla) {
         if (tecla.getKeyType() == KeyType.Character) {
             char c = tecla.getCharacter();
             if (c == 'e' || c == 'E') {
@@ -228,7 +241,7 @@ public class Joc extends Motor {
                 estat = Estat.INVENTARI;
                 return;
             }
-            if (c >= '1' && c <= '9') { //usar ítem fora de combat també gasta torn
+            if (c >= '1' && c <= '9') {
                 jugador.usaItem(c - '1');
                 jugador.tickVeri();
                 jugador.tickFoc();
@@ -249,7 +262,7 @@ public class Joc extends Motor {
             default -> { return; }
         }
 
-        Enemic enemic = trobaEnemicA(nx, ny); //si hi ha un enemic, iniciam combat
+        Enemic enemic = trobaEnemicA(nx, ny);
         if (enemic != null) {
             enemicCombat = enemic;
             logCombat.clear();
@@ -274,24 +287,24 @@ public class Joc extends Motor {
         if (jugador.esMort()) corrent = false;
     }
 
-    private Enemic trobaEnemicA(int x, int y) { //cerca si hi ha un enemic a la posició donada
+    private Enemic trobaEnemicA(int x, int y) {
         for (Enemic e : enemics)
             if (e.isActiu() && e.getX() == x && e.getY() == y) return e;
         return null;
     }
 
-    private void recullItemSiNHiHa(int x, int y) { //si hi ha un item a (x,y) el recull
+    private void recullItemSiNHiHa(int x, int y) {
         ItemMapa trobat = null;
         for (ItemMapa im : itemsMapa) {
             if (im.getX() == x && im.getY() == y) { trobat = im; break; }
         }
         if (trobat == null) return;
         jugador.afegeixItem(trobat.getItem());
-        mapa.setCella(x, y, '.'); //treu la 'i' del mapa
+        mapa.setCella(x, y, '.');
         itemsMapa.remove(trobat);
     }
 
-    private void carregaItemsMapa() { //escana totes les 'i' del mapa i crea items alternats
+    private void carregaItemsMapa() {
         char[][] celles = mapa.getCelles();
         int comptador = 0;
         for (int y = 0; y < celles.length; y++) {
@@ -323,6 +336,11 @@ public class Joc extends Motor {
                     default       -> null;
                 };
                 if (enemic != null) {
+                    //sobreescrivim els stats amb els del game.json si en tenim
+                    if (config != null) {
+                        TipusEnemic def = config.getTipusEnemic(String.valueOf(celles[y][x]));
+                        if (def != null) enemic.aplicaDefinicio(def.vida, def.atac, def.radi, def.colorR, def.colorG, def.colorB);
+                    }
                     enemics.add(enemic);
                     mapa.setCella(x, y, '.');
                 }
@@ -388,7 +406,6 @@ public class Joc extends Motor {
                 }
             }
         }
-        //items i enemics visibles també es recorden
         for (ItemMapa im : itemsMapa) {
             if (visible[im.getY()][im.getX()]) mapaRecord[im.getY()][im.getX()] = im.getItem().getSimbol();
         }
@@ -398,7 +415,7 @@ public class Joc extends Motor {
         return visible;
     }
 
-    // Cerca '@' al mapa per la posició inicial del jugador; si no n'hi ha, usa la primera casella lliure
+    //cerca '@' al mapa per la posició inicial del jugador; si no n'hi ha, usa la primera casella lliure
     private int trobaInicialX() {
         char[][] celles = mapa.getCelles();
         for (int y = 0; y < celles.length; y++)

@@ -14,8 +14,8 @@ import com.iessineu.rondalles.joc.Joc;
 public class Main {
 
     //arguments acceptats:
-    //(res)          -> joc normal amb planta1.map
-    //-game <fitxer> -> joc normal amb un fitxer concret
+    //(res)          -> joc normal llegint game.json (mapa inicial definit al json)
+    //-game <id|fitxer> -> joc amb un id de mapa del game.json o fitxer directe
     //-mute          -> arranca sense música
     //mapes          -> obre s'editor de mapes buit
     //mapes <fitxer> -> obre s'editor de mapes amb un fitxer existent
@@ -31,8 +31,8 @@ public class Main {
             }
         }
 
-        //mode normal
-        String fitxer = "mapes/planta1.map";
+        //mode normal: per defecte usa el mapaInicial del game.json
+        String fitxer = "planta1"; //id del game.json; Joc el resol a un fitxer real
         boolean mut = false;
         for (int i = 0; i < args.length; i++) {
             if ((args[i].equals("-game") || args[i].equals("-mod")) && i + 1 < args.length) {
