@@ -1,21 +1,48 @@
 {
-  "mapaInicial": "planta1",
-  "mapaPerdre": "perduda",
-  "ordre": ["planta1", "planta2", "planta3", "planta4", "planta5"],
-  "mapes": [
-    {"id": "planta1", "fitxer": "mapes/planta1.map"},
-    {"id": "planta2", "fitxer": "mapes/planta2.xml"},
-    {"id": "planta3", "fitxer": "mapes/planta3.xml"},
-    {"id": "planta4", "fitxer": "mapes/planta4.xml"},
-    {"id": "planta5", "fitxer": "mapes/planta5.xml"},
-    {"id": "perduda", "fitxer": "mapes/planta1.map"}
-  ],
-  "tipusEnemics": [
-    {"simbol": "d", "nom": "DimoniBoiet",    "vida": 10, "atac": 5,    "radi": 5, "colorR": 180, "colorG": 40,  "colorB": 10,  "estatica": false},
-    {"simbol": "e", "nom": "DimoniBoiet",    "vida": 10, "atac": 5,    "radi": 5, "colorR": 180, "colorG": 40,  "colorB": 10,  "estatica": false},
-    {"simbol": "B", "nom": "Bubota",         "vida": 20, "atac": 5,    "radi": 7, "colorR": 180, "colorG": 180, "colorB": 255, "estatica": false},
-    {"simbol": "G", "nom": "Gegant",         "vida": 40, "atac": 10,   "radi": 4, "colorR": 200, "colorG": 120, "colorB": 50,  "estatica": false},
-    {"simbol": "D", "nom": "Drac",           "vida": 50, "atac": 20,   "radi": 8, "colorR": 220, "colorG": 30,  "colorB": 30,  "estatica": false},
-    {"simbol": "M", "nom": "NaMariaEnganxa", "vida": 30, "atac": 9999, "radi": 0, "colorR": 180, "colorG": 50,  "colorB": 220, "estatica": true}
-  ]
+  "configuracio": {
+    "mapaInicial": "planta1",
+    "mapaPerdre": "perduda"
+  },
+  "mapes": {
+    "ordre": ["planta1", "planta2", "planta3", "planta4", "planta5"],
+    "registres": [
+      {"id": "planta1", "fitxer": "mapes/planta1.map"},
+      {"id": "planta2", "fitxer": "mapes/planta2.xml"},
+      {"id": "planta3", "fitxer": "mapes/planta3.xml"},
+      {"id": "planta4", "fitxer": "mapes/planta4.xml"},
+      {"id": "planta5", "fitxer": "mapes/planta5.xml"},
+      {"id": "perduda", "fitxer": "mapes/planta1.map"}
+    ]
+  },
+  "enemics": {
+    "tipus": [
+      {"simbol": "d", "nom": "DimoniBoiet",    "vida": 10, "atac": 5,    "radi": 5, "colorR": 180, "colorG": 40,  "colorB": 10,  "estatica": false},
+      {"simbol": "e", "nom": "DimoniBoiet",    "vida": 10, "atac": 5,    "radi": 5, "colorR": 180, "colorG": 40,  "colorB": 10,  "estatica": false},
+      {"simbol": "B", "nom": "Bubota",         "vida": 20, "atac": 5,    "radi": 7, "colorR": 180, "colorG": 180, "colorB": 255, "estatica": false},
+      {"simbol": "G", "nom": "Gegant",         "vida": 40, "atac": 10,   "radi": 4, "colorR": 200, "colorG": 120, "colorB": 50,  "estatica": false},
+      {"simbol": "D", "nom": "Drac",           "vida": 50, "atac": 20,   "radi": 8, "colorR": 220, "colorG": 30,  "colorB": 30,  "estatica": false},
+      {"simbol": "M", "nom": "NaMariaEnganxa", "vida": 30, "atac": 9999, "radi": 0, "colorR": 180, "colorG": 50,  "colorB": 220, "estatica": true}
+    ],
+    "posicions": [
+      {"mapa": "planta1", "simbol": "M", "x": 28, "y": 2},
+      {"mapa": "planta1", "simbol": "G", "x": 28, "y": 3},
+      {"mapa": "planta1", "simbol": "B", "x": 28, "y": 4},
+      {"mapa": "planta1", "simbol": "D", "x": 28, "y": 5},
+      {"mapa": "planta1", "simbol": "e", "x": 28, "y": 6},
+      {"mapa": "planta1", "simbol": "B", "x": 58, "y": 6},
+      {"mapa": "planta1", "simbol": "D", "x": 80, "y": 6},
+      {"mapa": "planta1", "simbol": "B", "x": 40, "y": 7},
+      {"mapa": "planta1", "simbol": "D", "x": 86, "y": 14},
+      {"mapa": "planta1", "simbol": "B", "x": 27, "y": 15},
+      {"mapa": "planta1", "simbol": "D", "x": 48, "y": 15},
+      {"mapa": "planta1", "simbol": "B", "x": 58, "y": 16},
+      {"mapa": "planta1", "simbol": "B", "x": 27, "y": 22},
+      {"mapa": "planta1", "simbol": "B", "x": 30, "y": 22},
+      {"mapa": "planta1", "simbol": "B", "x": 27, "y": 25},
+      {"mapa": "planta1", "simbol": "D", "x": 60, "y": 29},
+      {"mapa": "planta1", "simbol": "B", "x": 25, "y": 30},
+      {"mapa": "planta1", "simbol": "D", "x": 26, "y": 35},
+      {"mapa": "planta1", "simbol": "D", "x": 77, "y": 35}
+    ]
+  }
 }

@@ -2,6 +2,7 @@ package com.iessineu.rondalles.db;
 
 import com.iessineu.rondalles.joc.ConfigGame;
 import com.iessineu.rondalles.joc.MapaConfig;
+import com.iessineu.rondalles.joc.PosicioEnemic;
 import com.iessineu.rondalles.joc.TipusEnemic;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -44,9 +45,19 @@ public class PartidaRepository {
                     estatica INTEGER NOT NULL
                 )""");
 
-            if (taulaBuida(conn, "configuracio"))  ompleConfiguracio(conn, config);
-            if (taulaBuida(conn, "mapes"))         ompleMapes(conn, config);
-            if (taulaBuida(conn, "tipus_enemics")) ompleEnemics(conn, config);
+            st.executeUpdate("""
+                CREATE TABLE IF NOT EXISTS posicions_enemics (
+                    id     INTEGER PRIMARY KEY AUTOINCREMENT,
+                    mapa   TEXT NOT NULL,
+                    simbol TEXT NOT NULL,
+                    x      INTEGER NOT NULL,
+                    y      INTEGER NOT NULL
+                )""");
+
+            if (taulaBuida(conn, "configuracio"))    ompleConfiguracio(conn, config);
+            if (taulaBuida(conn, "mapes"))           ompleMapes(conn, config);
+            if (taulaBuida(conn, "tipus_enemics"))   ompleEnemics(conn, config);
+            if (taulaBuida(conn, "posicions_enemics")) omplePosicions(conn, config);
 
         } catch (Exception e) {
             System.err.println("Error inicialitzant BD: " + e.getMessage());
@@ -62,15 +73,16 @@ public class PartidaRepository {
 
     private static void ompleConfiguracio(Connection conn, ConfigGame config) throws Exception {
         try (PreparedStatement ps = conn.prepareStatement("INSERT INTO configuracio VALUES (?,?)")) {
-            ps.setString(1, "mapaInicial"); ps.setString(2, config.mapaInicial); ps.executeUpdate();
-            ps.setString(1, "mapaPerdre");  ps.setString(2, config.mapaPerdre);  ps.executeUpdate();
+            ps.setString(1, "mapaInicial"); ps.setString(2, config.getMapaInicial()); ps.executeUpdate();
+            ps.setString(1, "mapaPerdre");  ps.setString(2, config.getMapaPerdre());  ps.executeUpdate();
         }
     }
 
     private static void ompleMapes(Connection conn, ConfigGame config) throws Exception {
+        if (config.mapes == null) return;
         try (PreparedStatement ps = conn.prepareStatement("INSERT INTO mapes VALUES (?,?,?)")) {
-            for (int i = 0; i < config.ordre.size(); i++) {
-                String id = config.ordre.get(i);
+            for (int i = 0; i < config.mapes.ordre.size(); i++) {
+                String id = config.mapes.ordre.get(i);
                 MapaConfig mc = config.getMapaConfig(id);
                 if (mc == null) continue;
                 ps.setString(1, id);
@@ -82,9 +94,10 @@ public class PartidaRepository {
     }
 
     private static void ompleEnemics(Connection conn, ConfigGame config) throws Exception {
+        if (config.enemics == null || config.enemics.tipus == null) return;
         try (PreparedStatement ps = conn.prepareStatement(
                 "INSERT OR IGNORE INTO tipus_enemics VALUES (?,?,?,?,?,?,?,?,?)")) {
-            for (TipusEnemic t : config.tipusEnemics) {
+            for (TipusEnemic t : config.enemics.tipus) {
                 ps.setString(1, t.simbol);
                 ps.setString(2, t.nom);
                 ps.setInt(3, t.vida);
@@ -94,6 +107,20 @@ public class PartidaRepository {
                 ps.setInt(7, t.colorG);
                 ps.setInt(8, t.colorB);
                 ps.setInt(9, t.estatica ? 1 : 0);
+                ps.executeUpdate();
+            }
+        }
+    }
+
+    private static void omplePosicions(Connection conn, ConfigGame config) throws Exception {
+        if (config.enemics == null || config.enemics.posicions == null) return;
+        try (PreparedStatement ps = conn.prepareStatement(
+                "INSERT INTO posicions_enemics (mapa, simbol, x, y) VALUES (?,?,?,?)")) {
+            for (PosicioEnemic p : config.enemics.posicions) {
+                ps.setString(1, p.mapa);
+                ps.setString(2, p.simbol);
+                ps.setInt(3, p.x);
+                ps.setInt(4, p.y);
                 ps.executeUpdate();
             }
         }
