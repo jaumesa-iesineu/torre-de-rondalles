@@ -396,85 +396,103 @@ public class Renderitzador { // classe per gestionar la pantalla
             pintaText(colSep, i, "║", gris);
         pintaText(colSep, rows - 6, "╩", blanc);
 
-        //--- ZONA ESQUERRA: enemic + art ---
+        //--- ZONA ESQUERRA: caixa enemic + art ---
         String nomEnemic = enemic.getClass().getSimpleName().toUpperCase();
-        pintaText(4, 4, nomEnemic, vermell);
-        int fila = 5;
-        switch(enemic.getLletra()){
-            case 'd'->{
+        int xBoxEn = 4;
+        int wBoxEn = colSep - 9; //amplada exterior de la caixa
+        String nomEn = nomEnemic.length() > wBoxEn - 6 ? nomEnemic.substring(0, wBoxEn - 6) : nomEnemic;
+        pintaText(xBoxEn, 3, "╔═ " + nomEn + " " + "═".repeat(wBoxEn - nomEn.length() - 5) + "╗", vermell);
+        pintaText(xBoxEn, 4, "║", vermell);
+        pintaText(xBoxEn + 2, 4, barraVida(enemic.getVida(), enemic.getVidaMaxima(), 20), colorVida(enemic.getVida(), enemic.getVidaMaxima()));
+        pintaText(xBoxEn + wBoxEn - 1, 4, "║", vermell);
+        pintaText(xBoxEn, 5, "╚" + "═".repeat(wBoxEn - 2) + "╝", vermell);
+
+        //art ascii de l'enemic
+        int fila = 7;
+        switch (enemic.getLletra()) {
+            case 'd' -> {
                 for (String linia : DIMONI_ART) {
                     if (fila >= rows - 8) break;
                     pintaText(4, fila, linia, new TextColor.RGB(200, 70, 70));
                     fila++;
-                }   
+                }
             }
-            case 'D'->{
+            case 'D' -> {
                 for (String linia : DRAC_ART) {
                     if (fila >= rows - 8) break;
                     pintaText(4, fila, linia, new TextColor.RGB(200, 70, 70));
                     fila++;
                 }
             }
-            case 'B'->{
+            case 'B' -> {
                 for (String linia : BUBOTA_ART) {
                     if (fila >= rows - 8) break;
                     pintaText(4, fila, linia, new TextColor.RGB(200, 70, 70));
                     fila++;
                 }
             }
-            case 'G'->{
+            case 'G' -> {
                 for (String linia : GEGANT_ART) {
                     if (fila >= rows - 8) break;
                     pintaText(4, fila, linia, new TextColor.RGB(200, 70, 70));
                     fila++;
                 }
             }
-            case 'M'->{
+            case 'M' -> {
                 for (String linia : DRAC_ART) {
                     if (fila >= rows - 8) break;
                     pintaText(4, fila, linia, new TextColor.RGB(200, 70, 70));
                     fila++;
                 }
             }
-        
-        
         }
 
-        int filaHpEnemic = fila + 1;
-        if (filaHpEnemic < rows - 7) {
-            pintaText(4, filaHpEnemic, barraVida(enemic.getVida(), enemic.getVidaMaxima(), 22),
-                colorVida(enemic.getVida(), enemic.getVidaMaxima()));
-        }
-
-        //--- ZONA DRETA: HUD del jugador ---
+        //--- ZONA DRETA: caixa jugador + stats + accions ---
+        TextColor verd = new TextColor.RGB(80, 200, 120);
         int cHud = colSep + 3;
-        int fHud = 4;
+        int wBoxJug = cols - colSep - 6;
+        int fHud = 3;
 
-        //títol del panell
-        pintaText(cHud, fHud, "[ AVENTURER ]", new TextColor.RGB(80, 200, 120));
+        //caixa del jugador (verda per diferenciar-la de l'enemic)
+        pintaText(cHud, fHud, "╔═ AVENTURER " + "═".repeat(Math.max(0, wBoxJug - 14)) + "╗", verd);
+        fHud++;
+        pintaText(cHud, fHud, "║", verd);
+        pintaText(cHud + 2, fHud, barraVida(jugador.getVida(), jugador.getVidaMaxima(), 16), colorVida(jugador.getVida(), jugador.getVidaMaxima()));
+        pintaText(cHud + wBoxJug - 1, fHud, "║", verd);
+        fHud++;
+        pintaText(cHud, fHud, "╚" + "═".repeat(wBoxJug - 2) + "╝", verd);
         fHud += 2;
 
-        //barra de vida
-        pintaText(cHud, fHud, barraVida(jugador.getVida(), jugador.getVidaMaxima(), 18),
-            colorVida(jugador.getVida(), jugador.getVidaMaxima()));
-        fHud += 2;
+        //stats del jugador
+        pintaText(cHud, fHud, "ATK  " + jugador.getAtacTotal(), new TextColor.RGB(220, 130, 50));
+        fHud++;
+        pintaText(cHud, fHud, "DEF  " + jugador.getDefensaTotal(), new TextColor.RGB(100, 160, 220));
+        fHud++;
 
-        //stats
-        pintaText(cHud, fHud,     "ATAC  " + jugador.getAtacTotal(), new TextColor.RGB(220, 130, 50));
-        pintaText(cHud, fHud + 1, "DEF   " + jugador.getDefensaTotal(), new TextColor.RGB(100, 160, 220));
-        if (jugador.getTornsVeri() > 0)
-            pintaText(cHud, fHud + 2, "VERI  " + jugador.getTornsVeri() + " torns", new TextColor.RGB(100, 220, 80));
-        fHud += 4;
+        if (jugador.getTornsVeri() > 0) {
+            pintaText(cHud, fHud, "VERI " + jugador.getTornsVeri() + " torns", new TextColor.RGB(100, 220, 80));
+            fHud++;
+        }
+        if (jugador.getTornsFoc() > 0) {
+            pintaText(cHud, fHud, "FOC  " + jugador.getTornsFoc() + " torns", new TextColor.RGB(220, 120, 30));
+            fHud++;
+        }
+        if (jugador.getTornsGel() > 0) {
+            pintaText(cHud, fHud, "GEL  " + jugador.getTornsGel() + " torns", new TextColor.RGB(80, 180, 220));
+            fHud++;
+        }
+        fHud++;
 
-        //separador
         pintaText(cHud, fHud, "─".repeat(cols - colSep - 5), gris);
-        fHud += 2;
+        fHud++;
+        fHud++;
 
-        //accions
+        //accions disponibles
         pintaText(cHud, fHud, "ACCIONS", new TextColor.RGB(160, 160, 160));
         fHud++;
         pintaText(cHud, fHud, "[ A ]  Atacar", blanc);
         fHud++;
+
         for (int i = 0; i < com.iessineu.rondalles.inventari.Inventari.MAX_SLOTS; i++) {
             var slot = jugador.getInventari().getSlot(i);
             if (slot == null) continue;
@@ -482,6 +500,7 @@ public class Renderitzador { // classe per gestionar la pantalla
             pintaText(cHud, fHud, "[ " + (i + 1) + " ]  " + slot.item().getSimbol() + " " + slot.item().getNom() + quant, daurat);
             fHud++;
         }
+
         pintaText(cHud, fHud, "[ F ]  Fugir", gris);
 
         //--- CAIXA DE LOG (amplada total, sota tot) ---
