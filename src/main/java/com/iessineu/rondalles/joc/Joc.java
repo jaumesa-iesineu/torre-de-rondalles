@@ -6,6 +6,7 @@ package com.iessineu.rondalles.joc;
 
 import com.iessineu.rondalles.combat.SistemaCombat;
 import com.iessineu.rondalles.db.PartidaRepository;
+import java.util.List;
 import com.iessineu.rondalles.entitats.Bubota;
 import com.iessineu.rondalles.entitats.DimoniBoiet;
 import com.iessineu.rondalles.entitats.Drac;
@@ -82,7 +83,7 @@ public class Joc extends Motor {
                 idMapaActual = fitxerMapa;
                 fitxerMapa = mc.fitxer;
             } else {
-                idMapaActual = config.mapaInicial;
+                idMapaActual = config.getMapaInicial();
                 MapaConfig inicial = config.getMapaConfig(idMapaActual);
                 if (inicial != null) fitxerMapa = inicial.fitxer;
             }
@@ -224,7 +225,7 @@ public class Joc extends Motor {
             jugador.tickGel();
             int danyRebut = SistemaCombat.atacaJugador(enemicCombat, jugador);
             afegeixLog(nom + " contraataca! Has rebut " + danyRebut + " de dany.");
-            if (jugador.esMort()) corrent = false;
+            if (jugador.esMort()) { GestorPartida.esborra(); corrent = false; }
         }
     }
 
@@ -246,7 +247,7 @@ public class Joc extends Motor {
                 jugador.tickVeri();
                 jugador.tickFoc();
                 jugador.tickGel();
-                if (jugador.esMort()) corrent = false;
+                if (jugador.esMort()) { GestorPartida.esborra(); corrent = false; }
                 return;
             }
         }
@@ -284,7 +285,7 @@ public class Joc extends Motor {
             }
         }
 
-        if (jugador.esMort()) corrent = false;
+        if (jugador.esMort()) { GestorPartida.esborra(); corrent = false; }
     }
 
     private Enemic trobaEnemicA(int x, int y) {
@@ -324,28 +325,44 @@ public class Joc extends Motor {
     }
 
     private void carregaEnemics() {
+        //si el game.json té posicions per aquest mapa, les usam (no escanejam el mapa)
+        if (config != null) {
+            List<PosicioEnemic> posicions = config.getPosicionsPerMapa(idMapaActual);
+            if (!posicions.isEmpty()) {
+                for (PosicioEnemic p : posicions) {
+                    Enemic enemic = creaEnemic(p.simbol, p.x, p.y);
+                    if (enemic != null) enemics.add(enemic);
+                }
+                return;
+            }
+        }
+        //fallback: llegim els simbols directament del mapa (mapes sense posicions al json)
         char[][] celles = mapa.getCelles();
         for (int y = 0; y < celles.length; y++) {
             for (int x = 0; x < celles[y].length; x++) {
-                Enemic enemic = switch (celles[y][x]) {
-                    case 'e', 'd' -> new DimoniBoiet(x, y);
-                    case 'B'      -> new Bubota(x, y);
-                    case 'D'      -> new Drac(x, y);
-                    case 'G'      -> new Gegant(x, y);
-                    case 'M'      -> new NaMariaEnganxa(x, y);
-                    default       -> null;
-                };
+                Enemic enemic = creaEnemic(String.valueOf(celles[y][x]), x, y);
                 if (enemic != null) {
-                    //sobreescrivim els stats amb els del game.json si en tenim
-                    if (config != null) {
-                        TipusEnemic def = config.getTipusEnemic(String.valueOf(celles[y][x]));
-                        if (def != null) enemic.aplicaDefinicio(def.vida, def.atac, def.radi, def.colorR, def.colorG, def.colorB);
-                    }
                     enemics.add(enemic);
                     mapa.setCella(x, y, '.');
                 }
             }
         }
+    }
+
+    private Enemic creaEnemic(String simbol, int x, int y) {
+        Enemic enemic = switch (simbol) {
+            case "e", "d" -> new DimoniBoiet(x, y);
+            case "B"      -> new Bubota(x, y);
+            case "D"      -> new Drac(x, y);
+            case "G"      -> new Gegant(x, y);
+            case "M"      -> new NaMariaEnganxa(x, y);
+            default       -> null;
+        };
+        if (enemic != null && config != null) {
+            TipusEnemic def = config.getTipusEnemic(simbol);
+            if (def != null) enemic.aplicaDefinicio(def.vida, def.atac, def.radi, def.colorR, def.colorG, def.colorB);
+        }
+        return enemic;
     }
 
     @Override

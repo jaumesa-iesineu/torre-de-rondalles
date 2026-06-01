@@ -80,6 +80,11 @@ public class GestorPartida {
         return new File(FITXER).exists();
     }
 
+    //quan el jugador perd, esborra la partida guardada
+    public static void esborra() {
+        new File(FITXER).delete();
+    }
+
     public static void carrega(Joc joc) {
         if (!existeix()) return;
         try (DataInputStream dis = new DataInputStream(new FileInputStream(FITXER))) {
