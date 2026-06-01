@@ -110,4 +110,15 @@ public class RegistreItems {
     public Map<String, Arma>     todesLesArmes()     { return armes; }
     public Map<String, Armadura> todesLesArmadures() { return armadures; }
     public Map<String, Pocio>    totesLesPocions()   { return pocions; }
+
+    //cerca un item pel nom en totes les categories; retorna null si no el troba
+    public Item itemPerNom(String nom) {
+        for (Map.Entry<String, Pocio> e : pocions.entrySet())
+            if (e.getValue().getNom().equals(nom)) return pocio(e.getKey());
+        for (Map.Entry<String, Arma> e : armes.entrySet())
+            if (e.getValue().getNom().equals(nom)) return arma(e.getKey());
+        for (Map.Entry<String, Armadura> e : armadures.entrySet())
+            if (e.getValue().getNom().equals(nom)) return armadura(e.getKey());
+        return null;
+    }
 }
