@@ -2,11 +2,13 @@ package com.iessineu.rondalles.joc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 //POJO arrel que Gson omple amb tot el game.json
 public class ConfigGame {
 
     public Configuracio configuracio;
+    public Map<String, int[]> colorsPresets; //ex: {"vermellCremat": [180,40,10], ...}
     public MapesGroup mapes;
     public EnemicsGroup enemics;
 
@@ -25,11 +27,11 @@ public class ConfigGame {
         public List<PosicioEnemic> posicions;
     }
 
-    //helpers per cercar per id o simbol
+    //cerca el tipus que conté el simbol donat dins la seva llista de simbols
     public TipusEnemic getTipusEnemic(String simbol) {
         if (enemics == null || enemics.tipus == null) return null;
         for (TipusEnemic t : enemics.tipus)
-            if (t.simbol.equals(simbol)) return t;
+            if (t.simbols != null && t.simbols.contains(simbol)) return t;
         return null;
     }
 
