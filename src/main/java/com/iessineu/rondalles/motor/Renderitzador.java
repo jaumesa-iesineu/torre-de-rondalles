@@ -338,6 +338,27 @@ public class Renderitzador { // classe per gestionar la pantalla
     "            ,__) /",
     "             `..'"
 };
+    private static final String[] MARIA_ART = {
+        "        _____        ",
+        "       /     \\       ",
+        "      | () () |      ",
+        "       \\  ^  /       ",
+        "        |||||        ",
+        "   _____|||||_____   ",
+        "  /  Na Maria    \\   ",
+        " /   Enganxa!!!   \\  ",
+        "|   ,         ,   |  ",
+        "|  /  \\     /  \\  |  ",
+        " \\ \\___\\   /___/ /   ",
+        "  \\.....   ...../    ",
+        "    \\  | | | |  /    ",
+        "     \\_|_|_|_|_/     ",
+        "       |     |       ",
+        "      /|     |\\      ",
+        "     ( |     | )     ",
+        "      `'     '`      "
+    };
+
     private static final String[] DRAC_ART = {
         "      ^                       ^",
         "      |\\   \\        /        /|",
@@ -407,44 +428,21 @@ public class Renderitzador { // classe per gestionar la pantalla
         pintaText(xBoxEn + wBoxEn - 1, 4, "║", vermell);
         pintaText(xBoxEn, 5, "╚" + "═".repeat(wBoxEn - 2) + "╝", vermell);
 
-        //art ascii de l'enemic
+        //art ascii de l'enemic amb el seu color real
+        TextColor colorEnemic = enemic.getColor();
         int fila = 7;
-        switch (enemic.getLletra()) {
-            case 'd' -> {
-                for (String linia : DIMONI_ART) {
-                    if (fila >= rows - 8) break;
-                    pintaText(4, fila, linia, new TextColor.RGB(200, 70, 70));
-                    fila++;
-                }
-            }
-            case 'D' -> {
-                for (String linia : DRAC_ART) {
-                    if (fila >= rows - 8) break;
-                    pintaText(4, fila, linia, new TextColor.RGB(200, 70, 70));
-                    fila++;
-                }
-            }
-            case 'B' -> {
-                for (String linia : BUBOTA_ART) {
-                    if (fila >= rows - 8) break;
-                    pintaText(4, fila, linia, new TextColor.RGB(200, 70, 70));
-                    fila++;
-                }
-            }
-            case 'G' -> {
-                for (String linia : GEGANT_ART) {
-                    if (fila >= rows - 8) break;
-                    pintaText(4, fila, linia, new TextColor.RGB(200, 70, 70));
-                    fila++;
-                }
-            }
-            case 'M' -> {
-                for (String linia : DRAC_ART) {
-                    if (fila >= rows - 8) break;
-                    pintaText(4, fila, linia, new TextColor.RGB(200, 70, 70));
-                    fila++;
-                }
-            }
+        String[] art = switch (enemic.getLletra()) {
+            case 'd', 'e' -> DIMONI_ART;
+            case 'D'      -> DRAC_ART;
+            case 'B'      -> BUBOTA_ART;
+            case 'G'      -> GEGANT_ART;
+            case 'M'      -> MARIA_ART;
+            default       -> new String[]{};
+        };
+        for (String linia : art) {
+            if (fila >= rows - 8) break;
+            pintaText(4, fila, linia, colorEnemic);
+            fila++;
         }
 
         //--- ZONA DRETA: caixa jugador + stats + accions ---
