@@ -4,12 +4,17 @@
  */
 package com.iessineu.rondalles.entitats;
 
+import com.googlecode.lanterna.TextColor;
+
 /**
  *
  * @author jaume, dani, sergi, kanhai i pere
  */
 public abstract class Enemic extends Entitat { // extends Entitat es perque extends la classe Entitat
-    
+
+    //color carregat des del game.json; null = usa el color hardcoded de la subclasse
+    protected TextColor colorDef = null;
+
     char lletra;
     //màquina d'estats
     public enum EstatEnemic {
@@ -154,4 +159,13 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
     public int getAtac() { return atac; } //necessari pel sistema de combat
 
     public int getVidaMaxima() { return vidaMaxima; }
+
+    //aplica stats i color del game.json sobreescrivint els valors hardcoded
+    public void aplicaDefinicio(int vida, int atac, int radi, int r, int g, int b) {
+        this.vida = vida;
+        this.vidaMaxima = vida;
+        this.atac = atac;
+        this.radDeteccio = radi;
+        this.colorDef = new TextColor.RGB(r, g, b);
+    }
 }

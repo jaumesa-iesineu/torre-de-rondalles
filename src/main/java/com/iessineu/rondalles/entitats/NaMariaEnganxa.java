@@ -19,6 +19,7 @@ public class NaMariaEnganxa extends Enemic { // trampa estàtica — no es mou, 
 
     @Override
     public TextColor getColor() { // lila
+        if (colorDef != null) return colorDef;
         return new TextColor.RGB(180, 50, 220);
     }
 

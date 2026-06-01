@@ -25,6 +25,7 @@ public class Drac extends Enemic { // boss final de la planta 5
 
     @Override
     public TextColor getColor() { // vermell intens
+        if (colorDef != null) return colorDef;
         return new TextColor.RGB(220, 30, 30);
     }
 

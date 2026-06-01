@@ -24,6 +24,7 @@ public class Gegant extends Enemic { // extends Enemic perquè és una subclasse
 
     @Override
     public TextColor getColor() { // ataronjat fosc
+        if (colorDef != null) return colorDef;
         return new TextColor.RGB(200, 120, 50);
     }
 

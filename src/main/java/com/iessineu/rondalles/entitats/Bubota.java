@@ -24,6 +24,7 @@ public class Bubota extends Enemic { // extends Enemic perquè és una subclasse
 
     @Override
     public TextColor getColor() { // blanc blavós
+        if (colorDef != null) return colorDef;
         return new TextColor.RGB(180, 180, 255);
     }
 
