@@ -46,6 +46,13 @@ public class Joc extends Motor {
     //el fitxer .game que hem de carregar
     private String fitxerMapa;
 
+    //fog of war: caselles que el jugador ja ha vist alguna vegada
+    private boolean[][] explorat;
+    //últim caràcter vist a cada casella (inclou items i enemics)
+    private char[][] mapaRecord;
+
+    private static final int RADI_VISIO = 10;
+
     //índex de l'opció seleccionada al menú de pausa (0=reanudar, 1=guardar, 2=sortir)
     private int opcioMenuPausa = 0;
     private static final String[] OPCIONS_PAUSA = {"Reanudar", "Guardar", "Sortir"};
@@ -69,6 +76,10 @@ public class Joc extends Motor {
 
         carregaEnemics(); //escanejam les 'e' del mapa i cream els enemics
         carregaItemsMapa(); //escanejam les 'i' del mapa i posam els items
+
+        explorat = new boolean[mapa.getAlcada()][mapa.getAmplada()];
+        mapaRecord = new char[mapa.getAlcada()][mapa.getAmplada()];
+        for (char[] fila : mapaRecord) java.util.Arrays.fill(fila, ' ');
 
         //l'estat s'establirà a MENU_INICIAL des de Motor.start()
     }
@@ -326,16 +337,60 @@ public class Joc extends Motor {
                 return;
             }
             List<Entitat> totes = new ArrayList<>(enemics);
+            boolean[][] visible = actualitzaVisio();
             if (estat == Estat.COMBAT) {
                 renderer.dibuixaCombat(enemicCombat, jugador, logCombat);
             } else if (estat == Estat.INVENTARI) {
-                renderer.dibuixaInventari(mapa, jugador.getX(), jugador.getY(), totes, jugador, itemsMapa);
+                renderer.dibuixaInventari(mapa, jugador.getX(), jugador.getY(), totes, jugador, itemsMapa, visible, explorat, mapaRecord);
             } else {
-                renderer.dibuixa(mapa, jugador.getX(), jugador.getY(), totes, jugador, itemsMapa);
+                renderer.dibuixa(mapa, jugador.getX(), jugador.getY(), totes, jugador, itemsMapa, visible, explorat, mapaRecord);
             }
         } catch (IOException ex) {
             corrent = false;
         }
+    }
+
+    //Bresenham des del jugador fins a (x1,y1); retorna false si una paret talla la línia
+    private boolean teLiniaDVista(int x0, int y0, int x1, int y1, char[][] celles) {
+        int dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0);
+        int sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+        int err = dx - dy;
+        int cx = x0, cy = y0;
+        while (cx != x1 || cy != y1) {
+            int e2 = 2 * err;
+            if (e2 > -dy) { err -= dy; cx += sx; }
+            if (e2 < dx)  { err += dx; cy += sy; }
+            if (cx == x1 && cy == y1) break;
+            if (cy >= 0 && cy < celles.length && cx >= 0 && cx < celles[cy].length)
+                if (celles[cy][cx] == '#') return false;
+        }
+        return true;
+    }
+
+    //calcula quines caselles veu el jugador i actualitza explorat i mapaRecord
+    private boolean[][] actualitzaVisio() {
+        boolean[][] visible = new boolean[mapa.getAlcada()][mapa.getAmplada()];
+        char[][] celles = mapa.getCelles();
+        int jx = jugador.getX(), jy = jugador.getY();
+        for (int y = 0; y < mapa.getAlcada(); y++) {
+            for (int x = 0; x < mapa.getAmplada(); x++) {
+                double dist = Math.sqrt((x - jx) * (x - jx) + (y - jy) * (y - jy));
+                if (dist > RADI_VISIO) continue;
+                if (teLiniaDVista(jx, jy, x, y, celles)) {
+                    visible[y][x] = true;
+                    explorat[y][x] = true;
+                    mapaRecord[y][x] = celles[y][x];
+                }
+            }
+        }
+        //items i enemics visibles també es recorden
+        for (ItemMapa im : itemsMapa) {
+            if (visible[im.getY()][im.getX()]) mapaRecord[im.getY()][im.getX()] = im.getItem().getSimbol();
+        }
+        for (Enemic e : enemics) {
+            if (e.isActiu() && visible[e.getY()][e.getX()]) mapaRecord[e.getY()][e.getX()] = e.getSimbol();
+        }
+        return visible;
     }
 
     // Cerca '@' al mapa per la posició inicial del jugador; si no n'hi ha, usa la primera casella lliure

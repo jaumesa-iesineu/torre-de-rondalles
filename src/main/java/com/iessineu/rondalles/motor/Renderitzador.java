@@ -67,7 +67,7 @@ public class Renderitzador { // classe per gestionar la pantalla
         screen.setCursorPosition(null);
     }
 
-    public void dibuixa(Mapa mapa, int jx, int jy, List<Entitat> entitats, com.iessineu.rondalles.entitats.Jugador jugador, List<com.iessineu.rondalles.inventari.ItemMapa> itemsMapa) throws IOException {
+    public void dibuixa(Mapa mapa, int jx, int jy, List<Entitat> entitats, com.iessineu.rondalles.entitats.Jugador jugador, List<com.iessineu.rondalles.inventari.ItemMapa> itemsMapa, boolean[][] visible, boolean[][] explorat, char[][] mapaRecord) throws IOException {
         screen.clear();
 
         char[][] celles = mapa.getCelles();
@@ -78,35 +78,41 @@ public class Renderitzador { // classe per gestionar la pantalla
         int offsetX = Math.max(0, (cols - mapa.getAmplada()) / 2);
         int offsetY = Math.max(0, (files - mapa.getAlcada()) / 2);
 
+        TextColor colorMemoria = new TextColor.RGB(45, 45, 55);
+
         for (int y = 0; y < celles.length; y++) {
             for (int x = 0; x < celles[y].length; x++) {
-                double dist = Math.sqrt((x - jx) * (x - jx) + (y - jy) * (y - jy));
-                if (dist > RADI_LLANTERNA) continue;
-
-                double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.75;//Modificar degradat de la visió.
-                TextColor colorBase = colorPerCasella(celles[y][x]);
-                TextColor colorFinal = fosqueix(colorBase, factor);
-
-                TextColor fonsFinal = fosqueix(fonsCasella(celles[y][x]), factor);
-                screen.setCharacter(offsetX + x, offsetY + y, new TextCharacter(celles[y][x], colorFinal, fonsFinal));
+                if (visible[y][x]) {
+                    double dist = Math.sqrt((x - jx) * (x - jx) + (y - jy) * (y - jy));
+                    double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.75;
+                    TextColor colorFinal = fosqueix(colorPerCasella(celles[y][x]), factor);
+                    TextColor fonsFinal = fosqueix(fonsCasella(celles[y][x]), factor);
+                    screen.setCharacter(offsetX + x, offsetY + y, new TextCharacter(celles[y][x], colorFinal, fonsFinal));
+                } else if (explorat[y][x]) {
+                    //casella recordada: mostram l'últim que el jugador va veure
+                    screen.setCharacter(offsetX + x, offsetY + y, new TextCharacter(mapaRecord[y][x], colorMemoria, TextColor.ANSI.BLACK));
+                }
+                //si no explorada: negre (no dibuixam res)
             }
         }
 
-        //pintem les entitats actives per damunt del mapa
+        //pintem les entitats actives per damunt del mapa (només si el jugador les veu ara)
         for (Entitat e : entitats) {
             if (!e.isActiu()) continue;
-            double dist = Math.sqrt((e.getX() - jx) * (e.getX() - jx) + (e.getY() - jy) * (e.getY() - jy));
-            if (dist > RADI_LLANTERNA) continue;
+            if (e.getY() >= visible.length || e.getX() >= visible[e.getY()].length) continue;
+            if (!visible[e.getY()][e.getX()]) continue;
 
+            double dist = Math.sqrt((e.getX() - jx) * (e.getX() - jx) + (e.getY() - jy) * (e.getY() - jy));
             double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.5;
             TextColor color = fosqueix(e.getColor(), factor);
             screen.setCharacter(offsetX + e.getX(), offsetY + e.getY(), new TextCharacter(e.getSimbol(), color, TextColor.ANSI.BLACK));
         }
 
-        //pintem els ítems del terra amb el símbol i color real
+        //pintem els ítems del terra (només si el jugador els veu ara)
         for (com.iessineu.rondalles.inventari.ItemMapa im : itemsMapa) {
+            if (im.getY() >= visible.length || im.getX() >= visible[im.getY()].length) continue;
+            if (!visible[im.getY()][im.getX()]) continue;
             double dist = Math.sqrt((im.getX() - jx) * (im.getX() - jx) + (im.getY() - jy) * (im.getY() - jy));
-            if (dist > RADI_LLANTERNA) continue;
             double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.75;
             TextColor color = fosqueix(im.getItem().getColor(), factor);
             screen.setCharacter(offsetX + im.getX(), offsetY + im.getY(), new TextCharacter(im.getItem().getSimbol(), color, TextColor.ANSI.BLACK));
@@ -448,8 +454,8 @@ public class Renderitzador { // classe per gestionar la pantalla
         return new TextColor.RGB(180, 180, 180);
     }
 
-    public void dibuixaInventari(Mapa mapa, int jx, int jy, List<Entitat> entitats, com.iessineu.rondalles.entitats.Jugador jugador, List<com.iessineu.rondalles.inventari.ItemMapa> itemsMapa) throws IOException {
-        dibuixa(mapa, jx, jy, entitats, jugador, itemsMapa);
+    public void dibuixaInventari(Mapa mapa, int jx, int jy, List<Entitat> entitats, com.iessineu.rondalles.entitats.Jugador jugador, List<com.iessineu.rondalles.inventari.ItemMapa> itemsMapa, boolean[][] visible, boolean[][] explorat, char[][] mapaRecord) throws IOException {
+        dibuixa(mapa, jx, jy, entitats, jugador, itemsMapa, visible, explorat, mapaRecord);
 
         int cols = screen.getTerminalSize().getColumns();
         int rows = screen.getTerminalSize().getRows();
