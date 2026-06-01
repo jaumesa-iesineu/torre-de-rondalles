@@ -22,7 +22,14 @@ public class Drac extends Enemic { // boss final de la planta 5
             canviaEstat(EstatEnemic.PATRULLANT); // si no, patrulla
         }
     }
-
+    @Override
+public void actualitzaIAambRadi(Jugador jugador, int radEfectiu) {
+    if (distanciaAl(jugador) < radEfectiu) {
+        canviaEstat(EstatEnemic.PERSEGUINT);
+    } else {
+        canviaEstat(EstatEnemic.PATRULLANT);
+    }
+}
     @Override
     public TextColor getColor() { // vermell intens
         return new TextColor.RGB(220, 30, 30);

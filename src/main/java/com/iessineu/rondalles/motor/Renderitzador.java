@@ -129,6 +129,11 @@ public class Renderitzador { // classe per gestionar la pantalla
             case 'e' -> new TextColor.RGB(200, 50, 50); //enemic
             case 'i' -> new TextColor.RGB(220, 180, 50); //item
             case 'N' -> new TextColor.RGB(80, 200, 220); //npc
+            case '~' -> new TextColor.RGB(50, 100, 200);  // aigua
+            case ',' -> new TextColor.RGB(60, 160, 60);   // gespa
+            case '=' -> new TextColor.RGB(160, 160, 160); // metall
+            case '*' -> new TextColor.RGB(180, 230, 255); // gel
+            case '<' -> new TextColor.RGB(200, 200, 50);  // escales
             default -> new TextColor.RGB(90, 90, 90);
         };
     }
@@ -137,6 +142,8 @@ public class Renderitzador { // classe per gestionar la pantalla
         return switch (c) {
             case '#' -> new TextColor.RGB(40, 40, 50);
             case '.' -> new TextColor.RGB(30, 20, 10);
+            case '~' -> new TextColor.RGB(10, 30, 80);
+            case '*' -> new TextColor.RGB(20, 60, 90);
             default  -> TextColor.ANSI.BLACK;
         };
     }
@@ -523,8 +530,8 @@ public class Renderitzador { // classe per gestionar la pantalla
         return screen.readInput();
     }
 
-    //dibuixa el menú inicial amb opcions: Iniciar partida / Sortir
-    public void dibuixaMenuInicial() throws IOException {
+    //dibuixa el menú inicial amb opcions navegables amb fletxes
+    public void dibuixaMenuInicial(int opcioSeleccionada, String[] opcions) throws IOException {
         screen.clear();
         int cols = screen.getTerminalSize().getColumns();
         int files = screen.getTerminalSize().getRows();
@@ -559,19 +566,17 @@ public class Renderitzador { // classe per gestionar la pantalla
                 new TextCharacter(subtitol.charAt(j), TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
         }
 
-        //opcions del menú
-        String opcio1 = "[ ENTER ]  Iniciar partida";
-        String opcio2 = "[  S   ]   Sortir";
+        //opcions del menú amb fletxa de selecció
         int oy = cy + 2;
-        int ox1 = cx - opcio1.length() / 2;
-        int ox2 = cx - opcio2.length() / 2;
-
-        for (int j = 0; j < opcio1.length(); j++)
-            screen.setCharacter(ox1 + j, oy,
-                new TextCharacter(opcio1.charAt(j), TextColor.ANSI.GREEN_BRIGHT, TextColor.ANSI.BLACK));
-        for (int j = 0; j < opcio2.length(); j++)
-            screen.setCharacter(ox2 + j, oy + 2,
-                new TextCharacter(opcio2.charAt(j), TextColor.ANSI.RED, TextColor.ANSI.BLACK));
+        for (int i = 0; i < opcions.length; i++) {
+            String prefix = (i == opcioSeleccionada) ? " > " : "   ";
+            String text = prefix + opcions[i];
+            int ox = cx - text.length() / 2;
+            TextColor color = (i == opcioSeleccionada) ? TextColor.ANSI.YELLOW_BRIGHT : TextColor.ANSI.WHITE;
+            for (int j = 0; j < text.length(); j++)
+                screen.setCharacter(ox + j, oy + i * 2,
+                    new TextCharacter(text.charAt(j), color, TextColor.ANSI.BLACK));
+        }
 
         screen.refresh();
     }
@@ -629,4 +634,35 @@ public class Renderitzador { // classe per gestionar la pantalla
     public void tanca() throws IOException { // tanca es perque tanca la pantalla
         screen.close();
     }
+
+public void dibuixaEnigma(String pregunta, String inputActual) throws IOException {
+    screen.clear();
+    int cols = screen.getTerminalSize().getColumns();
+    int files = screen.getTerminalSize().getRows();
+    int cx = cols / 2, cy = files / 2;
+    TextColor blanc = new TextColor.RGB(220,220,220);
+    TextColor groc  = new TextColor.RGB(220,180,50);
+    TextColor verd  = new TextColor.RGB(80,200,120);
+
+    pintaText(cx - 10, cy - 4, "[ ENIGMA DEL NPC ]", groc);
+    pintaText(cx - pregunta.length()/2, cy - 2, pregunta, blanc);
+    pintaText(cx - 15, cy + 1, "Resposta: " + inputActual + "_", verd);
+    pintaText(cx - 12, cy + 3, "ENTER per confirmar  |  ESC per sortir", new TextColor.RGB(110,110,110));
+    screen.refresh();
+}
+
+public void dibuixaComerciants(int pis) throws IOException {
+    screen.clear();
+    int cols = screen.getTerminalSize().getColumns();
+    int files = screen.getTerminalSize().getRows();
+    int cx = cols / 2, cy = files / 2;
+    TextColor blanc = new TextColor.RGB(220,220,220);
+    TextColor groc  = new TextColor.RGB(220,180,50);
+
+    pintaText(cx - 12, cy - 3, "[ COMERCIANT - PIS " + pis + " ]", groc);
+    pintaText(cx - 15, cy,     "Benvingut! (comerç per implementar)", blanc);
+    pintaText(cx - 10, cy + 3, "ESC / ENTER per sortir", new TextColor.RGB(110,110,110));
+    screen.refresh();
+}
+
 }

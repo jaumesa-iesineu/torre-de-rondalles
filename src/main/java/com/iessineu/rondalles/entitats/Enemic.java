@@ -30,6 +30,7 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
 
     //distancia de detecció jugador
     protected int radDeteccio;
+    public int getRadDeteccio() { return radDeteccio; }
 
     //estat actual de la màquina
     protected EstatEnemic estatEnemic;
@@ -133,4 +134,6 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
     public int getAtac() { return atac; } //necessari pel sistema de combat
 
     public int getVidaMaxima() { return vidaMaxima; }
+
+public abstract void actualitzaIAambRadi(Jugador jugador, int radEfectiu);
 }

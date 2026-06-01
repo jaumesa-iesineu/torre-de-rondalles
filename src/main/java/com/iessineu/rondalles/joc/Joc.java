@@ -4,12 +4,15 @@
  */
 package com.iessineu.rondalles.joc;
 
-import com.iessineu.rondalles.combat.SistemaCombat;
-import com.iessineu.rondalles.entitats.Bubota;
-import com.iessineu.rondalles.entitats.DimoniBoiet;
+import com.iessineu.rondalles.audio.GestorMusica;
+import com.iessineu.rondalles.mapa.TipusTerra;
+import com.iessineu.rondalles.entitats.NpcComerciants;
 import com.iessineu.rondalles.entitats.Drac;
 import com.iessineu.rondalles.entitats.Gegant;
 import com.iessineu.rondalles.entitats.NaMariaEnganxa;
+import com.iessineu.rondalles.combat.SistemaCombat;
+import com.iessineu.rondalles.entitats.Bubota;
+import com.iessineu.rondalles.entitats.DimoniBoiet;
 import com.iessineu.rondalles.entitats.Enemic;
 import com.iessineu.rondalles.entitats.Entitat;
 import com.iessineu.rondalles.entitats.Jugador;
@@ -26,27 +29,39 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author jaume, dani, sergi, kanhai i pere
- */
 public class Joc extends Motor {
 
-    //el mapa actual carregat des fitxer .game
     private Mapa mapa;
-
     private Jugador jugador;
-
-    private List<Enemic> enemics; //tots els enemics carregats al mapa
-    private List<ItemMapa> itemsMapa = new ArrayList<>(); //items que hi ha al terra
-    private Enemic enemicCombat = null; //l'enemic amb qui estam lluitant ara mateix
+    private List<Enemic> enemics;
+    private List<ItemMapa> itemsMapa = new ArrayList<>();
+    private Enemic enemicCombat = null;
     private List<String> logCombat = new ArrayList<>();
-    private static final int MAX_LOG = 3;
 
-    //el fitxer .game que hem de carregar
+    // --- Pisos ---
+    private int pisActual = 1;
+    private static final String[] FITXERS_PISOS = {
+        "pis1.game","pis2.game","pis3.game","pis4.game","pis5.game"
+    };
+
+    // --- NPCs ---
+    private List<NpcComerciants> npcs = new ArrayList<>();
+    private NpcComerciants npcActual = null;
+    private String enigmaInput = "";
+
+    // --- Menú inicial amb fletxa ---
+    private int opcioMenuInicial = 0;
+    private static final String[] OPCIONS_INICIALS = {"Iniciar partida", "Sortir"};
+
+    // --- Terra especial ---
+    private boolean esperantSegonaAigua = false;
+    private int aiguaNx = 0, aiguaNy = 0;
+    private boolean lliscantGel = false;
+    private int gelDx = 0, gelDy = 0;
+
+    private static final int MAX_LOG = 3;
     private String fitxerMapa;
 
-    //índex de l'opció seleccionada al menú de pausa (0=reanudar, 1=guardar, 2=sortir)
     private int opcioMenuPausa = 0;
     private static final String[] OPCIONS_PAUSA = {"Reanudar", "Guardar", "Sortir"};
 
@@ -56,21 +71,14 @@ public class Joc extends Motor {
 
     @Override
     protected void init() throws Exception {
-        //creim el renderitzador que gestiona la pantalla
         renderer = new Renderitzador();
-
-        //carregam el mapa des del fitxer
         mapa = CarregadorMapa.carrega(fitxerMapa);
-
-        //posam el jugador a la primera posició lliure del mapa
         jugador = new Jugador(trobaInicialX(), trobaInicialY());
-
         enemics = new ArrayList<>();
-
-        carregaEnemics(); //escanejam les 'e' del mapa i cream els enemics
-        carregaItemsMapa(); //escanejam les 'i' del mapa i posam els items
-
-        //l'estat s'establirà a MENU_INICIAL des de Motor.start()
+        carregaEnemics();
+        carregaItemsMapa();
+        carregaNpcs();
+        GestorMusica.reprodueix(GestorMusica.Pista.MENU);
     }
 
     @Override
@@ -79,29 +87,31 @@ public class Joc extends Motor {
             gestionaMenuInicial(tecla);
             return;
         }
-
         if (estat == Estat.PAUSA) {
             gestionaPausa(tecla);
             return;
         }
-
-        //dins del joc, ESC obre el menú de pausa
+        if (estat == Estat.ENIGMA) {
+            gestionaEnigma(tecla);
+            return;
+        }
+        if (estat == Estat.COMERCIANT) {
+            gestionaComerciants(tecla);
+            return;
+        }
         if (tecla.getKeyType() == KeyType.Escape) {
             opcioMenuPausa = 0;
             estat = Estat.PAUSA;
             return;
         }
-
         if (tecla.getKeyType() == KeyType.EOF) {
             corrent = false;
             return;
         }
-
         if (estat == Estat.INVENTARI) {
             gestionaInventari(tecla);
             return;
         }
-
         if (estat == Estat.COMBAT) {
             gestionaCombat(tecla);
         } else {
@@ -120,18 +130,20 @@ public class Joc extends Motor {
     }
 
     private void gestionaMenuInicial(KeyStroke tecla) {
-        //ENTER o barra espai inicia la partida
-        if (tecla.getKeyType() == KeyType.Enter) {
-            estat = Estat.MON;
+        if (tecla.getKeyType() == KeyType.ArrowUp || tecla.getKeyType() == KeyType.ArrowDown) {
+            opcioMenuInicial = 1 - opcioMenuInicial;
             return;
         }
-        if (tecla.getKeyType() == KeyType.Character) {
-            char c = tecla.getCharacter();
-            if (c == ' ') { estat = Estat.MON; return; }
-            if (c == 's' || c == 'S') { corrent = false; return; } //sortir
+        if (tecla.getKeyType() == KeyType.Enter) {
+            if (opcioMenuInicial == 0) {
+                estat = Estat.MON;
+                GestorMusica.reprodueix(GestorMusica.Pista.PIS_1);
+            } else {
+                corrent = false;
+            }
+            return;
         }
-        //tecles de fletxa per seleccionar: 1=iniciar, 2=sortir
-        if (tecla.getKeyType() == KeyType.Escape) { corrent = false; }
+        if (tecla.getKeyType() == KeyType.Escape) corrent = false;
     }
 
     private void gestionaPausa(KeyStroke tecla) {
@@ -144,18 +156,16 @@ public class Joc extends Motor {
             return;
         }
         if (tecla.getKeyType() == KeyType.Escape) {
-            //ESC dins pausa torna al joc
             estat = Estat.MON;
             return;
         }
         if (tecla.getKeyType() == KeyType.Enter) {
             switch (opcioMenuPausa) {
-                case 0 -> estat = Estat.MON;       //reanudar
-                case 1 -> { /* guardar (per implementar) */ estat = Estat.MON; }
-                case 2 -> corrent = false;          //sortir
+                case 0 -> estat = Estat.MON;
+                case 1 -> { estat = Estat.MON; }
+                case 2 -> corrent = false;
             }
         }
-        //tecles ràpides: r=reanudar, g=guardar, x=sortir
         if (tecla.getKeyType() == KeyType.Character) {
             char c = tecla.getCharacter();
             if (c == 'r' || c == 'R') { estat = Estat.MON; return; }
@@ -163,31 +173,48 @@ public class Joc extends Motor {
         }
     }
 
-    private void gestionaCombat(KeyStroke tecla) { //gestiona les tecles durant el combat
+    private void gestionaCombat(KeyStroke tecla) {
         if (tecla.getKeyType() != KeyType.Character) return;
         char c = tecla.getCharacter();
 
-        if (c >= '1' && c <= '9') { //usar ítem no gasta torn de l'enemic
+        if (c >= '1' && c <= '9') {
             jugador.usaItem(c - '1');
             return;
         }
+        if (c == 'f' || c == 'F') {
+    enemicCombat = null;
 
-        if (c == 'f' || c == 'F') { //fugir torna al mapa
-            enemicCombat = null;
-            estat = Estat.MON;
-            return;
-        }
+    GestorMusica.reprodueix(
+        GestorMusica.Pista.valueOf("PIS_" + Math.min(pisActual, 5))
+    );
 
-        if (c == 'a' || c == 'A') { //atacar
+    estat = Estat.MON;
+    return;
+}
+        if (c == 'a' || c == 'A') {
             String nom = enemicCombat.getClass().getSimpleName().toUpperCase();
             int danyFet = SistemaCombat.atacaEnemic(jugador, enemicCombat);
             afegeixLog("Has atacat! " + nom + " ha rebut " + danyFet + " de dany.");
             if (enemicCombat.esMort()) {
                 afegeixLog(nom + " ha caigut!");
+                // Comprova boss ABANS de treure de la llista
+                boolean eraBoss = esBoss(enemicCombat);
+                int bossX = enemicCombat.getX();
+                int bossY = enemicCombat.getY();
                 enemics.remove(enemicCombat);
-                enemicCombat = null;
-                estat = Estat.MON;
-                return;
+enemicCombat = null;
+
+if (eraBoss) {
+    mapa.setCella(bossX, bossY, '<');
+    afegeixLog("Has derrotat el boss! Han aparegut unes escales (<).");
+}
+
+GestorMusica.reprodueix(
+    GestorMusica.Pista.valueOf("PIS_" + Math.min(pisActual, 5))
+);
+
+estat = Estat.MON;
+return;
             }
             SistemaCombat.tickEnemics(enemicCombat);
             jugador.tickVeri();
@@ -195,7 +222,10 @@ public class Joc extends Motor {
             jugador.tickGel();
             int danyRebut = SistemaCombat.atacaJugador(enemicCombat, jugador);
             afegeixLog(nom + " contraataca! Has rebut " + danyRebut + " de dany.");
-            if (jugador.esMort()) corrent = false;
+            if (jugador.esMort()) {
+    GestorMusica.reprodueix(GestorMusica.Pista.GAME_OVER);
+    corrent = false;
+}
         }
     }
 
@@ -204,7 +234,7 @@ public class Joc extends Motor {
         if (logCombat.size() > MAX_LOG) logCombat.remove(0);
     }
 
-    private void gestionaMoviment(KeyStroke tecla) { //gestiona el moviment pel mapa
+    private void gestionaMoviment(KeyStroke tecla) {
         if (tecla.getKeyType() == KeyType.Character) {
             char c = tecla.getCharacter();
             if (c == 'e' || c == 'E') {
@@ -212,70 +242,196 @@ public class Joc extends Motor {
                 estat = Estat.INVENTARI;
                 return;
             }
-            if (c >= '1' && c <= '9') { //usar ítem fora de combat també gasta torn
+            if (c >= '1' && c <= '9') {
                 jugador.usaItem(c - '1');
-                jugador.tickVeri();
-                jugador.tickFoc();
-                jugador.tickGel();
-                if (jugador.esMort()) corrent = false;
+                tickTorn();
                 return;
             }
         }
 
+        if (lliscantGel) {
+            int gx = jugador.getX() + gelDx;
+            int gy = jugador.getY() + gelDy;
+            char terraDesti = mapa.getCelles()[Math.max(0,Math.min(mapa.getAlcada()-1,gy))]
+                                             [Math.max(0,Math.min(mapa.getAmplada()-1,gx))];
+            if (mapa.esPasable(gx, gy) && TipusTerra.de(terraDesti) == TipusTerra.GEL) {
+                jugador.setX(gx); jugador.setY(gy); tickTorn();
+            } else {
+                lliscantGel = false;
+                if (mapa.esPasable(gx, gy)) { jugador.setX(gx); jugador.setY(gy); tickTorn(); }
+            }
+            if (jugador.esMort()) corrent = false;
+            return;
+        }
+
         int nx = jugador.getX();
         int ny = jugador.getY();
+        int dx = 0, dy = 0;
 
         switch (tecla.getKeyType()) {
-            case ArrowUp    -> ny--;
-            case ArrowDown  -> ny++;
-            case ArrowLeft  -> nx--;
-            case ArrowRight -> nx++;
+            case ArrowUp    -> { ny--; dy = -1; }
+            case ArrowDown  -> { ny++; dy =  1; }
+            case ArrowLeft  -> { nx--; dx = -1; }
+            case ArrowRight -> { nx++; dx =  1; }
             default -> { return; }
         }
 
-        Enemic enemic = trobaEnemicA(nx, ny); //si hi ha un enemic, iniciam combat
+        NpcComerciants npc = trobaNpcA(nx, ny);
+        if (npc != null) {
+            npcActual = npc;
+            enigmaInput = "";
+            estat = npc.isEnigmaResolt() ? Estat.COMERCIANT : Estat.ENIGMA;
+            return;
+        }
+
+        Enemic enemic = trobaEnemicA(nx, ny);
         if (enemic != null) {
             enemicCombat = enemic;
             logCombat.clear();
             afegeixLog("T'enfrentes al " + enemic.getClass().getSimpleName().toUpperCase() + "!");
             estat = Estat.COMBAT;
+            GestorMusica.reprodueix(esBoss(enemic) ? GestorMusica.Pista.BOSS : GestorMusica.Pista.COMBAT);
             return;
         }
 
-        if (mapa.esPasable(nx, ny)) {
-            jugador.setX(nx);
-            jugador.setY(ny);
-            jugador.setEstatJugador(Jugador.EstatJugador.MOVIMENT);
+        if (!mapa.esPasable(nx, ny)) return;
 
-            recullItemSiNHiHa(nx, ny);
-            jugador.tickVeri();
-
-            for (Enemic e : enemics) {
-                if (e.isActiu()) e.actualitzaIA(jugador);
+        char simbolDesti = mapa.getCelles()[ny][nx];
+        if (TipusTerra.de(simbolDesti) == TipusTerra.AIGUA) {
+            if (!esperantSegonaAigua || aiguaNx != nx || aiguaNy != ny) {
+                esperantSegonaAigua = true; aiguaNx = nx; aiguaNy = ny;
+                return;
             }
+            esperantSegonaAigua = false;
+        } else {
+            esperantSegonaAigua = false;
         }
+
+        if (simbolDesti == '<') {
+            passaSeguantPis(); return;
+        }
+
+        jugador.setX(nx); jugador.setY(ny);
+        jugador.setEstatJugador(Jugador.EstatJugador.MOVIMENT);
+
+        if (TipusTerra.de(mapa.getCelles()[ny][nx]) == TipusTerra.GEL) {
+
+    while (true) {
+
+        int segX = jugador.getX() + dx;
+        int segY = jugador.getY() + dy;
+
+        if (!mapa.esPasable(segX, segY)) {
+            break;
+        }
+
+        char seguent = mapa.getCelles()[segY][segX];
+
+        jugador.setX(segX);
+        jugador.setY(segY);
+
+        if (TipusTerra.de(seguent) != TipusTerra.GEL) {
+            break;
+        }
+    }
+}
+
+        recullItemSiNHiHa(nx, ny);
+        tickTorn();
 
         if (jugador.esMort()) corrent = false;
     }
 
-    private Enemic trobaEnemicA(int x, int y) { //cerca si hi ha un enemic a la posició donada
+    private void tickTorn() {
+        jugador.tickVeri(); jugador.tickFoc(); jugador.tickGel();
+        TipusTerra terra = TipusTerra.de(
+            mapa.getCelles()[jugador.getY()][jugador.getX()]);
+        for (Enemic e : enemics) {
+            if (!e.isActiu()) continue;
+            int radEfectiu = switch (terra) {
+                case GESPA -> (int)(e.getRadDeteccio() * 0.5);
+                case METAL -> (int)(e.getRadDeteccio() * 2.0);
+                default    -> e.getRadDeteccio();
+            };
+            e.actualitzaIAambRadi(jugador, radEfectiu);
+        }
+    }
+
+    private boolean esBoss(Enemic e) {
+        return e instanceof Drac || e instanceof Gegant || e instanceof NaMariaEnganxa;
+    }
+
+    private void passaSeguantPis() {
+        pisActual++;
+        if (pisActual > FITXERS_PISOS.length) {
+    GestorMusica.reprodueix(GestorMusica.Pista.VICTORIA);
+    estat = Estat.VICTORIA;
+    return;
+}
+        try {
+            fitxerMapa = FITXERS_PISOS[pisActual - 1];
+            mapa = CarregadorMapa.carrega(fitxerMapa);
+            jugador.setX(trobaInicialX()); jugador.setY(trobaInicialY());
+            enemics.clear(); itemsMapa.clear(); npcs.clear();
+            carregaEnemics(); carregaItemsMapa(); carregaNpcs();
+            GestorMusica.reprodueix(GestorMusica.Pista.valueOf("PIS_" + pisActual));
+        } catch (Exception ex) { corrent = false; }
+    }
+
+    private void carregaNpcs() {
+        char[][] celles = mapa.getCelles();
+        for (int y = 0; y < celles.length; y++)
+            for (int x = 0; x < celles[y].length; x++)
+                if (celles[y][x] == 'N') {
+                    npcs.add(new NpcComerciants(x, y, pisActual));
+                }
+    }
+
+    private NpcComerciants trobaNpcA(int x, int y) {
+        for (NpcComerciants n : npcs)
+            if (n.getX() == x && n.getY() == y) return n;
+        return null;
+    }
+
+    private void gestionaEnigma(KeyStroke tecla) {
+        if (tecla.getKeyType() == KeyType.Escape) { estat = Estat.MON; return; }
+        if (tecla.getKeyType() == KeyType.Enter) {
+            if (npcActual.comprovaSolucio(enigmaInput)) {
+                estat = Estat.COMERCIANT;
+            } else {
+                enigmaInput = "";
+            }
+            return;
+        }
+        if (tecla.getKeyType() == KeyType.Backspace && enigmaInput.length() > 0)
+            enigmaInput = enigmaInput.substring(0, enigmaInput.length() - 1);
+        if (tecla.getKeyType() == KeyType.Character)
+            enigmaInput += tecla.getCharacter();
+    }
+
+    private void gestionaComerciants(KeyStroke tecla) {
+        if (tecla.getKeyType() == KeyType.Escape || tecla.getKeyType() == KeyType.Enter)
+            estat = Estat.MON;
+    }
+
+    private Enemic trobaEnemicA(int x, int y) {
         for (Enemic e : enemics)
             if (e.isActiu() && e.getX() == x && e.getY() == y) return e;
         return null;
     }
 
-    private void recullItemSiNHiHa(int x, int y) { //si hi ha un item a (x,y) el recull
+    private void recullItemSiNHiHa(int x, int y) {
         ItemMapa trobat = null;
         for (ItemMapa im : itemsMapa) {
             if (im.getX() == x && im.getY() == y) { trobat = im; break; }
         }
         if (trobat == null) return;
         jugador.afegeixItem(trobat.getItem());
-        mapa.setCella(x, y, '.'); //treu la 'i' del mapa
+        mapa.setCella(x, y, '.');
         itemsMapa.remove(trobat);
     }
 
-    private void carregaItemsMapa() { //escana totes les 'i' del mapa i crea items alternats
+    private void carregaItemsMapa() {
         char[][] celles = mapa.getCelles();
         int comptador = 0;
         for (int y = 0; y < celles.length; y++) {
@@ -318,14 +474,24 @@ public class Joc extends Motor {
     protected void renderitza() {
         try {
             if (estat == Estat.MENU_INICIAL) {
-                renderer.dibuixaMenuInicial();
+                renderer.dibuixaMenuInicial(opcioMenuInicial, OPCIONS_INICIALS);
                 return;
             }
             if (estat == Estat.PAUSA) {
                 renderer.dibuixaPausa(opcioMenuPausa, OPCIONS_PAUSA);
                 return;
             }
+            if (estat == Estat.ENIGMA) {
+                renderer.dibuixaEnigma(npcActual.getEnigma(), enigmaInput);
+                return;
+            }
+            if (estat == Estat.COMERCIANT) {
+                renderer.dibuixaComerciants(pisActual);
+                return;
+            }
+
             List<Entitat> totes = new ArrayList<>(enemics);
+
             if (estat == Estat.COMBAT) {
                 renderer.dibuixaCombat(enemicCombat, jugador, logCombat);
             } else if (estat == Estat.INVENTARI) {
@@ -338,7 +504,6 @@ public class Joc extends Motor {
         }
     }
 
-    // Cerca '@' al mapa per la posició inicial del jugador; si no n'hi ha, usa la primera casella lliure
     private int trobaInicialX() {
         char[][] celles = mapa.getCelles();
         for (int y = 0; y < celles.length; y++)

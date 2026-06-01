@@ -13,10 +13,16 @@ public class NaMariaEnganxa extends Enemic { // trampa estàtica — no es mou, 
         this.lletra='M';
     }
 
-    @Override
-    public void actualitzaIA(Jugador jugador) { // trampa: no té IA, no es mou mai
+  @Override
+public void actualitzaIAambRadi(Jugador jugador, int radEfectiu) {
+
+    if (distanciaAl(jugador) < radEfectiu) {
+        canviaEstat(EstatEnemic.PERSEGUINT);
+    } else {
+        canviaEstat(EstatEnemic.PATRULLANT);
     }
 
+}
     @Override
     public TextColor getColor() { // lila
         return new TextColor.RGB(180, 50, 220);
