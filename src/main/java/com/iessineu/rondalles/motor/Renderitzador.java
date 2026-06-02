@@ -205,9 +205,9 @@ public class Renderitzador { // classe per gestionar la pantalla
     //aplica un factor d'oscuritat als components rgb del color
     private TextColor fosqueix(TextColor color, double factor) {
         if (!(color instanceof TextColor.RGB rgb)) return color;
-        int r = (int)(rgb.getRed() * factor);
-        int g = (int)(rgb.getGreen() * factor);
-        int b = (int)(rgb.getBlue() * factor);
+        int r = Math.max(0, Math.min(255, (int)(rgb.getRed() * factor)));
+        int g = Math.max(0, Math.min(255, (int)(rgb.getGreen() * factor)));
+        int b = Math.max(0, Math.min(255, (int)(rgb.getBlue() * factor)));
         return new TextColor.RGB(r, g, b);
     }
 

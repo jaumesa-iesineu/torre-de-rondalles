@@ -83,12 +83,22 @@ public abstract class Motor {
 
         while (corrent) {
 
-            renderitza();
+            try {
+                renderitza();
+            } catch (Exception ex) {
+                System.err.println("[RENDER ERROR] " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
+                ex.printStackTrace(System.err);
+            }
 
             KeyStroke tecla = renderer.llegeixInput();
 
             if (tecla != null) {
-                actualitza(tecla);
+                try {
+                    actualitza(tecla);
+                } catch (Exception ex) {
+                    System.err.println("[UPDATE ERROR] " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
+                    ex.printStackTrace(System.err);
+                }
             }
         }
 
