@@ -26,7 +26,14 @@ public class Gegant extends Enemic { // extends Enemic perquè és una subclasse
             canviaEstat(EstatEnemic.PATRULLANT);
         }
     }
-
+    @Override
+public void actualitzaIAambRadi(Jugador jugador, int radEfectiu) {
+    if (distanciaAl(jugador) < radEfectiu) {
+        canviaEstat(EstatEnemic.PERSEGUINT);
+    } else {
+        canviaEstat(EstatEnemic.PATRULLANT);
+    }
+}
     @Override
     public TextColor getColor() { // ataronjat fosc
         if (colorDef != null) return colorDef;

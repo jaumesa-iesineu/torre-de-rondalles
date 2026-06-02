@@ -1,37 +1,41 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.iessineu.rondalles.entitats;
 
 import com.googlecode.lanterna.TextColor;
-import com.iessineu.rondalles.mapa.Mapa;
 
-/**
- *
- * @author kanhai, jaume, dani, sergi, pere
- */
-public class DimoniBoiet extends Enemic { // extends Enemic es perque extends la classe Enemic
+public class DimoniBoiet extends Enemic {
 
-    public DimoniBoiet(int x, int y) { // constructor de la classe DimoniBoiet
+    public DimoniBoiet(int x, int y) {
         super(x, y, 'd', 10, 5, 5);
         this.lletra = 'd';
     }
 
     @Override
-    public void actualitzaIA(Jugador jugador, Mapa mapa) {
-        if (distanciaAl(jugador) <= radDeteccio) {
+    public void actualitzaIA(Jugador jugador, char[][] cells) {
+
+        if (distanciaAl(jugador) < radDeteccio && potVeure(jugador, cells)) {
             canviaEstat(EstatEnemic.PERSEGUINT);
-            mouCap(jugador.getX(), jugador.getY(), mapa, jugador);
         } else {
             canviaEstat(EstatEnemic.PATRULLANT);
         }
     }
 
     @Override
-    public TextColor getColor() { // getColor es perque retorna el color del Dimoni Boiet
-        if (colorDef != null) return colorDef;
-        return new TextColor.RGB(180, 40, 10); // intent de vermell cremat :)
+    public void actualitzaIAambRadi(Jugador jugador, int radEfectiu) {
+
+        if (distanciaAl(jugador) < radEfectiu) {
+            canviaEstat(EstatEnemic.PERSEGUINT);
+        } else {
+            canviaEstat(EstatEnemic.PATRULLANT);
+        }
     }
 
+    @Override
+    public TextColor getColor() {
+
+        if (colorDef != null) {
+            return colorDef;
+        }
+
+        return new TextColor.RGB(180, 40, 10);
+    }
 }

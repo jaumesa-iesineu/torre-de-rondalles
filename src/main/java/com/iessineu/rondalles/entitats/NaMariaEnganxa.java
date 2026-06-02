@@ -1,27 +1,32 @@
 package com.iessineu.rondalles.entitats;
 
 import com.googlecode.lanterna.TextColor;
-import com.iessineu.rondalles.mapa.Mapa;
 
-/**
- *
- * @author kanhai, jaume, dani, sergi, pere
- */
-public class NaMariaEnganxa extends Enemic { // trampa estàtica — no es mou, mata instantàniament
+public class NaMariaEnganxa extends Enemic {
 
-    public NaMariaEnganxa(int x, int y) { // constructor de la classe NaMariaEnganxa
-        super(x, y, 'M', 30, 9999, 0); // atac 9999 = kill instantani, radDeteccio 0 = no detecta
+    public NaMariaEnganxa(int x, int y) {
+
+        super(x, y, 'M', 30, 9999, 0);
         this.lletra = 'M';
     }
 
     @Override
-    public void actualitzaIA(Jugador jugador, Mapa mapa) { // trampa: no té IA, no es mou mai
+    public void actualitzaIA(Jugador jugador, char[][] cells) {
+        // Trampa estàtica: no fa res
     }
 
     @Override
-    public TextColor getColor() { // lila
-        if (colorDef != null) return colorDef;
-        return new TextColor.RGB(180, 50, 220);
+    public void actualitzaIAambRadi(Jugador jugador, int radEfectiu) {
+        // Trampa estàtica: no fa res
     }
 
+    @Override
+    public TextColor getColor() {
+
+        if (colorDef != null) {
+            return colorDef;
+        }
+
+        return new TextColor.RGB(180, 50, 220);
+    }
 }

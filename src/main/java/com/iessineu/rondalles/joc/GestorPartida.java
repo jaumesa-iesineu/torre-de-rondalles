@@ -16,20 +16,20 @@ public class GestorPartida {
 
     private static final String FITXER = "partida.save";
     private static final byte[] MAGIC = {'S', 'A', 'V', 'E'};
-    private static final byte VERSIO = 1;
+    private static final byte VERSION = 1;
 
     public static void desa(Joc joc) {
         try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(FITXER))) {
             dos.write(MAGIC);
-            dos.writeByte(VERSIO);
+            dos.writeByte(VERSION);
 
             //mapa actual
-            byte[] idBytes = joc.idMapaActual.getBytes(StandardCharsets.UTF_8);
+            byte[] idBytes = ((String) joc.idMapaActual).getBytes(StandardCharsets.UTF_8);
             dos.writeShort(idBytes.length);
             dos.write(idBytes);
 
             //posició i stats del jugador
-            Jugador j = joc.jugador;
+            Jugador j = joc.jugado;
             dos.writeShort(j.getX());
             dos.writeShort(j.getY());
             dos.writeShort(j.getVida());
@@ -45,7 +45,7 @@ public class GestorPartida {
             for (int i = 0; i < Inventari.MAX_SLOTS; i++) {
                 Inventari.Slot slot = j.getInventari().getSlot(i);
                 if (slot == null) {
-                    dos.writeByte(0); //buit
+                    dos.writeByte(0); //built
                 } else {
                     dos.writeByte(1); //ple
                     byte[] nomBytes = slot.item().getNom().getBytes(StandardCharsets.UTF_8);
@@ -56,7 +56,7 @@ public class GestorPartida {
             }
 
             //enemics morts (llista de posicions originals)
-            dos.writeShort(joc.enemicsMorts.size());
+            dos.writeShort(((DataOutputStream) joc.enemicsMorts).size());
             for (int[] pos : joc.enemicsMorts) {
                 dos.writeShort(pos[0]);
                 dos.writeShort(pos[1]);
@@ -91,7 +91,7 @@ public class GestorPartida {
             //validar magic bytes
             for (byte b : MAGIC)
                 if (dis.readByte() != b) throw new RuntimeException("Fitxer de partida invàlid");
-            if (dis.readByte() != VERSIO) throw new RuntimeException("Versió de partida incompatible");
+            if (dis.readByte() != VERSION) throw new RuntimeException("Versió de partida incompatible");
 
             //mapa
             int idLen = dis.readShort();
