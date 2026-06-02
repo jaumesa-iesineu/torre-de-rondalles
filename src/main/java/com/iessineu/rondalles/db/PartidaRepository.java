@@ -9,10 +9,24 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PartidaRepository {
 
     private static final String URL = "jdbc:sqlite:rondalles.db";
+
+    // inicialitza la BD des del game.json empaquetado (sense -game)
+    // si les taules ja existeixen i no estan buides, no fa res
+    public static void inicialitzaDefecte() {
+        try {
+            com.iessineu.rondalles.joc.ConfigGame config =
+                com.iessineu.rondalles.joc.CarregadorGame.carrega("game.json");
+            inicialitza(config);
+        } catch (Exception e) {
+            System.err.println("No s'ha pogut inicialitzar la BD per defecte: " + e.getMessage());
+        }
+    }
 
     //crea les taules i les omple amb les dades per defecte del game.json si estan buides
     public static void inicialitza(ConfigGame config) {
@@ -116,6 +130,68 @@ public class PartidaRepository {
                 ps.executeUpdate();
             }
         }
+    }
+
+    // reconstrueix un ConfigGame llegint les taules de la BD (s'usa quan no es passa -game)
+    public static ConfigGame carregaConfig() {
+        ConfigGame config = new ConfigGame();
+        try (Connection conn = DriverManager.getConnection(URL);
+             Statement st = conn.createStatement()) {
+
+            config.configuracio = new ConfigGame.Configuracio();
+            try (ResultSet rs = st.executeQuery("SELECT valor FROM configuracio WHERE clau='mapaInicial'")) {
+                if (rs.next()) config.configuracio.mapaInicial = rs.getString(1);
+            }
+
+            config.mapes = new ConfigGame.MapesGroup();
+            config.mapes.ordre = new ArrayList<>();
+            config.mapes.registres = new ArrayList<>();
+            try (ResultSet rs = st.executeQuery("SELECT id, fitxer FROM mapes ORDER BY ordre")) {
+                while (rs.next()) {
+                    MapaConfig mc = new MapaConfig();
+                    mc.id = rs.getString(1);
+                    mc.fitxer = rs.getString(2);
+                    config.mapes.ordre.add(mc.id);
+                    config.mapes.registres.add(mc);
+                }
+            }
+
+            config.enemics = new ConfigGame.EnemicsGroup();
+            config.enemics.tipus = new ArrayList<>();
+            config.enemics.posicions = new ArrayList<>();
+            try (ResultSet rs = st.executeQuery("SELECT simbols,nom,vida,atac,radi,color_r,color_g,color_b,estatica,art_ascii FROM tipus_enemics")) {
+                while (rs.next()) {
+                    TipusEnemic te = new TipusEnemic();
+                    String simbolsStr = rs.getString(1);
+                    te.simbols = simbolsStr != null ? Arrays.asList(simbolsStr.split(",")) : new ArrayList<>();
+                    te.nom = rs.getString(2);
+                    te.vida = rs.getInt(3);
+                    te.atac = rs.getInt(4);
+                    te.radi = rs.getInt(5);
+                    te.colorR = rs.getInt(6);
+                    te.colorG = rs.getInt(7);
+                    te.colorB = rs.getInt(8);
+                    te.estatica = rs.getInt(9) == 1;
+                    String art = rs.getString(10);
+                    te.artAscii = art != null ? art.split("\n") : null;
+                    config.enemics.tipus.add(te);
+                }
+            }
+            try (ResultSet rs = st.executeQuery("SELECT mapa,simbol,x,y FROM posicions_enemics")) {
+                while (rs.next()) {
+                    PosicioEnemic pe = new PosicioEnemic();
+                    pe.mapa = rs.getString(1);
+                    pe.simbol = rs.getString(2);
+                    pe.x = rs.getInt(3);
+                    pe.y = rs.getInt(4);
+                    config.enemics.posicions.add(pe);
+                }
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error carregant config de BD: " + e.getMessage());
+        }
+        return config;
     }
 
     private static void omplePosicions(Connection conn, ConfigGame config) throws Exception {

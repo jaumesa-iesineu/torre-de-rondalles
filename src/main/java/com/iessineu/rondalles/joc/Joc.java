@@ -68,15 +68,24 @@ public class Joc extends Motor {
         this.mut = mut;
     }
 
+    // constructor principal: rep la config ja construïda i fusionada (amb -game i tots els -mod aplicats)
+    public Joc(ConfigGame configExterna, boolean mut) {
+        this.config = configExterna;
+        this.mut = mut;
+        // el mapa inicial ve de la config; s'acabarà de resoldre a init()
+        this.fitxerMapa = configExterna.getMapaInicial();
+    }
+
     @Override
     protected void init() throws Exception {
         renderer = new Renderitzador();
 
-        //carregam la configuració del game.json i inicialitzam la BD
+        // si la config no ve de fora (constructor antic), la carregam des del game.json empaquetado
         try {
-            config = CarregadorGame.carrega("game.json");
+            if (config == null) {
+                config = CarregadorGame.carrega("game.json");
+            }
             PartidaRepository.inicialitza(config);
-            //si el fitxerMapa és un id de config, en cercam el fitxer real
             MapaConfig mc = config.getMapaConfig(fitxerMapa);
             if (mc != null) {
                 idMapaActual = fitxerMapa;
@@ -87,7 +96,6 @@ public class Joc extends Motor {
                 if (inicial != null) fitxerMapa = inicial.fitxer;
             }
         } catch (Exception e) {
-            //si no hi ha game.json, usam el mapa per defecte directament
             idMapaActual = "planta1";
             fitxerMapa = "mapes/planta1.map";
         }
