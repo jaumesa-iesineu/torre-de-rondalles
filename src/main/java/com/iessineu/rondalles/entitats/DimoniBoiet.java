@@ -10,20 +10,32 @@ public class DimoniBoiet extends Enemic {
     }
 
     @Override
-    public void actualitzaIA(Jugador jugador) {
-        actualitzaIAambRadi(jugador, radDeteccio);
+    public void actualitzaIA(Jugador jugador, char[][] cells) {
+
+        if (distanciaAl(jugador) < radDeteccio && potVeure(jugador, cells)) {
+            canviaEstat(EstatEnemic.PERSEGUINT);
+        } else {
+            canviaEstat(EstatEnemic.PATRULLANT);
+        }
     }
 
     @Override
-public void actualitzaIAambRadi(Jugador jugador, int radEfectiu) {
-    if (distanciaAl(jugador) < radEfectiu) {
-        canviaEstat(EstatEnemic.PERSEGUINT);
-    } else {
-        canviaEstat(EstatEnemic.PATRULLANT);
+    public void actualitzaIAambRadi(Jugador jugador, int radEfectiu) {
+
+        if (distanciaAl(jugador) < radEfectiu) {
+            canviaEstat(EstatEnemic.PERSEGUINT);
+        } else {
+            canviaEstat(EstatEnemic.PATRULLANT);
+        }
     }
-}
+
     @Override
     public TextColor getColor() {
+
+        if (colorDef != null) {
+            return colorDef;
+        }
+
         return new TextColor.RGB(180, 40, 10);
     }
 }

@@ -1,6 +1,9 @@
 package com.iessineu.rondalles.motor;
 
 import com.googlecode.lanterna.input.KeyStroke;
+import java.io.File;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Sequencer;
 
 /**
  *
@@ -17,7 +20,13 @@ public abstract class Motor {
     // en quin estat es troba el joc ara mateix
     protected Estat estat;
 
-    // cada joc sap com inicialitzar-se (carregar mapa, crear jugador...)
+    // reproductor de música de fons
+    private Sequencer sequencer;
+
+    // si true no es reprodueix música
+    protected boolean mut = false;
+
+    // cada joc sap com inicialitzar-se
     protected abstract void init() throws Exception;
 
     // cada joc sap com reaccionar a les tecles
@@ -26,14 +35,54 @@ public abstract class Motor {
     // cada joc sap com pintar la seva pantalla
     protected abstract void renderitza();
 
-    // aquí és on arranca tot
+    private void iniciaMusica() {
+
+        if (mut) {
+            return;
+        }
+
+        try {
+
+            File fitxer = new File("musica/musica_fons.mid");
+
+            if (!fitxer.exists()) {
+                return;
+            }
+
+            sequencer = MidiSystem.getSequencer();
+            sequencer.open();
+            sequencer.setSequence(new java.io.FileInputStream(fitxer));
+            sequencer.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
+            sequencer.start();
+
+        } catch (Exception e) {
+            // si no hi ha àudio disponible el joc continua igual
+        }
+    }
+
+    private void aturaMusica() {
+
+        if (sequencer != null) {
+
+            if (sequencer.isRunning()) {
+                sequencer.stop();
+            }
+
+            sequencer.close();
+        }
+    }
+
     public void start() throws Exception {
+
         init();
+
+        iniciaMusica();
+
         corrent = true;
         estat = Estat.MENU_INICIAL;
 
-        // el joc és per torns: esperam que el jugador premi una tecla
         while (corrent) {
+
             renderitza();
 
             KeyStroke tecla = renderer.llegeixInput();
@@ -42,6 +91,8 @@ public abstract class Motor {
                 actualitza(tecla);
             }
         }
+
+        aturaMusica();
 
         renderer.tanca();
     }

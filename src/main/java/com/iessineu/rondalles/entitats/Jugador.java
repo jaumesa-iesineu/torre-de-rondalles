@@ -34,7 +34,7 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     private int pes; // pes actual del jugador
     private int pesMaxim; // pes maxim del jugador
 
-    private int velocitat; // velocitat actual del jugador
+    private int velocitat;// velocitat actual del jugador
 
     private int visio; //visio actual del jugador
 
@@ -189,6 +189,11 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     public int getTornsVeri() { return tornsVeri; }
     public int getTornsFoc()  { return tornsFoc; }
     public int getTornsGel()  { return tornsGel; }
+
+    public void setVida(int v)       { vida = Math.max(0, v); }
+    public void setVidaMaxima(int v) { vidaMaxima = v; }
+    public void setAtac(int a)       { atac = a; }
+    public void setDefensa(int d)    { defensa = d; }
 
     public Inventari getInventari() { return inventari; }
 

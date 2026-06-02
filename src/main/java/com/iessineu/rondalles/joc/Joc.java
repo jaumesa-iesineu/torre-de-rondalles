@@ -4,9 +4,11 @@
  */
 package com.iessineu.rondalles.joc;
 
+
 import com.iessineu.rondalles.audio.GestorMusica;
 import com.iessineu.rondalles.mapa.TipusTerra;
 import com.iessineu.rondalles.entitats.NpcComerciants;
+
 import com.iessineu.rondalles.entitats.Drac;
 import com.iessineu.rondalles.entitats.Gegant;
 import com.iessineu.rondalles.entitats.NaMariaEnganxa;
@@ -32,11 +34,14 @@ import java.util.List;
 public class Joc extends Motor {
 
     private Mapa mapa;
-    private Jugador jugador;
+
+    Jugador jugador;
     private List<Enemic> enemics;
+
     private List<ItemMapa> itemsMapa = new ArrayList<>();
     private Enemic enemicCombat = null;
     private List<String> logCombat = new ArrayList<>();
+
 
     // --- Pisos ---
     private int pisActual = 1;
@@ -60,18 +65,37 @@ public class Joc extends Motor {
     private int gelDx = 0, gelDy = 0;
 
     private static final int MAX_LOG = 3;
+
     private String fitxerMapa;
+    private char[][] mapaRecord;
+
+    //configuració carregada del game.json
+    private ConfigGame config;
+
+    private static final int RADI_VISIO = 10;
 
     private int opcioMenuPausa = 0;
-    private static final String[] OPCIONS_PAUSA = {"Reanudar", "Guardar", "Sortir"};
+
+    public Object idMapaActual;
+
+    public Jugador jugado;
+
+    public Object enemicsMorts;
+    private static final String[] OPCIONS_PAUSA = {"Reanudar", "Guardar", "Carregar", "Sortir"};
 
     public Joc(String fitxerMapa) {
         this.fitxerMapa = fitxerMapa;
     }
 
+    public Joc(String fitxerMapa, boolean mut) {
+        this.fitxerMapa = fitxerMapa;
+        this.mut = mut;
+    }
+
     @Override
     protected void init() throws Exception {
         renderer = new Renderitzador();
+
         mapa = CarregadorMapa.carrega(fitxerMapa);
         jugador = new Jugador(trobaInicialX(), trobaInicialY());
         enemics = new ArrayList<>();
@@ -79,6 +103,7 @@ public class Joc extends Motor {
         carregaItemsMapa();
         carregaNpcs();
         GestorMusica.reprodueix(GestorMusica.Pista.MENU);
+
     }
 
     @Override
@@ -91,6 +116,7 @@ public class Joc extends Motor {
             gestionaPausa(tecla);
             return;
         }
+
         if (estat == Estat.ENIGMA) {
             gestionaEnigma(tecla);
             return;
@@ -99,6 +125,7 @@ public class Joc extends Motor {
             gestionaComerciants(tecla);
             return;
         }
+
         if (tecla.getKeyType() == KeyType.Escape) {
             opcioMenuPausa = 0;
             estat = Estat.PAUSA;
@@ -130,6 +157,7 @@ public class Joc extends Motor {
     }
 
     private void gestionaMenuInicial(KeyStroke tecla) {
+
         if (tecla.getKeyType() == KeyType.ArrowUp || tecla.getKeyType() == KeyType.ArrowDown) {
             opcioMenuInicial = 1 - opcioMenuInicial;
             return;
@@ -144,6 +172,7 @@ public class Joc extends Motor {
             return;
         }
         if (tecla.getKeyType() == KeyType.Escape) corrent = false;
+
     }
 
     private void gestionaPausa(KeyStroke tecla) {
@@ -162,8 +191,10 @@ public class Joc extends Motor {
         if (tecla.getKeyType() == KeyType.Enter) {
             switch (opcioMenuPausa) {
                 case 0 -> estat = Estat.MON;
+
                 case 1 -> { estat = Estat.MON; }
                 case 2 -> corrent = false;
+
             }
         }
         if (tecla.getKeyType() == KeyType.Character) {
@@ -184,6 +215,7 @@ public class Joc extends Motor {
         if (c == 'f' || c == 'F') {
     enemicCombat = null;
 
+
     GestorMusica.reprodueix(
         GestorMusica.Pista.valueOf("PIS_" + Math.min(pisActual, 5))
     );
@@ -191,16 +223,19 @@ public class Joc extends Motor {
     estat = Estat.MON;
     return;
 }
+
         if (c == 'a' || c == 'A') {
             String nom = enemicCombat.getClass().getSimpleName().toUpperCase();
             int danyFet = SistemaCombat.atacaEnemic(jugador, enemicCombat);
             afegeixLog("Has atacat! " + nom + " ha rebut " + danyFet + " de dany.");
             if (enemicCombat.esMort()) {
                 afegeixLog(nom + " ha caigut!");
+
                 // Comprova boss ABANS de treure de la llista
                 boolean eraBoss = esBoss(enemicCombat);
                 int bossX = enemicCombat.getX();
                 int bossY = enemicCombat.getY();
+
                 enemics.remove(enemicCombat);
 enemicCombat = null;
 
@@ -222,10 +257,12 @@ return;
             jugador.tickGel();
             int danyRebut = SistemaCombat.atacaJugador(enemicCombat, jugador);
             afegeixLog(nom + " contraataca! Has rebut " + danyRebut + " de dany.");
+
             if (jugador.esMort()) {
     GestorMusica.reprodueix(GestorMusica.Pista.GAME_OVER);
     corrent = false;
 }
+
         }
     }
 
@@ -238,13 +275,15 @@ return;
         if (tecla.getKeyType() == KeyType.Character) {
             char c = tecla.getCharacter();
             if (c == 'e' || c == 'E') {
-                for (Enemic e : enemics) if (e.isActiu()) e.actualitzaIA(jugador);
+                for (Enemic e : enemics) if (e.isActiu()) e.actualitzaIA(jugador, mapa.getCelles());
                 estat = Estat.INVENTARI;
                 return;
             }
             if (c >= '1' && c <= '9') {
                 jugador.usaItem(c - '1');
+
                 tickTorn();
+
                 return;
             }
         }
@@ -276,6 +315,7 @@ return;
             default -> { return; }
         }
 
+
         NpcComerciants npc = trobaNpcA(nx, ny);
         if (npc != null) {
             npcActual = npc;
@@ -283,6 +323,7 @@ return;
             estat = npc.isEnigmaResolt() ? Estat.COMERCIANT : Estat.ENIGMA;
             return;
         }
+
 
         Enemic enemic = trobaEnemicA(nx, ny);
         if (enemic != null) {
@@ -296,16 +337,19 @@ return;
 
         if (!mapa.esPasable(nx, ny)) return;
 
+
         char simbolDesti = mapa.getCelles()[ny][nx];
         if (TipusTerra.de(simbolDesti) == TipusTerra.AIGUA) {
             if (!esperantSegonaAigua || aiguaNx != nx || aiguaNy != ny) {
                 esperantSegonaAigua = true; aiguaNx = nx; aiguaNy = ny;
                 return;
+
             }
             esperantSegonaAigua = false;
         } else {
             esperantSegonaAigua = false;
         }
+
 
         if (simbolDesti == '<') {
             passaSeguantPis(); return;
@@ -414,6 +458,7 @@ return;
             estat = Estat.MON;
     }
 
+
     private Enemic trobaEnemicA(int x, int y) {
         for (Enemic e : enemics)
             if (e.isActiu() && e.getX() == x && e.getY() == y) return e;
@@ -451,23 +496,45 @@ return;
     }
 
     private void carregaEnemics() {
+        //si el game.json té posicions per aquest mapa, les usam (no escanejam el mapa)
+        if (config != null) {
+            String idMapaActual = null;
+            List<PosicioEnemic> posicions = config.getPosicionsPerMapa(idMapaActual);
+            if (!posicions.isEmpty()) {
+                for (PosicioEnemic p : posicions) {
+                    Enemic enemic = creaEnemic(p.simbol, p.x, p.y);
+                    if (enemic != null) enemics.add(enemic);
+                }
+                return;
+            }
+        }
+        //fallback: llegim els simbols directament del mapa (mapes sense posicions al json)
         char[][] celles = mapa.getCelles();
         for (int y = 0; y < celles.length; y++) {
             for (int x = 0; x < celles[y].length; x++) {
-                Enemic enemic = switch (celles[y][x]) {
-                    case 'e', 'd' -> new DimoniBoiet(x, y);
-                    case 'B'      -> new Bubota(x, y);
-                    case 'D'      -> new Drac(x, y);
-                    case 'G'      -> new Gegant(x, y);
-                    case 'M'      -> new NaMariaEnganxa(x, y);
-                    default       -> null;
-                };
+                Enemic enemic = creaEnemic(String.valueOf(celles[y][x]), x, y);
                 if (enemic != null) {
                     enemics.add(enemic);
                     mapa.setCella(x, y, '.');
                 }
             }
         }
+    }
+
+    private Enemic creaEnemic(String simbol, int x, int y) {
+        Enemic enemic = switch (simbol) {
+            case "e", "d" -> new DimoniBoiet(x, y);
+            case "B"      -> new Bubota(x, y);
+            case "D"      -> new Drac(x, y);
+            case "G"      -> new Gegant(x, y);
+            case "M"      -> new NaMariaEnganxa(x, y);
+            default       -> null;
+        };
+        if (enemic != null && config != null) {
+            TipusEnemic def = config.getTipusEnemic(simbol);
+            if (def != null) enemic.aplicaDefinicio(def.vida, def.atac, def.radi, def.colorR, def.colorG, def.colorB, def.artAscii);
+        }
+        return enemic;
     }
 
     @Override
@@ -492,17 +559,23 @@ return;
 
             List<Entitat> totes = new ArrayList<>(enemics);
 
+
+
+            boolean[][] visible = null;
+            boolean[][] explorat = null;
             if (estat == Estat.COMBAT) {
                 renderer.dibuixaCombat(enemicCombat, jugador, logCombat);
             } else if (estat == Estat.INVENTARI) {
-                renderer.dibuixaInventari(mapa, jugador.getX(), jugador.getY(), totes, jugador, itemsMapa);
+                renderer.dibuixaInventari(mapa, jugador.getX(), jugador.getY(), totes, jugador, itemsMapa, visible, explorat, mapaRecord);
             } else {
-                renderer.dibuixa(mapa, jugador.getX(), jugador.getY(), totes, jugador, itemsMapa);
+                renderer.dibuixa(mapa, jugador.getX(), jugador.getY(), totes, jugador, itemsMapa, visible, explorat, mapaRecord);
             }
         } catch (IOException ex) {
             corrent = false;
         }
     }
+
+
 
     private int trobaInicialX() {
         char[][] celles = mapa.getCelles();

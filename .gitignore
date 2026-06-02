@@ -8,3 +8,4 @@ nbdist/
 *.class
 *.jar
 nbactions.xml
+.DS_Store

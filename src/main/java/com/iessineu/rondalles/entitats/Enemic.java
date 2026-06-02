@@ -1,17 +1,15 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.iessineu.rondalles.entitats;
 
-/**
- *
- * @author jaume, dani, sergi, kanhai i pere
- */
-public abstract class Enemic extends Entitat { // extends Entitat es perque extends la classe Entitat
-    
+import com.googlecode.lanterna.TextColor;
+
+public abstract class Enemic extends Entitat {
+
+    // color i art carregats des del game.json
+    protected TextColor colorDef = null;
+    protected String[] artAscii = null;
+
     char lletra;
-    //màquina d'estats
+
     public enum EstatEnemic {
         PATRULLANT,
         ALERTA,
@@ -25,18 +23,20 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
     protected int atac;
 
     private int tornsVeri = 0;
-    private int tornsFoc  = 0;
-    private int tornsGel  = 0;
+    private int tornsFoc = 0;
+    private int tornsGel = 0;
 
-    //distancia de detecció jugador
     protected int radDeteccio;
-    public int getRadDeteccio() { return radDeteccio; }
 
-    //estat actual de la màquina
+    public int getRadDeteccio() {
+        return radDeteccio;
+    }
+
     protected EstatEnemic estatEnemic;
 
-    public Enemic(int x, int y, char simbol, int vida, int atac, int radDeteccio) { // constructor de la classe Enemic
+    public Enemic(int x, int y, char simbol, int vida, int atac, int radDeteccio) {
         super(x, y, simbol);
+
         this.vidaMaxima = vida;
         this.vida = vida;
         this.atac = atac;
@@ -44,37 +44,92 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
         this.estatEnemic = EstatEnemic.PATRULLANT;
     }
 
-    //cada tipus d'enemic té sa seva pròpia IA
-    //es crida quan el jugador fa un moviment (és el seu torn)
-    public abstract void actualitzaIA(Jugador jugador);
+    public abstract void actualitzaIA(Jugador jugador, char[][] cells);
+
+    public abstract void actualitzaIAambRadi(Jugador jugador, int radEfectiu);
+
+    protected boolean potVeure(Jugador jugador, char[][] cells) {
+
+        if (cells == null) {
+            return true;
+        }
+
+        int x0 = this.x;
+        int y0 = this.y;
+
+        int x1 = jugador.getX();
+        int y1 = jugador.getY();
+
+        int dx = Math.abs(x1 - x0);
+        int dy = Math.abs(y1 - y0);
+
+        int sx = x0 < x1 ? 1 : -1;
+        int sy = y0 < y1 ? 1 : -1;
+
+        int err = dx - dy;
+
+        int cx = x0;
+        int cy = y0;
+
+        while (cx != x1 || cy != y1) {
+
+            int e2 = 2 * err;
+
+            if (e2 > -dy) {
+                err -= dy;
+                cx += sx;
+            }
+
+            if (e2 < dx) {
+                err += dx;
+                cy += sy;
+            }
+
+            if (cx == x1 && cy == y1) {
+                break;
+            }
+
+            if (cy >= 0 && cy < cells.length
+                    && cx >= 0 && cx < cells[cy].length) {
+
+                if (cells[cy][cx] == '#') {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 
     @Override
     public void actualitza() {
-        //per actualitzacions
     }
 
     @Override
     public void interactua(Jugador jugador) {
-        //quan el jugador entra a la casella de l'enemic, pega
-        //de moment simplement resta vida, el combat real el farem més endavant
+
         jugador.rebreDany(atac);
         estatEnemic = EstatEnemic.EXECUTANT_ACCIO;
     }
 
-    //distància efins jugador
     protected double distanciaAl(Jugador jugador) {
+
         int dx = jugador.getX() - this.x;
         int dy = jugador.getY() - this.y;
+
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    public void canviaEstat(EstatEnemic nouEstat) { 
+    public void canviaEstat(EstatEnemic nouEstat) {
         this.estatEnemic = nouEstat;
     }
 
     public void rebreDany(int dany) {
+
         vida -= dany;
+
         if (vida <= 0) {
+
             vida = 0;
             estatEnemic = EstatEnemic.MORT;
             actiu = false;
@@ -82,48 +137,77 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
     }
 
     public void tickVeri() {
-        if (tornsVeri <= 0) return;
+
+        if (tornsVeri <= 0) {
+            return;
+        }
+
         rebreDany(3);
         tornsVeri--;
     }
 
     public void tickFoc() {
-        if (tornsFoc <= 0) return;
+
+        if (tornsFoc <= 0) {
+            return;
+        }
+
         tornsFoc--;
     }
 
     public void tickGel() {
-        if (tornsGel <= 0) return;
+
+        if (tornsGel <= 0) {
+            return;
+        }
+
         tornsGel--;
     }
-    
-    public char getLletra(){
-    return lletra;
+
+    public char getLletra() {
+        return lletra;
     }
+
     public int getAtacEfectiu() {
+
         int penalitzacio = tornsFoc > 0 ? 2 : 0;
+
         return Math.max(1, atac - penalitzacio);
     }
 
     public int getDefensaEfectiva() {
-        return tornsGel > 0 ? 0 : 0; //enemics de moment no tenen defensa base
+        return 0;
     }
 
-    public void setTornsVeri(int t) { tornsVeri = t; }
-    public void setTornsFoc(int t)  { tornsFoc = t; }
-    public void setTornsGel(int t)  { tornsGel = t; }
+    public void setTornsVeri(int t) {
+        tornsVeri = t;
+    }
 
-    public int getTornsVeri() { return tornsVeri; }
-    public int getTornsFoc()  { return tornsFoc; }
-    public int getTornsGel()  { return tornsGel; }
+    public void setTornsFoc(int t) {
+        tornsFoc = t;
+    }
 
-    // getters i setters
+    public void setTornsGel(int t) {
+        tornsGel = t;
+    }
 
-    public EstatEnemic getEstatEnemic() { // getEstatEnemic es perque retorna l'estat actual de la màquina d'estats
+    public int getTornsVeri() {
+        return tornsVeri;
+    }
+
+    public int getTornsFoc() {
+        return tornsFoc;
+    }
+
+    public int getTornsGel() {
+        return tornsGel;
+    }
+
+    public EstatEnemic getEstatEnemic() {
         return estatEnemic;
     }
 
-    public int getVida() { // getVida es perque retorna la vida actual de l'enemic
+    public int getVida() {
         return vida;
     }
 
@@ -131,9 +215,36 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
         return vida <= 0;
     }
 
-    public int getAtac() { return atac; } //necessari pel sistema de combat
+    public int getAtac() {
+        return atac;
+    }
 
-    public int getVidaMaxima() { return vidaMaxima; }
+    public int getVidaMaxima() {
+        return vidaMaxima;
+    }
 
-public abstract void actualitzaIAambRadi(Jugador jugador, int radEfectiu);
+    public void aplicaDefinicio(
+            int vida,
+            int atac,
+            int radi,
+            int r,
+            int g,
+            int b,
+            String[] art) {
+
+        this.vida = vida;
+        this.vidaMaxima = vida;
+        this.atac = atac;
+        this.radDeteccio = radi;
+        this.colorDef = new TextColor.RGB(r, g, b);
+        this.artAscii = art;
+    }
+
+    public String[] getArtAscii() {
+        return artAscii;
+    }
+
+    public TextColor getColor() {
+        return colorDef;
+    }
 }

@@ -113,4 +113,11 @@ public class Inventari {
 
     public Arma getArmaEquipada() { return armaEquipada; }
     public Map<Armadura.Slot, Armadura> getArmaduresEquipades() { return armaduresEquipades; }
+
+    //buida tots els slots i equip (s'usa en carregar partida)
+    public void buidaSlots() {
+        for (int i = 0; i < MAX_SLOTS; i++) slots[i] = null;
+        armaduresEquipades.clear();
+        armaEquipada = null;
+    }
 }

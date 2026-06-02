@@ -1,0 +1,101 @@
+TORRE DE RONDALLES — notes sobre els formats de fitxer
+autors: jaume, dani, sergi, kanhai, pere
+
+
+== game.json ==
+
+Es el fitxer principal del joc. Aqui definim tot: quins mapes hi ha,
+en quin ordre van, i tots els enemics amb els seus stats.
+
+L'estructura esta dividida en seccions que funcionen com taules:
+
+  configuracio  -> opcions globals (mapa inicial etc)
+  colorsPresets -> colors predefinits per reutilitzar (veure baix)
+  mapes         -> llista de mapes i l'ordre de progressio
+  enemics       -> tipus d'enemics i on estan col·locats a cada mapa
+
+
+--- Canviar colors ---
+
+A "colorsPresets" teniu els colors que usam. Format: [R, G, B] de 0 a 255.
+Podeu canviar-los o afegir-ne de nous. Per exemple:
+
+  "colorsPresets": {
+    "vermellCremat":  [180,  40,  10],   <- el dimoni boiet
+    "blancBlavis":    [180, 180, 255],   <- la bubota
+    "ataronjatFosc":  [200, 120,  50],   <- el gegant
+    "vermellIntens":  [220,  30,  30],   <- el drac
+    "lila":           [180,  50, 220],   <- na maria enganxa
+    "verdFluid":      [ 50, 200,  80],   <- lliure per usar
+    "blavCel":        [ 80, 160, 255],   <- lliure per usar
+    "groc":           [230, 200,  40]    <- lliure per usar
+  }
+
+Per canviar el color d'un enemic editau colorR/G/B al seu tipus.
+
+
+--- Afegir un enemic nou ---
+
+1. Afegiu una entrada a "tipus" amb els camps:
+   - simbols: llista de caracters que el representen al mapa, ex: ["V"]
+   - nom, vida, atac, radi, colorR/G/B, estatica
+   - artFitxer: ruta al fitxer d'art ascii (ex: "art/vampir.txt")
+
+2. Creeu el fitxer src/main/resources/art/vampir.txt amb l'art ascii
+
+3. Afegiu posicions a "posicions" per col·locar-lo als mapes
+
+4. Creeu la classe Java VampirEnemic.java (copia de DimoniBoiet canviant el simbol)
+   i afegiu el cas al switch de creaEnemic() a Joc.java
+
+
+--- Tipus d'enemics (simbols) ---
+
+  "d", "e"  ->  DimoniBoiet   (varis simbols poden apuntar al mateix tipus)
+  "B"       ->  Bubota
+  "G"       ->  Gegant
+  "D"       ->  Drac
+  "M"       ->  NaMariaEnganxa
+
+
+== fitxers d'art ascii (resources/art/*.txt) ==
+
+Cada enemic te el seu fitxer de text pla amb l'art ascii.
+Una linia del fitxer = una linia de l'art. Res mes.
+
+  art/dimoni.txt   -> DimoniBoiet
+  art/bubota.txt   -> Bubota
+  art/gegant.txt   -> Gegant
+  art/drac.txt     -> Drac
+  art/maria.txt    -> NaMariaEnganxa
+
+Si canviau un fitxer, el joc agafa els canvis automaticament al reiniciar.
+No cal tocar cap fitxer Java ni recompilar per canviar l'art.
+
+
+== partida.save ==
+
+Fitxer binari que es crea quan guardau la partida (ESC -> Guardar).
+Guarda: posicio del jugador, vida/atac/defensa, inventari,
+quins enemics heu matat, i el fog of war (el que heu explorat).
+
+Si perdeu, s'esborra automaticament.
+Si carregueu (ESC -> Carregar) restaura tot l'estat.
+
+
+== rondalles.db ==
+
+Base de dades SQLite que es crea sola al arrencar el joc.
+Conte les mateixes dades que game.json pero en taules:
+
+  configuracio     -> opcions globals
+  mapes            -> llista de mapes amb l'ordre
+  tipus_enemics    -> stats, colors i art de cada tipus
+  posicions_enemics -> on esta cada enemic a cada mapa
+
+Per consultar:
+  sqlite3 rondalles.db "SELECT simbols, nom FROM tipus_enemics;"
+  sqlite3 rondalles.db "SELECT * FROM posicions_enemics WHERE mapa='planta1';"
+
+Si canviau game.json i voleu que la BD s'actualitzi, borreu rondalles.db
+i reiniciau el joc (es torna a crear automaticament).
