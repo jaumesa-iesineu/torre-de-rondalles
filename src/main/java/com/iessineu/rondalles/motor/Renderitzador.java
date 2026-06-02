@@ -128,11 +128,13 @@ public class Renderitzador { // classe per gestionar la pantalla
                 int sc = 1 + (mx - camX);
                 int sf = 3 + (my - camY);
                 if (sc < 1 || sc >= colSep || sf < 3 || sf >= files - 1) continue;
-                if (visible[my][mx]) {
+                boolean esVisible = visible == null || visible[my][mx];
+                boolean esExplorada = explorat != null && explorat[my][mx];
+                if (esVisible) {
                     double dist   = Math.sqrt((mx - jx) * (mx - jx) + (my - jy) * (my - jy));
                     double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.75;
                     screen.setCharacter(sc, sf, new TextCharacter(celles[my][mx], fosqueix(colorPerCasella(celles[my][mx]), factor), fosqueix(fonsCasella(celles[my][mx]), factor)));
-                } else if (explorat[my][mx]) {
+                } else if (esExplorada) {
                     screen.setCharacter(sc, sf, new TextCharacter(mapaRecord[my][mx], colorMemoria, TextColor.ANSI.BLACK));
                 }
             }
@@ -141,8 +143,8 @@ public class Renderitzador { // classe per gestionar la pantalla
         //entitats per damunt (només si visibles)
         for (Entitat e : entitats) {
             if (!e.isActiu()) continue;
-            if (e.getY() >= visible.length || e.getX() >= visible[e.getY()].length) continue;
-            if (!visible[e.getY()][e.getX()]) continue;
+            if (visible != null && (e.getY() >= visible.length || e.getX() >= visible[e.getY()].length)) continue;
+            if (visible != null && !visible[e.getY()][e.getX()]) continue;
             int sc = 1 + (e.getX() - camX);
             int sf = 3 + (e.getY() - camY);
             if (sc < 1 || sc >= colSep || sf < 3 || sf >= files - 1) continue;
@@ -153,8 +155,8 @@ public class Renderitzador { // classe per gestionar la pantalla
 
         //ítems del terra (només si visibles)
         for (com.iessineu.rondalles.inventari.ItemMapa im : itemsMapa) {
-            if (im.getY() >= visible.length || im.getX() >= visible[im.getY()].length) continue;
-            if (!visible[im.getY()][im.getX()]) continue;
+            if (visible != null && (im.getY() >= visible.length || im.getX() >= visible[im.getY()].length)) continue;
+            if (visible != null && !visible[im.getY()][im.getX()]) continue;
             int sc = 1 + (im.getX() - camX);
             int sf = 3 + (im.getY() - camY);
             if (sc < 1 || sc >= colSep || sf < 3 || sf >= files - 1) continue;
