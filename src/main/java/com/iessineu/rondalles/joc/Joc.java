@@ -92,10 +92,41 @@ public class Joc extends Motor {
         this.mut = mut;
     }
 
+    // constructor principal: rep la config ja construïda i fusionada (amb -game i tots els -mod aplicats)
+    public Joc(ConfigGame configExterna, boolean mut) {
+        this.config = configExterna;
+        this.mut = mut;
+        // el mapa inicial ve de la config; s'acabarà de resoldre a init()
+        this.fitxerMapa = configExterna.getMapaInicial();
+    }
+
     @Override
     protected void init() throws Exception {
         renderer = new Renderitzador();
 
+<<<<<<< HEAD
+=======
+        // si la config no ve de fora (constructor antic), la carregam des del game.json empaquetado
+        try {
+            if (config == null) {
+                config = CarregadorGame.carrega("game.json");
+            }
+            PartidaRepository.inicialitza(config);
+            MapaConfig mc = config.getMapaConfig(fitxerMapa);
+            if (mc != null) {
+                idMapaActual = fitxerMapa;
+                fitxerMapa = mc.fitxer;
+            } else {
+                idMapaActual = config.getMapaInicial();
+                MapaConfig inicial = config.getMapaConfig(idMapaActual);
+                if (inicial != null) fitxerMapa = inicial.fitxer;
+            }
+        } catch (Exception e) {
+            idMapaActual = "planta1";
+            fitxerMapa = "mapes/planta1.map";
+        }
+
+>>>>>>> e7617d653f9c180af157d0baa5cfb941027abd5f
         mapa = CarregadorMapa.carrega(fitxerMapa);
         jugador = new Jugador(trobaInicialX(), trobaInicialY());
         enemics = new ArrayList<>();
