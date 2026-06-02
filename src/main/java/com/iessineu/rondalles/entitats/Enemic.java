@@ -5,6 +5,11 @@
 package com.iessineu.rondalles.entitats;
 
 import com.googlecode.lanterna.TextColor;
+import com.iessineu.rondalles.mapa.Mapa;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -17,6 +22,7 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
     protected String[] artAscii = null;
 
     char lletra;
+
     //màquina d'estats
     public enum EstatEnemic {
         PATRULLANT,
@@ -31,8 +37,8 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
     protected int atac;
 
     private int tornsVeri = 0;
-    private int tornsFoc  = 0;
-    private int tornsGel  = 0;
+    private int tornsFoc = 0;
+    private int tornsGel = 0;
 
     //distancia de detecció jugador
     protected int radDeteccio;
@@ -51,28 +57,7 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
 
     //cada tipus d'enemic té sa seva pròpia IA
     //es crida quan el jugador fa un moviment (és el seu torn)
-    public abstract void actualitzaIA(Jugador jugador, char[][] celles);
-
-    //Bresenham: comprova si hi ha línia de visió directa fins al jugador sense parets
-    protected boolean potVeure(Jugador jugador, char[][] celles) {
-        int x0 = this.x, y0 = this.y;
-        int x1 = jugador.getX(), y1 = jugador.getY();
-        int dx = Math.abs(x1 - x0);
-        int dy = Math.abs(y1 - y0);
-        int sx = x0 < x1 ? 1 : -1;
-        int sy = y0 < y1 ? 1 : -1;
-        int err = dx - dy;
-        int cx = x0, cy = y0;
-        while (cx != x1 || cy != y1) {
-            int e2 = 2 * err;
-            if (e2 > -dy) { err -= dy; cx += sx; }
-            if (e2 < dx)  { err += dx; cy += sy; }
-            if (cx == x1 && cy == y1) break; //el jugador no és una paret
-            if (cy >= 0 && cy < celles.length && cx >= 0 && cx < celles[cy].length)
-                if (celles[cy][cx] == '#') return false;
-        }
-        return true;
-    }
+    public abstract void actualitzaIA(Jugador jugador, Mapa mapa);
 
     @Override
     public void actualitza() {
@@ -87,14 +72,116 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
         estatEnemic = EstatEnemic.EXECUTANT_ACCIO;
     }
 
-    //distància efins jugador
-    protected double distanciaAl(Jugador jugador) {
+    protected double calculaDistanciaAlJugador(Jugador jugador) {
         int dx = jugador.getX() - this.x;
         int dy = jugador.getY() - this.y;
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    public void canviaEstat(EstatEnemic nouEstat) { 
+    // compatibilitat amb el nom antic usat a les subclasses
+    protected double distanciaAl(Jugador jugador) {
+        return calculaDistanciaAlJugador(jugador);
+    }
+
+    // mou l'enemic un pas cap a la casella (casellaDesti_x, casellaDesti_y) evitant parets.
+    // prova primer en diagonal, després sols horitzontal, després sols vertical.
+    // mai entra a la casella del jugador — el xoc el gestiona Joc.java.
+    protected void mouUnPasCapA(int casellaDesti_x, int casellaDesti_y, Mapa mapa, Jugador jugador) {
+        int direccioHoritzontal = Integer.signum(casellaDesti_x - this.x);
+        int direccioVertical = Integer.signum(casellaDesti_y - this.y);
+
+        int novaX_solsHoritzontal = this.x + direccioHoritzontal;
+        int novaY_solsHoritzontal = this.y;
+        boolean casellaHoritzontalOcupadaPerJugador = (novaX_solsHoritzontal == jugador.getX() && novaY_solsHoritzontal == jugador.getY());
+        if (direccioHoritzontal != 0 && !casellaHoritzontalOcupadaPerJugador && mapa.esPasable(novaX_solsHoritzontal, novaY_solsHoritzontal)) { // si la direcció horitzontal no es 0 i la casella horitzontal no es ocupada per el jugador i es pasable, movem l'enemic a la casella horitzontal
+            this.x = novaX_solsHoritzontal;
+            return;
+        }
+
+        int novaX_solsVertical = this.x;
+        int novaY_solsVertical = this.y + direccioVertical;
+        boolean casellaVerticalOcupadaPerJugador = (novaX_solsVertical == jugador.getX() && novaY_solsVertical == jugador.getY());
+        if (direccioVertical != 0 && !casellaVerticalOcupadaPerJugador && mapa.esPasable(novaX_solsVertical, novaY_solsVertical)) { // si la direcció vertical no es 0 i la casella vertical no es ocupada per el jugador i es pasable, movem l'enemic a la casella vertical
+            this.y = novaY_solsVertical;
+        }
+    }
+
+    // compatibilitat amb el nom antic usat a les subclasses
+    protected void mouCap(int tx, int ty, Mapa mapa, Jugador jugador) {
+        mouUnPasCapA(tx, ty, mapa, jugador);
+    }
+
+    // A* — cerca el camí més curt fins a (casellaDesti_x, casellaDesti_y) evitant parets.
+    // retorna les coordenades del PRIMER PAS del camí, o {-1,-1} si no hi ha camí.
+    protected int[] cercaCamiAmbAEstrella(int casellaDesti_x, int casellaDesti_y, Mapa mapa) {
+        record CasellaDelCami(int x, int y) {
+
+        }
+
+        int casellaOrigen_x = this.x; // casella d'origen
+        int casellaOrigen_y = this.y; // casella d'origen
+        if (casellaOrigen_x == casellaDesti_x && casellaOrigen_y == casellaDesti_y) {
+            return new int[]{-1, -1};
+        }
+
+        Map<CasellaDelCami, CasellaDelCami> casellaPare = new HashMap<>(); // casella pare
+        Map<CasellaDelCami, Integer> costRealDesDeOrigen = new HashMap<>(); // cost real des de l'origen
+        List<CasellaDelCami> casellesObertes = new ArrayList<>(); // caselles obertes
+
+        CasellaDelCami casellaInici = new CasellaDelCami(casellaOrigen_x, casellaOrigen_y); // casella inici
+        CasellaDelCami casellaMeta = new CasellaDelCami(casellaDesti_x, casellaDesti_y); // casella meta
+        casellaPare.put(casellaInici, null); // casella pare
+        costRealDesDeOrigen.put(casellaInici, 0); // cost real des de l'origen
+        casellesObertes.add(casellaInici); // caselles obertes
+
+        int[][] direccionsPossibles = {{0, -1}, {0, 1}, {-1, 0}, {1, 0}}; // direccions possibles
+
+        while (!casellesObertes.isEmpty()) { // mentre hi hagi caselles obertes
+            // tria la casella amb menor cost total estimat (f = costReal + heuristica)
+            casellesObertes.sort((casellaA, casellaB) -> {
+                int costTotalEstimatA = costRealDesDeOrigen.get(casellaA) + Math.abs(casellaA.x() - casellaDesti_x) + Math.abs(casellaA.y() - casellaDesti_y); // cost total estimat de la casella A
+                int costTotalEstimatB = costRealDesDeOrigen.get(casellaB) + Math.abs(casellaB.x() - casellaDesti_x) + Math.abs(casellaB.y() - casellaDesti_y); // cost total estimat de la casella B
+                return costTotalEstimatA - costTotalEstimatB;
+            });
+            CasellaDelCami casellaActual = casellesObertes.remove(0);
+
+            if (casellaActual.equals(casellaMeta)) {
+                // reconstruïm el camí remuntant pels pares fins a l'origen
+                CasellaDelCami casellaReconstruint = casellaActual;
+                while (casellaPare.get(casellaReconstruint) != null && !casellaPare.get(casellaReconstruint).equals(casellaInici)) // mentre la casella reconstruint no sigui la casella inici
+                {
+                    casellaReconstruint = casellaPare.get(casellaReconstruint); // reconstruïm el camí remuntant pels pares fins a l'origen
+                }
+                return new int[]{casellaReconstruint.x(), casellaReconstruint.y()};
+            }
+
+            int costRealCasellaActual = costRealDesDeOrigen.get(casellaActual);
+            for (int[] direccio : direccionsPossibles) { // per cada direcció possible
+                int casellaveina_x = casellaActual.x() + direccio[0]; // casella veïna x
+                int casellaVeina_y = casellaActual.y() + direccio[1]; // casella veïna y
+                CasellaDelCami casellaVeina = new CasellaDelCami(casellaveina_x, casellaVeina_y);
+                if (!mapa.esPasable(casellaveina_x, casellaVeina_y) && !casellaVeina.equals(casellaMeta)) {
+                    continue; // si la casella veïna no es pasable i no es la casella meta, continue
+                }
+                int nouCostReal = costRealCasellaActual + 1;
+                if (nouCostReal < costRealDesDeOrigen.getOrDefault(casellaVeina, Integer.MAX_VALUE)) { // si el nou cost real es menor que el cost real des de l'origen, actualitzem el cost real des de l'origen
+                    costRealDesDeOrigen.put(casellaVeina, nouCostReal);
+                    casellaPare.put(casellaVeina, casellaActual);
+                    if (!casellesObertes.contains(casellaVeina)) {
+                        casellesObertes.add(casellaVeina); // si la casella veïna no es troba en les caselles obertes, l'afegim
+                    }
+                }
+            }
+        }
+        return new int[]{-1, -1}; // si no hi ha camí possible, retornem {-1, -1}
+    }
+
+    // compatibilitat amb el nom antic usat a les subclasses
+    protected int[] aEstrella(int gx, int gy, Mapa mapa) {
+        return cercaCamiAmbAEstrella(gx, gy, mapa);
+    }
+
+    public void canviaEstat(EstatEnemic nouEstat) {
         this.estatEnemic = nouEstat;
     }
 
@@ -108,24 +195,31 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
     }
 
     public void tickVeri() {
-        if (tornsVeri <= 0) return;
+        if (tornsVeri <= 0) {
+            return;
+        }
         rebreDany(3);
         tornsVeri--;
     }
 
     public void tickFoc() {
-        if (tornsFoc <= 0) return;
+        if (tornsFoc <= 0) {
+            return;
+        }
         tornsFoc--;
     }
 
     public void tickGel() {
-        if (tornsGel <= 0) return;
+        if (tornsGel <= 0) {
+            return;
+        }
         tornsGel--;
     }
-    
-    public char getLletra(){
-    return lletra;
+
+    public char getLletra() {
+        return lletra;
     }
+
     public int getAtacEfectiu() {
         int penalitzacio = tornsFoc > 0 ? 2 : 0;
         return Math.max(1, atac - penalitzacio);
@@ -135,16 +229,31 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
         return tornsGel > 0 ? 0 : 0; //enemics de moment no tenen defensa base
     }
 
-    public void setTornsVeri(int t) { tornsVeri = t; }
-    public void setTornsFoc(int t)  { tornsFoc = t; }
-    public void setTornsGel(int t)  { tornsGel = t; }
+    public void setTornsVeri(int t) {
+        tornsVeri = t;
+    }
 
-    public int getTornsVeri() { return tornsVeri; }
-    public int getTornsFoc()  { return tornsFoc; }
-    public int getTornsGel()  { return tornsGel; }
+    public void setTornsFoc(int t) {
+        tornsFoc = t;
+    }
+
+    public void setTornsGel(int t) {
+        tornsGel = t;
+    }
+
+    public int getTornsVeri() {
+        return tornsVeri;
+    }
+
+    public int getTornsFoc() {
+        return tornsFoc;
+    }
+
+    public int getTornsGel() {
+        return tornsGel;
+    }
 
     // getters i setters
-
     public EstatEnemic getEstatEnemic() { // getEstatEnemic es perque retorna l'estat actual de la màquina d'estats
         return estatEnemic;
     }
@@ -157,9 +266,13 @@ public abstract class Enemic extends Entitat { // extends Entitat es perque exte
         return vida <= 0;
     }
 
-    public int getAtac() { return atac; } //necessari pel sistema de combat
+    public int getAtac() {
+        return atac;
+    } //necessari pel sistema de combat
 
-    public int getVidaMaxima() { return vidaMaxima; }
+    public int getVidaMaxima() {
+        return vidaMaxima;
+    }
 
     //aplica stats, color i art del game.json sobreescrivint els valors hardcoded
     public void aplicaDefinicio(int vida, int atac, int radi, int r, int g, int b, String[] art) {

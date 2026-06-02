@@ -39,16 +39,26 @@ public class EditorMapes {
 
     private static Color colorTile(char c) {
         return switch (c) {
-            case '#' -> new Color(80,  80,  90);
-            case '.' -> new Color(55,  40,  28);
-            case 'B' -> new Color(180, 180, 255); //Bubota
-            case 'd' -> new Color(180, 40,  10);  //DimoniBoiet
-            case 'D' -> new Color(220, 30,  30);  //Drac
-            case 'G' -> new Color(200, 120, 50);  //Gegant
-            case 'M' -> new Color(180, 50,  220); //NaMariaEnganxa
-            case 'i' -> new Color(200, 160, 40);  //item
-            case 'N' -> new Color(60,  180, 200); //npc
-            default  -> new Color(25,  25,  25);
+            case '#' ->
+                new Color(80, 80, 90);
+            case '.' ->
+                new Color(55, 40, 28);
+            case 'B' ->
+                new Color(180, 180, 255); //Bubota
+            case 'd' ->
+                new Color(180, 40, 10);  //DimoniBoiet
+            case 'D' ->
+                new Color(220, 30, 30);  //Drac
+            case 'G' ->
+                new Color(200, 120, 50);  //Gegant
+            case 'M' ->
+                new Color(180, 50, 220); //NaMariaEnganxa
+            case 'i' ->
+                new Color(200, 160, 40);  //item
+            case 'N' ->
+                new Color(60, 180, 200); //npc
+            default ->
+                new Color(25, 25, 25);
         };
     }
 
@@ -59,15 +69,28 @@ public class EditorMapes {
             setBackground(new Color(20, 20, 20));
 
             MouseAdapter ma = new MouseAdapter() {
-                @Override public void mousePressed(MouseEvent e)  { gestiona(e, true);  }
-                @Override public void mouseDragged(MouseEvent e)  { gestiona(e, false); }
-                @Override public void mouseReleased(MouseEvent e) { allibera(e);        }
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    gestiona(e, true);
+                }
+
+                @Override
+                public void mouseDragged(MouseEvent e) {
+                    gestiona(e, false);
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    allibera(e);
+                }
 
                 private void gestiona(MouseEvent e, boolean primerClic) {
                     if (modeHabitacio) {
                         int tx = clamp(e.getX() / MIDA, 0, mapW - 1);
                         int ty = clamp(e.getY() / MIDA, 0, mapH - 1);
-                        if (primerClic) ptInici = new Point(tx, ty);
+                        if (primerClic) {
+                            ptInici = new Point(tx, ty);
+                        }
                         if (ptInici != null) {
                             int rx = Math.min(ptInici.x, tx);
                             int ry = Math.min(ptInici.y, ty);
@@ -80,23 +103,27 @@ public class EditorMapes {
                     }
                     int tx = e.getX() / MIDA;
                     int ty = e.getY() / MIDA;
-                    if (tx < 0 || tx >= mapW || ty < 0 || ty >= mapH) return;
+                    if (tx < 0 || tx >= mapW || ty < 0 || ty >= mapH) {
+                        return;
+                    }
                     celles[ty][tx] = SwingUtilities.isRightMouseButton(e) ? '#' : tileActual;
                     repaint();
                 }
 
                 private void allibera(MouseEvent e) {
-                    if (!modeHabitacio || rectTemp == null) return;
+                    if (!modeHabitacio || rectTemp == null) {
+                        return;
+                    }
                     if (rectTemp.width > 1 || rectTemp.height > 1) {
                         String id = JOptionPane.showInputDialog(PanellMapa.this,
-                            "Nom de l'habitació:", "hab" + (habitacions.size() + 1));
+                                "Nom de l'habitació:", "hab" + (habitacions.size() + 1));
                         if (id != null && !id.isBlank()) {
                             habitacions.add(new Habitacio(id.trim(), rectTemp.x, rectTemp.y, rectTemp.width, rectTemp.height));
                             actualitzaLlistaHabitacions();
                         }
                     }
                     rectTemp = null;
-                    ptInici  = null;
+                    ptInici = null;
                     repaint();
                 }
             };
@@ -114,17 +141,22 @@ public class EditorMapes {
             Graphics2D g2 = (Graphics2D) g;
 
             //tiles
-            for (int ty = 0; ty < mapH; ty++)
+            for (int ty = 0; ty < mapH; ty++) {
                 for (int tx = 0; tx < mapW; tx++) {
                     g2.setColor(colorTile(celles[ty][tx]));
                     g2.fillRect(tx * MIDA, ty * MIDA, MIDA, MIDA);
                 }
+            }
 
             //graella
             g2.setColor(new Color(0, 0, 0, 60));
             g2.setStroke(new BasicStroke(1));
-            for (int x = 0; x <= mapW; x++) g2.drawLine(x * MIDA, 0, x * MIDA, mapH * MIDA);
-            for (int y = 0; y <= mapH; y++) g2.drawLine(0, y * MIDA, mapW * MIDA, y * MIDA);
+            for (int x = 0; x <= mapW; x++) {
+                g2.drawLine(x * MIDA, 0, x * MIDA, mapH * MIDA);
+            }
+            for (int y = 0; y <= mapH; y++) {
+                g2.drawLine(0, y * MIDA, mapW * MIDA, y * MIDA);
+            }
 
             //habitacions definides
             g2.setFont(new Font("Monospaced", Font.BOLD, 11));
@@ -152,13 +184,17 @@ public class EditorMapes {
 
     private void inicialitzaMapa() {
         celles = new char[mapH][mapW];
-        for (int y = 0; y < mapH; y++)
-            for (int x = 0; x < mapW; x++)
+        for (int y = 0; y < mapH; y++) {
+            for (int x = 0; x < mapW; x++) {
                 celles[y][x] = (x == 0 || x == mapW - 1 || y == 0 || y == mapH - 1) ? '#' : '.';
+            }
+        }
     }
 
     public void mostra() {
-        if (celles == null) inicialitzaMapa();
+        if (celles == null) {
+            inicialitzaMapa();
+        }
         canvas = new PanellMapa();
 
         JFrame frame = new JFrame("Editor de mapes — Torre de Rondalles");
@@ -206,9 +242,13 @@ public class EditorMapes {
             JTextField campW = new JTextField(String.valueOf(mapW), 5);
             JTextField campH = new JTextField(String.valueOf(mapH), 5);
             JPanel p = new JPanel(new GridLayout(2, 2, 6, 6));
-            p.add(new JLabel("Amplada:")); p.add(campW);
-            p.add(new JLabel("Alçada:"));  p.add(campH);
-            if (JOptionPane.showConfirmDialog(frame, p, "Dimensions", JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) return;
+            p.add(new JLabel("Amplada:"));
+            p.add(campW);
+            p.add(new JLabel("Alçada:"));
+            p.add(campH);
+            if (JOptionPane.showConfirmDialog(frame, p, "Dimensions", JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+                return;
+            }
             try {
                 mapW = Integer.parseInt(campW.getText().trim());
                 mapH = Integer.parseInt(campH.getText().trim());
@@ -283,7 +323,9 @@ public class EditorMapes {
     }
 
     private void actualitzaLlistaHabitacions() {
-        if (panellLlistaHabs == null) return;
+        if (panellLlistaHabs == null) {
+            return;
+        }
         panellLlistaHabs.removeAll();
         for (int i = 0; i < habitacions.size(); i++) {
             Habitacio hab = habitacions.get(i);
@@ -302,7 +344,7 @@ public class EditorMapes {
                 actualitzaLlistaHabitacions();
                 canvas.repaint();
             });
-            fila.add(lbl,  BorderLayout.CENTER);
+            fila.add(lbl, BorderLayout.CENTER);
             fila.add(btnX, BorderLayout.EAST);
             panellLlistaHabs.add(fila);
             panellLlistaHabs.add(Box.createVerticalStrut(2));
@@ -343,9 +385,11 @@ public class EditorMapes {
                     btnModeHab.setBackground(null);
                     btnModeHab.setText("Definir habitació");
                 }
-                for (Component c : sidebar.getComponents())
-                    if (c instanceof JPanel p && p.getLayout() instanceof FlowLayout)
+                for (Component c : sidebar.getComponents()) {
+                    if (c instanceof JPanel p && p.getLayout() instanceof FlowLayout) {
                         p.setBackground(new Color(40, 40, 40));
+                    }
+                }
                 boto.setBackground(new Color(70, 60, 30));
             }
         });
@@ -374,8 +418,8 @@ public class EditorMapes {
         try {
             Mapa mapa = CarregadorMapa.carrega(ruta);
             celles = mapa.getCelles();
-            mapW   = mapa.getAmplada();
-            mapH   = mapa.getAlcada();
+            mapW = mapa.getAmplada();
+            mapH = mapa.getAlcada();
             habitacions.clear();
             habitacions.addAll(CarregadorMapa.carregaHabitacionsDefinides(ruta));
             actualitzaLlistaHabitacions();
@@ -393,9 +437,13 @@ public class EditorMapes {
             JTextField campW = new JTextField("60", 5);
             JTextField campH = new JTextField("40", 5);
             JPanel p = new JPanel(new GridLayout(2, 2, 6, 6));
-            p.add(new JLabel("Amplada (caselles):")); p.add(campW);
-            p.add(new JLabel("Alçada (caselles):"));  p.add(campH);
-            if (JOptionPane.showConfirmDialog(null, p, "Nou mapa", JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) return;
+            p.add(new JLabel("Amplada (caselles):"));
+            p.add(campW);
+            p.add(new JLabel("Alçada (caselles):"));
+            p.add(campH);
+            if (JOptionPane.showConfirmDialog(null, p, "Nou mapa", JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+                return;
+            }
             try {
                 EditorMapes editor = new EditorMapes();
                 editor.mapW = Integer.parseInt(campW.getText().trim());
@@ -414,9 +462,9 @@ public class EditorMapes {
             try {
                 Mapa mapa = CarregadorMapa.carrega(ruta);
                 EditorMapes editor = new EditorMapes();
-                editor.celles  = mapa.getCelles();
-                editor.mapW    = mapa.getAmplada();
-                editor.mapH    = mapa.getAlcada();
+                editor.celles = mapa.getCelles();
+                editor.mapW = mapa.getAmplada();
+                editor.mapH = mapa.getAlcada();
                 editor.nomMapa = nom;
                 editor.habitacions.addAll(CarregadorMapa.carregaHabitacionsDefinides(ruta));
                 editor.mostra();

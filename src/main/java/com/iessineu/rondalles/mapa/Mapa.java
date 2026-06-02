@@ -31,7 +31,9 @@ public class Mapa { // classe per gestionar el mapa
     //comprova si el jugador pot trepitjar aquella posició
     public boolean esPasable(int x, int y) {
         //si surt dels límits del mapa no pot passar
-        if (x < 0 || y < 0 || x >= amplada || y >= alcada) return false;
+        if (x < 0 || y < 0 || x >= amplada || y >= alcada) {
+            return false;
+        }
 
         char c = celles[y][x];
         //les parets no es travessen, tot lo demés sí
@@ -40,7 +42,6 @@ public class Mapa { // classe per gestionar el mapa
     }
 
     // getters i setters
-
     public char[][] getCelles() {
         return celles;
     }
@@ -58,6 +59,8 @@ public class Mapa { // classe per gestionar el mapa
     }
 
     public void setCella(int x, int y, char c) { //canvia una cel·la, per exemple quan es recull un item
-        if (y >= 0 && y < alcada && x >= 0 && x < amplada) celles[y][x] = c;
+        if (y >= 0 && y < alcada && x >= 0 && x < amplada) {
+            celles[y][x] = c;
+        }
     }
 }

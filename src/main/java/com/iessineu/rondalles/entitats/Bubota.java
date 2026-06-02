@@ -1,6 +1,7 @@
 package com.iessineu.rondalles.entitats;
 
 import com.googlecode.lanterna.TextColor;
+import com.iessineu.rondalles.mapa.Mapa;
 
 /**
  *
@@ -10,15 +11,16 @@ public class Bubota extends Enemic { // extends Enemic perquè és una subclasse
 
     public Bubota(int x, int y) { // constructor de la classe Bubota
         super(x, y, 'B', 20, 5, 7);
-        this.lletra='B';
+        this.lletra = 'B';
     }
 
     @Override
-    public void actualitzaIA(Jugador jugador, char[][] celles) { // actualitzaIA actualitza la IA de la Bubota cada torn
-        if (distanciaAl(jugador) < radDeteccio && potVeure(jugador, celles)) {
-            canviaEstat(EstatEnemic.PERSEGUINT); // si el jugador entra al radi de detecció i el veu, persegueix
+    public void actualitzaIA(Jugador jugador, Mapa mapa) {
+        if (distanciaAl(jugador) <= radDeteccio) {
+            canviaEstat(EstatEnemic.PERSEGUINT);
+            mouCap(jugador.getX(), jugador.getY(), mapa, jugador);
         } else {
-            canviaEstat(EstatEnemic.PATRULLANT); // si no, patrulla
+            canviaEstat(EstatEnemic.PATRULLANT);
         }
     }
 

@@ -24,8 +24,11 @@ public class Main {
         if (args.length > 0) {
             switch (args[0]) {
                 case "mapes" -> {
-                    if (args.length > 1) EditorMapes.lancarAmbMapa(args[1]);
-                    else                 EditorMapes.lancar();
+                    if (args.length > 1) {
+                        EditorMapes.lancarAmbMapa(args[1]);
+                    } else {
+                        EditorMapes.lancar();
+                    }
                     return;
                 }
             }

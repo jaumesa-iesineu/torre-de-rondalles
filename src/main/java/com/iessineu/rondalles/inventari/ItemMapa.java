@@ -12,7 +12,15 @@ public class ItemMapa { //un item que hi ha al terra del mapa
         this.item = item;
     }
 
-    public int getX() { return x; }
-    public int getY() { return y; }
-    public Item getItem() { return item; }
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public Item getItem() {
+        return item;
+    }
 }

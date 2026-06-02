@@ -5,7 +5,9 @@ import com.iessineu.rondalles.entitats.Jugador;
 
 public class Pocio extends Item {
 
-    public enum Tipus { VIDA, VERI, FOC, GEL }
+    public enum Tipus {
+        VIDA, VERI, FOC, GEL
+    }
 
     private Tipus tipus;
     private int valor;
@@ -19,23 +21,36 @@ public class Pocio extends Item {
     @Override
     public void aplicaEfecte(Jugador jugador) {
         switch (tipus) {
-            case VIDA -> jugador.curar(valor);
-            case VERI -> jugador.setTornsVeri(valor);
-            case FOC  -> jugador.setTornsFoc(valor);
-            case GEL  -> jugador.setTornsGel(valor);
+            case VIDA ->
+                jugador.curar(valor);
+            case VERI ->
+                jugador.setTornsVeri(valor);
+            case FOC ->
+                jugador.setTornsFoc(valor);
+            case GEL ->
+                jugador.setTornsGel(valor);
         }
     }
 
     @Override
     public TextColor getColor() {
         return switch (tipus) {
-            case VIDA -> new TextColor.RGB(220, 60,  60);
-            case VERI -> new TextColor.RGB(80,  200, 80);
-            case FOC  -> new TextColor.RGB(220, 120, 30);
-            case GEL  -> new TextColor.RGB(80,  180, 220);
+            case VIDA ->
+                new TextColor.RGB(220, 60, 60);
+            case VERI ->
+                new TextColor.RGB(80, 200, 80);
+            case FOC ->
+                new TextColor.RGB(220, 120, 30);
+            case GEL ->
+                new TextColor.RGB(80, 180, 220);
         };
     }
 
-    public Tipus getTipus() { return tipus; }
-    public int getValor()   { return valor; }
+    public Tipus getTipus() {
+        return tipus;
+    }
+
+    public int getValor() {
+        return valor;
+    }
 }

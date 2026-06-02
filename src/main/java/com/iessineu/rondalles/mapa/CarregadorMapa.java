@@ -29,7 +29,9 @@ public class CarregadorMapa {
     // - si el fitxer acaba en .map → text pla
     // - si no → XML (format antic .game)
     public static Mapa carrega(String rutaFitxer) throws Exception {
-        if (rutaFitxer.endsWith(".map")) return carregaPlà(rutaFitxer);
+        if (rutaFitxer.endsWith(".map")) {
+            return carregaPlà(rutaFitxer);
+        }
         return parsejaDocument(parsejaFitxer(rutaFitxer));
     }
 
@@ -46,27 +48,34 @@ public class CarregadorMapa {
                     nom = linia.substring(4).trim();
                     continue;
                 }
-                if (linia.startsWith("#") && files.isEmpty()) continue; // comentari abans del mapa
+                if (linia.startsWith("#") && files.isEmpty()) {
+                    continue; // comentari abans del mapa
+                }
                 files.add(linia);
             }
         }
 
-        int alcada  = files.size();
+        int alcada = files.size();
         int amplada = files.stream().mapToInt(String::length).max().orElse(0);
         char[][] celles = new char[alcada][amplada];
         for (int y = 0; y < alcada; y++) {
             String row = files.get(y);
-            for (int x = 0; x < amplada; x++)
+            for (int x = 0; x < amplada; x++) {
                 celles[y][x] = x < row.length() ? row.charAt(x) : '#';
+            }
         }
         return new Mapa(celles, nom);
     }
 
     private static InputStream obriStream(String rutaFitxer) throws Exception {
         File fitxer = new File(rutaFitxer);
-        if (fitxer.exists()) return new java.io.FileInputStream(fitxer);
+        if (fitxer.exists()) {
+            return new java.io.FileInputStream(fitxer);
+        }
         InputStream is = CarregadorMapa.class.getResourceAsStream("/" + rutaFitxer);
-        if (is == null) throw new Exception("no trobat el fitxer: " + rutaFitxer);
+        if (is == null) {
+            throw new Exception("no trobat el fitxer: " + rutaFitxer);
+        }
         return is;
     }
 
@@ -91,13 +100,15 @@ public class CarregadorMapa {
                 List<String> files = extrauFiles(tilesNodes.item(0).getTextContent());
                 int w = files.stream().mapToInt(String::length).max().orElse(0);
                 int hh = files.size();
-                if (w > 0 && hh > 0) resultat.add(new Habitacio(id, x, y, w, hh));
+                if (w > 0 && hh > 0) {
+                    resultat.add(new Habitacio(id, x, y, w, hh));
+                }
                 continue;
             }
 
             //format antic: amplada i alcada com a atributs
             if (h.hasAttribute("amplada") && h.hasAttribute("alcada")) {
-                int w  = Integer.parseInt(h.getAttribute("amplada"));
+                int w = Integer.parseInt(h.getAttribute("amplada"));
                 int hh = Integer.parseInt(h.getAttribute("alcada"));
                 resultat.add(new Habitacio(id, x, y, w, hh));
             }
@@ -108,9 +119,13 @@ public class CarregadorMapa {
     private static Document parsejaFitxer(String rutaFitxer) throws Exception {
         File fitxer = new File(rutaFitxer);
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        if (fitxer.exists()) return db.parse(fitxer);
+        if (fitxer.exists()) {
+            return db.parse(fitxer);
+        }
         InputStream is = CarregadorMapa.class.getResourceAsStream("/" + rutaFitxer);
-        if (is == null) throw new Exception("no trobat el fitxer: " + rutaFitxer);
+        if (is == null) {
+            throw new Exception("no trobat el fitxer: " + rutaFitxer);
+        }
         return db.parse(is);
     }
 
@@ -240,15 +255,18 @@ public class CarregadorMapa {
         List<String> files = new ArrayList<>();
         for (String linia : contingut.split("\n")) {
             String t = linia.stripTrailing();
-            if (!t.isBlank()) files.add(t);
+            if (!t.isBlank()) {
+                files.add(t);
+            }
         }
         int alcada = files.size();
         int amplada = files.isEmpty() ? 0 : files.stream().mapToInt(String::length).max().orElse(0);
         char[][] celles = new char[alcada][amplada];
         for (int y = 0; y < alcada; y++) {
             String row = files.get(y);
-            for (int x = 0; x < amplada; x++)
+            for (int x = 0; x < amplada; x++) {
                 celles[y][x] = x < row.length() ? row.charAt(x) : '#';
+            }
         }
         return new Mapa(celles, nom);
     }
@@ -264,17 +282,25 @@ public class CarregadorMapa {
             int ox = Integer.parseInt(h.getAttribute("x"));
             int oy = Integer.parseInt(h.getAttribute("y"));
             NodeList tilesNodes = h.getElementsByTagName("tiles");
-            if (tilesNodes.getLength() == 0) continue;
+            if (tilesNodes.getLength() == 0) {
+                continue;
+            }
             List<String> files = extrauFiles(tilesNodes.item(0).getTextContent());
             int w = files.stream().mapToInt(String::length).max().orElse(0);
             int hh = files.size();
-            if (ox + w  > maxX) maxX = ox + w;
-            if (oy + hh > maxY) maxY = oy + hh;
+            if (ox + w > maxX) {
+                maxX = ox + w;
+            }
+            if (oy + hh > maxY) {
+                maxY = oy + hh;
+            }
         }
 
         //cream la graella buida plena de parets
         char[][] celles = new char[maxY][maxX];
-        for (char[] row : celles) java.util.Arrays.fill(row, '#');
+        for (char[] row : celles) {
+            java.util.Arrays.fill(row, '#');
+        }
 
         //segona passada: enganxam els tiles de cada habitació a la posició corresponent
         for (int i = 0; i < nodes.getLength(); i++) {
@@ -282,13 +308,17 @@ public class CarregadorMapa {
             int ox = Integer.parseInt(h.getAttribute("x"));
             int oy = Integer.parseInt(h.getAttribute("y"));
             NodeList tilesNodes = h.getElementsByTagName("tiles");
-            if (tilesNodes.getLength() == 0) continue;
+            if (tilesNodes.getLength() == 0) {
+                continue;
+            }
             List<String> files = extrauFiles(tilesNodes.item(0).getTextContent());
             for (int dy = 0; dy < files.size(); dy++) {
                 String row = files.get(dy);
                 for (int dx = 0; dx < row.length(); dx++) {
                     int gy = oy + dy, gx = ox + dx;
-                    if (gy < maxY && gx < maxX) celles[gy][gx] = row.charAt(dx);
+                    if (gy < maxY && gx < maxX) {
+                        celles[gy][gx] = row.charAt(dx);
+                    }
                 }
             }
         }
@@ -301,7 +331,9 @@ public class CarregadorMapa {
         List<String> files = new ArrayList<>();
         for (String linia : text.split("\n")) {
             String t = linia.stripTrailing();
-            if (!t.isBlank()) files.add(t);
+            if (!t.isBlank()) {
+                files.add(t);
+            }
         }
         return files;
     }
@@ -312,8 +344,9 @@ public class CarregadorMapa {
             pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             pw.println("<mapa id=\"" + mapa.getNom() + "\" nom=\"" + mapa.getNom() + "\">");
             pw.println("    <tilemap>");
-            for (char[] fila : mapa.getCelles())
+            for (char[] fila : mapa.getCelles()) {
                 pw.println("        " + new String(fila));
+            }
             pw.println("    </tilemap>");
             pw.println("</mapa>");
         }

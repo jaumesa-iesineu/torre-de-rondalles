@@ -43,7 +43,9 @@ public abstract class Motor {
         if (mut) return;
         try {
             File fitxer = new File("musica/musica_fons.mid");
-            if (!fitxer.exists()) return;
+            if (!fitxer.exists()) {
+                return;
+            }
             sequencer = MidiSystem.getSequencer();
             sequencer.open();
             sequencer.setSequence(new java.io.FileInputStream(fitxer));
@@ -57,7 +59,9 @@ public abstract class Motor {
     //atura i allibera el reproductor
     private void aturaMusica() {
         if (sequencer != null) {
-            if (sequencer.isRunning()) sequencer.stop();
+            if (sequencer.isRunning()) {
+                sequencer.stop();
+            }
             sequencer.close();
         }
     }

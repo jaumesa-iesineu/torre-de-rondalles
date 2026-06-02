@@ -39,6 +39,8 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     private int visio; //visio actual del jugador
 
     private EstatJugador estatJugador; //estat actual del jugador
+    private int dirX = 0; // darrera direcció horitzontal (per Pinky)
+    private int dirY = 1; // darrera direcció vertical (per Pinky)
 
     private Inventari inventari = new Inventari(); //el que du a sobre
     private int tornsVeri = 0;
@@ -111,8 +113,12 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     }
 
     public void usaItem(int index) { //usa l'item del slot indicat (0-based)
-        if (index < 0 || index >= com.iessineu.rondalles.inventari.Inventari.MAX_SLOTS) return;
-        if (inventari.get(index) == null) return;
+        if (index < 0 || index >= com.iessineu.rondalles.inventari.Inventari.MAX_SLOTS) {
+            return;
+        }
+        if (inventari.get(index) == null) {
+            return;
+        }
         Item item = inventari.get(index);
         item.aplicaEfecte(this);
         pes -= item.getPes();
@@ -120,18 +126,24 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     }
 
     public void tickVeri() {
-        if (tornsVeri <= 0) return;
+        if (tornsVeri <= 0) {
+            return;
+        }
         rebreDany(3);
         tornsVeri--;
     }
 
     public void tickFoc() {
-        if (tornsFoc <= 0) return;
+        if (tornsFoc <= 0) {
+            return;
+        }
         tornsFoc--;
     }
 
     public void tickGel() {
-        if (tornsGel <= 0) return;
+        if (tornsGel <= 0) {
+            return;
+        }
         tornsGel--;
     }
 
@@ -182,18 +194,33 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
         this.estatJugador = e;
     }
 
+    public void setDir(int dx, int dy) {
+        if (dx != 0 || dy != 0) {
+            dirX = dx;
+            dirY = dy;
+        }
+    }
+
+    public int getDirX() {
+        return dirX;
+    }
+
+    public int getDirY() {
+        return dirY;
+    }
+
+    public void setVida(int v) { vida = Math.max(0, v); }
+    public void setVidaMaxima(int v) { vidaMaxima = v; }
+    public void setAtac(int a) { atac = a; }
+    public void setDefensa(int d) { defensa = d; }
+
     public void setTornsVeri(int t) { tornsVeri = t; }
-    public void setTornsFoc(int t)  { tornsFoc = t; }
-    public void setTornsGel(int t)  { tornsGel = t; }
+    public void setTornsFoc(int t) { tornsFoc = t; }
+    public void setTornsGel(int t) { tornsGel = t; }
 
     public int getTornsVeri() { return tornsVeri; }
-    public int getTornsFoc()  { return tornsFoc; }
-    public int getTornsGel()  { return tornsGel; }
-
-    public void setVida(int v)       { vida = Math.max(0, v); }
-    public void setVidaMaxima(int v) { vidaMaxima = v; }
-    public void setAtac(int a)       { atac = a; }
-    public void setDefensa(int d)    { defensa = d; }
+    public int getTornsFoc() { return tornsFoc; }
+    public int getTornsGel() { return tornsGel; }
 
     public Inventari getInventari() { return inventari; }
 

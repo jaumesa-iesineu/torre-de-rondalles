@@ -5,6 +5,7 @@
 package com.iessineu.rondalles.entitats;
 
 import com.googlecode.lanterna.TextColor;
+import com.iessineu.rondalles.mapa.Mapa;
 
 /**
  *
@@ -14,15 +15,16 @@ public class DimoniBoiet extends Enemic { // extends Enemic es perque extends la
 
     public DimoniBoiet(int x, int y) { // constructor de la classe DimoniBoiet
         super(x, y, 'd', 10, 5, 5);
-        this.lletra='d';
+        this.lletra = 'd';
     }
 
     @Override
-    public void actualitzaIA(Jugador jugador, char[][] celles) { // actualitzaIA es perque actualitza la IA del Dimoni Boiet
-        if (distanciaAl(jugador) < radDeteccio && potVeure(jugador, celles)) {
-            canviaEstat(EstatEnemic.PERSEGUINT); // si entres al radi de deteccio i te veu, canvia a PERSEGUINT
+    public void actualitzaIA(Jugador jugador, Mapa mapa) {
+        if (distanciaAl(jugador) <= radDeteccio) {
+            canviaEstat(EstatEnemic.PERSEGUINT);
+            mouCap(jugador.getX(), jugador.getY(), mapa, jugador);
         } else {
-            canviaEstat(EstatEnemic.PATRULLANT); // si no entres al radi de deteccio, canvia a PATRULLANT
+            canviaEstat(EstatEnemic.PATRULLANT);
         }
     }
 

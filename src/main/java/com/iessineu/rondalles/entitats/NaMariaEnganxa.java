@@ -1,6 +1,7 @@
 package com.iessineu.rondalles.entitats;
 
 import com.googlecode.lanterna.TextColor;
+import com.iessineu.rondalles.mapa.Mapa;
 
 /**
  *
@@ -10,11 +11,11 @@ public class NaMariaEnganxa extends Enemic { // trampa estàtica — no es mou, 
 
     public NaMariaEnganxa(int x, int y) { // constructor de la classe NaMariaEnganxa
         super(x, y, 'M', 30, 9999, 0); // atac 9999 = kill instantani, radDeteccio 0 = no detecta
-        this.lletra='M';
+        this.lletra = 'M';
     }
 
     @Override
-    public void actualitzaIA(Jugador jugador, char[][] celles) { // trampa: no té IA, no es mou mai
+    public void actualitzaIA(Jugador jugador, Mapa mapa) { // trampa: no té IA, no es mou mai
     }
 
     @Override

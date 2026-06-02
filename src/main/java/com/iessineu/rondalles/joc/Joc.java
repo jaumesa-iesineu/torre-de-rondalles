@@ -6,7 +6,6 @@ package com.iessineu.rondalles.joc;
 
 import com.iessineu.rondalles.combat.SistemaCombat;
 import com.iessineu.rondalles.db.PartidaRepository;
-import java.util.List;
 import com.iessineu.rondalles.entitats.Bubota;
 import com.iessineu.rondalles.entitats.DimoniBoiet;
 import com.iessineu.rondalles.entitats.Drac;
@@ -157,10 +156,18 @@ public class Joc extends Motor {
         }
         if (tecla.getKeyType() == KeyType.Character) {
             char c = tecla.getCharacter();
-            if (c == ' ') { estat = Estat.MON; return; }
-            if (c == 's' || c == 'S') { corrent = false; return; }
+            if (c == ' ') {
+                estat = Estat.MON;
+                return;
+            }
+            if (c == 's' || c == 'S') {
+                corrent = false;
+                return;
+            }
         }
-        if (tecla.getKeyType() == KeyType.Escape) { corrent = false; }
+        if (tecla.getKeyType() == KeyType.Escape) {
+            corrent = false;
+        }
     }
 
     private void gestionaPausa(KeyStroke tecla) {
@@ -186,13 +193,20 @@ public class Joc extends Motor {
         }
         if (tecla.getKeyType() == KeyType.Character) {
             char c = tecla.getCharacter();
-            if (c == 'r' || c == 'R') { estat = Estat.MON; return; }
-            if (c == 'x' || c == 'X') { corrent = false; }
+            if (c == 'r' || c == 'R') {
+                estat = Estat.MON;
+                return;
+            }
+            if (c == 'x' || c == 'X') {
+                corrent = false;
+            }
         }
     }
 
     private void gestionaCombat(KeyStroke tecla) {
-        if (tecla.getKeyType() != KeyType.Character) return;
+        if (tecla.getKeyType() != KeyType.Character) {
+            return;
+        }
         char c = tecla.getCharacter();
 
         if (c >= '1' && c <= '9') {
@@ -231,14 +245,20 @@ public class Joc extends Motor {
 
     private void afegeixLog(String msg) {
         logCombat.add(msg);
-        if (logCombat.size() > MAX_LOG) logCombat.remove(0);
+        if (logCombat.size() > MAX_LOG) {
+            logCombat.remove(0);
+        }
     }
 
     private void gestionaMoviment(KeyStroke tecla) {
         if (tecla.getKeyType() == KeyType.Character) {
             char c = tecla.getCharacter();
             if (c == 'e' || c == 'E') {
-                for (Enemic e : enemics) if (e.isActiu()) e.actualitzaIA(jugador, mapa.getCelles());
+                for (Enemic e : enemics) {
+                    if (e.isActiu()) {
+                        e.actualitzaIA(jugador, mapa);
+                    }
+                }
                 estat = Estat.INVENTARI;
                 return;
             }
@@ -254,14 +274,30 @@ public class Joc extends Motor {
 
         int nx = jugador.getX();
         int ny = jugador.getY();
+        int dx = 0, dy = 0;
 
         switch (tecla.getKeyType()) {
-            case ArrowUp    -> ny--;
-            case ArrowDown  -> ny++;
-            case ArrowLeft  -> nx--;
-            case ArrowRight -> nx++;
-            default -> { return; }
+            case ArrowUp -> {
+                ny--;
+                dy = -1;
+            }
+            case ArrowDown -> {
+                ny++;
+                dy = 1;
+            }
+            case ArrowLeft -> {
+                nx--;
+                dx = -1;
+            }
+            case ArrowRight -> {
+                nx++;
+                dx = 1;
+            }
+            default -> {
+                return;
+            }
         }
+        jugador.setDir(dx, dy);
 
         Enemic enemic = trobaEnemicA(nx, ny);
         if (enemic != null) {
@@ -281,7 +317,9 @@ public class Joc extends Motor {
             jugador.tickVeri();
 
             for (Enemic e : enemics) {
-                if (e.isActiu()) e.actualitzaIA(jugador, mapa.getCelles());
+                if (e.isActiu()) {
+                    e.actualitzaIA(jugador, mapa);
+                }
             }
         }
 
@@ -289,17 +327,25 @@ public class Joc extends Motor {
     }
 
     private Enemic trobaEnemicA(int x, int y) {
-        for (Enemic e : enemics)
-            if (e.isActiu() && e.getX() == x && e.getY() == y) return e;
+        for (Enemic e : enemics) {
+            if (e.isActiu() && e.getX() == x && e.getY() == y) {
+                return e;
+            }
+        }
         return null;
     }
 
     private void recullItemSiNHiHa(int x, int y) {
         ItemMapa trobat = null;
         for (ItemMapa im : itemsMapa) {
-            if (im.getX() == x && im.getY() == y) { trobat = im; break; }
+            if (im.getX() == x && im.getY() == y) {
+                trobat = im;
+                break;
+            }
         }
-        if (trobat == null) return;
+        if (trobat == null) {
+            return;
+        }
         jugador.afegeixItem(trobat.getItem());
         mapa.setCella(x, y, '.');
         itemsMapa.remove(trobat);
@@ -312,10 +358,14 @@ public class Joc extends Motor {
             for (int x = 0; x < celles[y].length; x++) {
                 if (celles[y][x] == 'i') {
                     String id = switch (comptador % 4) {
-                        case 0 -> "pocio-vida";
-                        case 1 -> "pocio-veri";
-                        case 2 -> "pocio-foc";
-                        default -> "pocio-gel";
+                        case 0 ->
+                            "pocio-vida";
+                        case 1 ->
+                            "pocio-veri";
+                        case 2 ->
+                            "pocio-foc";
+                        default ->
+                            "pocio-gel";
                     };
                     itemsMapa.add(new ItemMapa(x, y, RegistreItems.get().pocio(id)));
                     comptador++;
@@ -435,23 +485,40 @@ public class Joc extends Motor {
     //cerca '@' al mapa per la posició inicial del jugador; si no n'hi ha, usa la primera casella lliure
     private int trobaInicialX() {
         char[][] celles = mapa.getCelles();
-        for (int y = 0; y < celles.length; y++)
-            for (int x = 0; x < celles[y].length; x++)
-                if (celles[y][x] == '@') { mapa.setCella(x, y, '.'); return x; }
-        for (int y = 0; y < celles.length; y++)
-            for (int x = 0; x < celles[y].length; x++)
-                if (celles[y][x] == '.') return x;
+        for (int y = 0; y < celles.length; y++) {
+            for (int x = 0; x < celles[y].length; x++) {
+                if (celles[y][x] == '@') {
+                    mapa.setCella(x, y, '.');
+                    return x;
+                }
+            }
+        }
+        for (int y = 0; y < celles.length; y++) {
+            for (int x = 0; x < celles[y].length; x++) {
+                if (celles[y][x] == '.') {
+                    return x;
+                }
+            }
+        }
         return 1;
     }
 
     private int trobaInicialY() {
         char[][] celles = mapa.getCelles();
-        for (int y = 0; y < celles.length; y++)
-            for (int x = 0; x < celles[y].length; x++)
-                if (celles[y][x] == '@') return y;
-        for (int y = 0; y < celles.length; y++)
-            for (int x = 0; x < celles[y].length; x++)
-                if (celles[y][x] == '.') return y;
+        for (int y = 0; y < celles.length; y++) {
+            for (int x = 0; x < celles[y].length; x++) {
+                if (celles[y][x] == '@') {
+                    return y;
+                }
+            }
+        }
+        for (int y = 0; y < celles.length; y++) {
+            for (int x = 0; x < celles[y].length; x++) {
+                if (celles[y][x] == '.') {
+                    return y;
+                }
+            }
+        }
         return 1;
     }
 }

@@ -38,20 +38,19 @@ public abstract class Entitat { // classe base per totes les entitats (enemics, 
     public abstract TextColor getColor();
 
     // getters i setters
-    
     //getters
     public int getX() {
         return x;
     }
-    
+
     public int getY() {
         return y;
     }
-    
+
     public char getSimbol() {
         return simbol;
     }
-    
+
     public boolean isActiu() {
         return actiu;
     }
@@ -60,11 +59,11 @@ public abstract class Entitat { // classe base per totes les entitats (enemics, 
     public void setX(int x) {
         this.x = x;
     }
-    
+
     public void setY(int y) {
         this.y = y;
     }
-    
+
     public void setActiu(boolean actiu) {
         this.actiu = actiu;
     }
