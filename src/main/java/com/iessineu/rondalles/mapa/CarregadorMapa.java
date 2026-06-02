@@ -48,10 +48,10 @@ public class CarregadorMapa {
                     nom = linia.substring(4).trim();
                     continue;
                 }
-                if (linia.startsWith("#") && files.isEmpty()) {
-                    continue; // comentari abans del mapa
+                if (linia.startsWith("//")) {
+                    continue;
                 }
-                files.add(linia);
+                if (!linia.isBlank()) files.add(linia);
             }
         }
 
