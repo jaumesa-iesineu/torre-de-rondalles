@@ -240,6 +240,62 @@ public abstract class Enemic extends Entitat {
         this.artAscii = art;
     }
 
+    protected void mouCapA(int tx, int ty, char[][] cells, Jugador jugador) {
+        int dx = Integer.signum(tx - this.x);
+        int dy = Integer.signum(ty - this.y);
+        int nx = this.x + dx, ny = this.y + dy;
+        if (pucMourem(nx, ny, cells, jugador)) { this.x = nx; this.y = ny; return; }
+        nx = this.x + dx; ny = this.y;
+        if (dx != 0 && pucMourem(nx, ny, cells, jugador)) { this.x = nx; this.y = ny; return; }
+        nx = this.x; ny = this.y + dy;
+        if (dy != 0 && pucMourem(nx, ny, cells, jugador)) { this.x = nx; this.y = ny; }
+    }
+
+    private boolean pucMourem(int nx, int ny, char[][] cells, Jugador jugador) {
+        if (cells == null) return true;
+        if (ny < 0 || ny >= cells.length || nx < 0 || nx >= cells[ny].length) return false;
+        if (cells[ny][nx] == '#') return false;
+        if (jugador != null && nx == jugador.getX() && ny == jugador.getY()) return false;
+        return true;
+    }
+
+    protected int[] primerPasBFS(int tx, int ty, char[][] cells) {
+        if (cells == null) return new int[]{tx, ty};
+        int rows = cells.length, cols = rows > 0 ? cells[0].length : 0;
+        boolean[][] visitat = new boolean[rows][cols];
+        int[] firstX = new int[rows * cols];
+        int[] firstY = new int[rows * cols];
+        java.util.Arrays.fill(firstX, -1);
+        java.util.Arrays.fill(firstY, -1);
+        java.util.Queue<int[]> cua = new java.util.LinkedList<>();
+        int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};
+        visitat[this.y][this.x] = true;
+        for (int[] d : dirs) {
+            int nx = this.x + d[0], ny = this.y + d[1];
+            if (ny >= 0 && ny < rows && nx >= 0 && nx < cols && cells[ny][nx] != '#' && !visitat[ny][nx]) {
+                visitat[ny][nx] = true;
+                firstX[ny * cols + nx] = nx;
+                firstY[ny * cols + nx] = ny;
+                cua.add(new int[]{nx, ny});
+            }
+        }
+        while (!cua.isEmpty()) {
+            int[] cur = cua.poll();
+            int cx = cur[0], cy = cur[1];
+            if (cx == tx && cy == ty) return new int[]{firstX[cy * cols + cx], firstY[cy * cols + cx]};
+            for (int[] d : dirs) {
+                int nx = cx + d[0], ny = cy + d[1];
+                if (ny >= 0 && ny < rows && nx >= 0 && nx < cols && cells[ny][nx] != '#' && !visitat[ny][nx]) {
+                    visitat[ny][nx] = true;
+                    firstX[ny * cols + nx] = firstX[cy * cols + cx];
+                    firstY[ny * cols + nx] = firstY[cy * cols + cx];
+                    cua.add(new int[]{nx, ny});
+                }
+            }
+        }
+        return new int[]{-1, -1};
+    }
+
     public String[] getArtAscii() {
         return artAscii;
     }

@@ -1,7 +1,6 @@
 package com.iessineu.rondalles.entitats;
 
 import com.googlecode.lanterna.TextColor;
-import com.iessineu.rondalles.mapa.Mapa;
 
 /**
  *
@@ -15,13 +14,11 @@ public class Gegant extends Enemic { // extends Enemic perquè és una subclasse
     }
 
     @Override
-    public void actualitzaIA(Jugador jugador, Mapa mapa) {
-        if (calculaDistanciaAlJugador(jugador) <= radDeteccio) {
+    public void actualitzaIA(Jugador jugador, char[][] cells) {
+        if (distanciaAl(jugador) <= radDeteccio) {
             canviaEstat(EstatEnemic.PERSEGUINT);
-            int[] primerPasDelCami = cercaCamiAmbAEstrella(jugador.getX(), jugador.getY(), mapa);
-            if (primerPasDelCami[0] != -1) {
-                mouUnPasCapA(primerPasDelCami[0], primerPasDelCami[1], mapa, jugador);
-            }
+            int[] pas = primerPasBFS(jugador.getX(), jugador.getY(), cells);
+            if (pas[0] != -1) mouCapA(pas[0], pas[1], cells, jugador);
         } else {
             canviaEstat(EstatEnemic.PATRULLANT);
         }

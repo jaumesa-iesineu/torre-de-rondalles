@@ -27,6 +27,7 @@ import com.iessineu.rondalles.motor.Motor;
 import com.iessineu.rondalles.motor.Renderitzador;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.iessineu.rondalles.db.PartidaRepository;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class Joc extends Motor {
     private Mapa mapa;
 
     Jugador jugador;
-    private List<Enemic> enemics;
+    List<Enemic> enemics;
 
     private List<ItemMapa> itemsMapa = new ArrayList<>();
     private Enemic enemicCombat = null;
@@ -76,11 +77,10 @@ public class Joc extends Motor {
 
     private int opcioMenuPausa = 0;
 
-    public Object idMapaActual;
+    public String idMapaActual;
 
-    public Jugador jugado;
-
-    public Object enemicsMorts;
+    public List<int[]> enemicsMorts = new ArrayList<>();
+    public boolean[][] explorat;
     private static final String[] OPCIONS_PAUSA = {"Reanudar", "Guardar", "Carregar", "Sortir"};
 
     public Joc(String fitxerMapa) {
@@ -104,9 +104,7 @@ public class Joc extends Motor {
     protected void init() throws Exception {
         renderer = new Renderitzador();
 
-<<<<<<< HEAD
-=======
-        // si la config no ve de fora (constructor antic), la carregam des del game.json empaquetado
+        // si la config no ve de fora (constructor amb -game/-mod), la carregam des del game.json empaquetado
         try {
             if (config == null) {
                 config = CarregadorGame.carrega("game.json");
@@ -126,7 +124,6 @@ public class Joc extends Motor {
             fitxerMapa = "mapes/planta1.map";
         }
 
->>>>>>> e7617d653f9c180af157d0baa5cfb941027abd5f
         mapa = CarregadorMapa.carrega(fitxerMapa);
         jugador = new Jugador(trobaInicialX(), trobaInicialY());
         enemics = new ArrayList<>();
@@ -351,7 +348,7 @@ return;
         if (npc != null) {
             npcActual = npc;
             enigmaInput = "";
-            estat = npc.isEnigmaResolt() ? Estat.COMERCIANT : Estat.ENIGMA;
+            estat = npc.isEnigmaResult() ? Estat.COMERCIANT : Estat.ENIGMA;
             return;
         }
 
@@ -593,7 +590,6 @@ return;
 
 
             boolean[][] visible = null;
-            boolean[][] explorat = null;
             if (estat == Estat.COMBAT) {
                 renderer.dibuixaCombat(enemicCombat, jugador, logCombat);
             } else if (estat == Estat.INVENTARI) {

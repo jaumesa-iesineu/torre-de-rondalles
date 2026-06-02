@@ -29,7 +29,7 @@ public class GestorPartida {
             dos.write(idBytes);
 
             //posició i stats del jugador
-            Jugador j = joc.jugado;
+            Jugador j = joc.jugador;
             dos.writeShort(j.getX());
             dos.writeShort(j.getY());
             dos.writeShort(j.getVida());

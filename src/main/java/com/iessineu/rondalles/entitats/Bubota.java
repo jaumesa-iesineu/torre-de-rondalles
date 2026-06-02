@@ -1,7 +1,6 @@
 package com.iessineu.rondalles.entitats;
 
 import com.googlecode.lanterna.TextColor;
-import com.iessineu.rondalles.mapa.Mapa;
 
 /**
  *
@@ -15,10 +14,10 @@ public class Bubota extends Enemic { // extends Enemic perquè és una subclasse
     }
 
     @Override
-    public void actualitzaIA(Jugador jugador, Mapa mapa) {
-        if (distanciaAl(jugador) <= radDeteccio) {
+    public void actualitzaIA(Jugador jugador, char[][] cells) {
+        if (distanciaAl(jugador) <= radDeteccio && potVeure(jugador, cells)) {
             canviaEstat(EstatEnemic.PERSEGUINT);
-            mouCap(jugador.getX(), jugador.getY(), mapa, jugador);
+            mouCapA(jugador.getX(), jugador.getY(), cells, jugador);
         } else {
             canviaEstat(EstatEnemic.PATRULLANT);
         }
