@@ -387,26 +387,12 @@ return;
         jugador.setEstatJugador(Jugador.EstatJugador.MOVIMENT);
 
         if (TipusTerra.de(mapa.getCelles()[ny][nx]) == TipusTerra.GEL) {
-
-    while (true) {
-
-        int segX = jugador.getX() + dx;
-        int segY = jugador.getY() + dy;
-
-        if (!mapa.esPasable(segX, segY)) {
-            break;
+            lliscantGel = true;
+            gelDx = dx;
+            gelDy = dy;
+        } else {
+            lliscantGel = false;
         }
-
-        char seguent = mapa.getCelles()[segY][segX];
-
-        jugador.setX(segX);
-        jugador.setY(segY);
-
-        if (TipusTerra.de(seguent) != TipusTerra.GEL) {
-            break;
-        }
-    }
-}
 
         recullItemSiNHiHa(nx, ny);
         tickTorn();
