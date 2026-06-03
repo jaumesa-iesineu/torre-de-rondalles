@@ -34,9 +34,10 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     private int pes; // pes actual del jugador
     private int pesMaxim; // pes maxim del jugador
 
-    private int velocitat;// velocitat actual del jugador
+    private int velocitat;
+    private int evasio; // % de probabilitat d'esquivar un atac (0-100)
 
-    private int visio; //visio actual del jugador
+    private int visio;
 
     private EstatJugador estatJugador; //estat actual del jugador
     private int dirX = 0; // darrera direcció horitzontal (per Pinky)
@@ -56,6 +57,7 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
         this.pesMaxim = 50;
         this.pes = 0;
         this.velocitat = 5;
+        this.evasio = 10;
         this.visio = 5;
         this.estatJugador = EstatJugador.IDLE;
     }
@@ -94,8 +96,12 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
         return vida <= 0;
     }
 
+    public boolean esquiva() {
+        return evasio > 0 && java.util.concurrent.ThreadLocalRandom.current().nextInt(100) < evasio;
+    }
+
     public void rebreDany(int dany) {
-        int danyReal = Math.max(1, dany - defensa); //la defensa absorb part del cop
+        int danyReal = Math.max(1, dany - defensa);
         vida -= danyReal;
         if (vida <= 0) {
             vida = 0;
@@ -181,6 +187,11 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     public int getpesMaxim() {
         return pesMaxim;
     }
+
+    public int getEvasio() { return evasio; }
+    public void setEvasio(int e) { evasio = e; }
+    public int getVelocitat() { return velocitat; }
+    public void setVelocitat(int v) { velocitat = v; }
 
     public int getVisio() {
         return visio;

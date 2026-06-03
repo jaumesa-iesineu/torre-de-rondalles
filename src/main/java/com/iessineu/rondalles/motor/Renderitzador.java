@@ -234,6 +234,8 @@ public class Renderitzador { // classe per gestionar la pantalla
         //estadistiques bàsiques
         pintaText(col, fila++, "ATK  " + jugador.getAtacTotal(),    taronja);
         pintaText(col, fila++, "DEF  " + jugador.getDefensaTotal(), blau);
+        pintaText(col, fila++, "VEL  " + jugador.velocitatEfectiva(), new TextColor.RGB(100, 200, 255));
+        pintaText(col, fila++, "EVA  " + jugador.getEvasio() + "%",  new TextColor.RGB(180, 255, 180));
         pintaText(col, fila++, "PES  " + jugador.getPes() + " / " + jugador.getpesMaxim(), groc);
         fila++;
 

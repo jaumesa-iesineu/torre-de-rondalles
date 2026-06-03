@@ -15,7 +15,8 @@ public class SistemaCombat {
         return dany;
     }
 
-    public static int atacaJugador(Enemic enemic, Jugador jugador) { //enemic pega al jugador, retorna dany real
+    public static int atacaJugador(Enemic enemic, Jugador jugador) {
+        if (jugador.esquiva()) return -1; // -1 = esquivat
         int dany = calculaDany(enemic.getAtacEfectiu(), jugador.getDefensaTotal());
         jugador.rebreDany(dany);
         return dany;

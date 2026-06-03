@@ -288,7 +288,11 @@ return;
             jugador.tickFoc();
             jugador.tickGel();
             int danyRebut = SistemaCombat.atacaJugador(enemicCombat, jugador);
-            afegeixLog(nom + " contraataca! Has rebut " + danyRebut + " de dany.");
+            if (danyRebut == -1) {
+                afegeixLog("Has esquivat l'atac de " + nom + "!");
+            } else {
+                afegeixLog(nom + " contraataca! Has rebut " + danyRebut + " de dany.");
+            }
 
             if (jugador.esMort()) {
     GestorMusica.reprodueix(GestorMusica.Pista.GAME_OVER);
@@ -408,16 +412,20 @@ return;
         jugador.tickVeri(); jugador.tickFoc(); jugador.tickGel();
         TipusTerra terra = TipusTerra.de(
             mapa.getCelles()[jugador.getY()][jugador.getX()]);
-        for (Enemic e : enemics) {
-            if (!e.isActiu()) continue;
-            int radEfectiu = switch (terra) {
-                case GESPA -> (int)(e.getRadDeteccio() * 0.5);
-                case METAL -> (int)(e.getRadDeteccio() * 2.0);
-                default    -> e.getRadDeteccio();
-            };
-            e.actualitzaIAambRadi(jugador, radEfectiu);
-            e.actualitzaIA(jugador, mapa.getCelles());
-            e.tickVeri(); e.tickFoc(); e.tickGel();
+        // torns extra per penalització de pes (velocitat 5=normal, 4=-1, 3=-2)
+        int tornsEnemics = 1 + (5 - jugador.velocitatEfectiva());
+        for (int torn = 0; torn < tornsEnemics; torn++) {
+            for (Enemic e : enemics) {
+                if (!e.isActiu()) continue;
+                int radEfectiu = switch (terra) {
+                    case GESPA -> (int)(e.getRadDeteccio() * 0.5);
+                    case METAL -> (int)(e.getRadDeteccio() * 2.0);
+                    default    -> e.getRadDeteccio();
+                };
+                e.actualitzaIAambRadi(jugador, radEfectiu);
+                e.actualitzaIA(jugador, mapa.getCelles());
+                if (torn == 0) { e.tickVeri(); e.tickFoc(); e.tickGel(); }
+            }
         }
     }
 
