@@ -15,7 +15,7 @@ public class Drac extends Enemic { // boss final de la planta 5
 
     @Override
     public void actualitzaIA(Jugador jugador, char[][] cells) {
-        if (distanciaAl(jugador) <= radDeteccio) {
+        if (distanciaAl(jugador) <= radDeteccio && potVeure(jugador, cells)) {
             canviaEstat(EstatEnemic.PERSEGUINT);
             int[] pas = primerPasBFS(jugador.getX(), jugador.getY(), cells);
             if (pas[0] != -1) mouCapA(pas[0], pas[1], cells, jugador);

@@ -14,6 +14,7 @@ public class DimoniBoiet extends Enemic {
 
         if (distanciaAl(jugador) < radDeteccio && potVeure(jugador, cells)) {
             canviaEstat(EstatEnemic.PERSEGUINT);
+            mouCapA(jugador.getX(), jugador.getY(), cells, jugador);
         } else {
             canviaEstat(EstatEnemic.PATRULLANT);
         }

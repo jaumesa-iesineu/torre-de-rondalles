@@ -130,8 +130,12 @@ public class Joc extends Motor {
         carregaEnemics();
         carregaItemsMapa();
         carregaNpcs();
-        GestorMusica.reprodueix(GestorMusica.Pista.MENU);
 
+        explorat = new boolean[mapa.getAlcada()][mapa.getAmplada()];
+        mapaRecord = new char[mapa.getAlcada()][mapa.getAmplada()];
+        for (char[] fila : mapaRecord) java.util.Arrays.fill(fila, ' ');
+
+        GestorMusica.reprodueix(GestorMusica.Pista.MENU);
     }
 
     @Override
@@ -434,8 +438,56 @@ return;
             jugador.setX(trobaInicialX()); jugador.setY(trobaInicialY());
             enemics.clear(); itemsMapa.clear(); npcs.clear();
             carregaEnemics(); carregaItemsMapa(); carregaNpcs();
+
+            explorat = new boolean[mapa.getAlcada()][mapa.getAmplada()];
+            mapaRecord = new char[mapa.getAlcada()][mapa.getAmplada()];
+            for (char[] fila : mapaRecord) java.util.Arrays.fill(fila, ' ');
+
             GestorMusica.reprodueix(GestorMusica.Pista.valueOf("PIS_" + pisActual));
         } catch (Exception ex) { corrent = false; }
+    }
+
+    //Bresenham des del jugador fins a (x1,y1); retorna false si una paret talla la línia
+    private boolean teLiniaDVista(int x0, int y0, int x1, int y1, char[][] celles) {
+        int dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0);
+        int sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+        int err = dx - dy;
+        int cx = x0, cy = y0;
+        while (cx != x1 || cy != y1) {
+            int e2 = 2 * err;
+            if (e2 > -dy) { err -= dy; cx += sx; }
+            if (e2 < dx)  { err += dx; cy += sy; }
+            if (cx == x1 && cy == y1) break;
+            if (cy >= 0 && cy < celles.length && cx >= 0 && cx < celles[cy].length)
+                if (celles[cy][cx] == '#') return false;
+        }
+        return true;
+    }
+
+    //calcula quines caselles veu el jugador i actualitza explorat i mapaRecord
+    private boolean[][] actualitzaVisio() {
+        boolean[][] visible = new boolean[mapa.getAlcada()][mapa.getAmplada()];
+        char[][] celles = mapa.getCelles();
+        int jx = jugador.getX(), jy = jugador.getY();
+        for (int y = 0; y < mapa.getAlcada(); y++) {
+            for (int x = 0; x < mapa.getAmplada(); x++) {
+                double dist = Math.sqrt((x - jx) * (x - jx) + (y - jy) * (y - jy));
+                if (dist > RADI_VISIO) continue;
+                if (teLiniaDVista(jx, jy, x, y, celles)) {
+                    visible[y][x] = true;
+                    explorat[y][x] = true;
+                    mapaRecord[y][x] = celles[y][x];
+                }
+            }
+        }
+        //items i enemics visibles també es recorden
+        for (ItemMapa im : itemsMapa) {
+            if (visible[im.getY()][im.getX()]) mapaRecord[im.getY()][im.getX()] = im.getItem().getSimbol();
+        }
+        for (Enemic e : enemics) {
+            if (e.isActiu() && visible[e.getY()][e.getX()]) mapaRecord[e.getY()][e.getX()] = e.getSimbol();
+        }
+        return visible;
     }
 
     private void carregaNpcs() {
@@ -575,9 +627,7 @@ return;
 
             List<Entitat> totes = new ArrayList<>(enemics);
 
-
-
-            boolean[][] visible = null;
+            boolean[][] visible = actualitzaVisio();
             if (estat == Estat.COMBAT) {
                 renderer.dibuixaCombat(enemicCombat, jugador, logCombat);
             } else if (estat == Estat.INVENTARI) {
