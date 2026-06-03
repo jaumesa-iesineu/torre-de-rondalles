@@ -426,6 +426,8 @@ return;
                 default    -> e.getRadDeteccio();
             };
             e.actualitzaIAambRadi(jugador, radEfectiu);
+            e.actualitzaIA(jugador, mapa.getCelles());
+            e.tickVeri(); e.tickFoc(); e.tickGel();
         }
     }
 
