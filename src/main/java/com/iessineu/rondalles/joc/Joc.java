@@ -471,7 +471,7 @@ return;
         int jx = jugador.getX(), jy = jugador.getY();
         for (int y = 0; y < mapa.getAlcada(); y++) {
             for (int x = 0; x < mapa.getAmplada(); x++) {
-                double dist = Math.sqrt((x - jx) * (x - jx) + (y - jy) * (y - jy));
+                double dist = Math.sqrt(((x - jx) * (x - jx)/3) + ((y - jy) * (y - jy)*2));//Posat per a que se vegi la visió redona
                 if (dist > RADI_VISIO) continue;
                 if (teLiniaDVista(jx, jy, x, y, celles)) {
                     visible[y][x] = true;
