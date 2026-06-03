@@ -67,6 +67,46 @@
         "estatica": true,
         "artFitxer": "art/maria.txt"
       }
+    ]
+  },
+  "npcs": {
+    "tipus": [
+      {
+        "simbols": [
+          "N"
+        ],
+        "nom": "EnPere el Ferreter",
+        "dialeg": "Benvingut, aventurer! Tinc eines i armadures de primera qualitat. Compra abans que s'acabi!",
+        "colorR": 80,
+        "colorG": 160,
+        "colorB": 255,
+        "estatica": true,
+        "artFitxer": "art/npc_pere.txt"
+      },
+      {
+        "simbols": [
+          "n"
+        ],
+        "nom": "La Griselda l'Herbolera",
+        "dialeg": "Les meves pocions curen qualsevol ferida... i alguns mals d'amor. Que vols comprar, estimat?",
+        "colorR": 50,
+        "colorG": 200,
+        "colorB": 80,
+        "estatica": true,
+        "artFitxer": "art/npc_griselda.txt"
+      },
+      {
+        "simbols": [
+          "ñ"
+        ],
+        "nom": "En Blai el Misteriós",
+        "dialeg": "Psst... tinc objectes que no trobaràs enlloc més. Però no preguntis d'on venen.",
+        "colorR": 230,
+        "colorG": 200,
+        "colorB": 40,
+        "estatica": true,
+        "artFitxer": "art/npc_blai.txt"
+      }
     ],
     "posicions": [
       {"mapa": "planta1", "simbol": "M", "x": 28, "y": 2},
@@ -87,7 +127,10 @@
       {"mapa": "planta1", "simbol": "D", "x": 60, "y": 29},
       {"mapa": "planta1", "simbol": "B", "x": 25, "y": 30},
       {"mapa": "planta1", "simbol": "D", "x": 26, "y": 35},
-      {"mapa": "planta1", "simbol": "D", "x": 77, "y": 35}
+      {"mapa": "planta1", "simbol": "D", "x": 77, "y": 35},
+      {"mapa": "planta1", "simbol": "N", "x": 10, "y": 10},
+      {"mapa": "planta1", "simbol": "n", "x": 10, "y": 10},
+      {"mapa": "planta1", "simbol": "ñ", "x": 10, "y": 10}
     ]
   }
 }
