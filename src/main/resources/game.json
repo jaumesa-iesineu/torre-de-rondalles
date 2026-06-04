@@ -1,18 +1,203 @@
 {
-  "configuracio": {
-    "mapaInicial": "planta1"
-  },
+    "configuracio": {
+        "mapaInicial": "planta1"
+    },
 
-  "colorsPresets": {
-    "vermellCremat":  [180,  40,  10],
-    "blancBlavis":    [180, 180, 255],
-    "ataronjatFosc":  [200, 120,  50],
-    "vermellIntens":  [220,  30,  30],
-    "lila":           [180,  50, 220],
-    "verdFluid":      [ 50, 200,  80],
-    "blavCel":        [ 80, 160, 255],
-    "groc":           [230, 200,  40]
-  },
+    "catalogItems": {
+        "armes": [
+            {
+                "id": "puny",
+                "nom": "Puny",
+                "pes": 0,
+                "simbol": "p",
+                "atac": 1,
+                "rang": 1
+            },
+            {
+                "id": "falc-llaurador",
+                "nom": "Falç de llaurador",
+                "pes": 1,
+                "simbol": "f",
+                "atac": 3,
+                "rang": 1
+            },
+            {
+                "id": "garrot-olivera",
+                "nom": "Garrot d'olivera",
+                "pes": 2,
+                "simbol": "g",
+                "atac": 5,
+                "rang": 1
+            },
+            {
+                "id": "llanca-pescador",
+                "nom": "Llança de pescador",
+                "pes": 3,
+                "simbol": "l",
+                "atac": 7,
+                "rang": 2
+            },
+            {
+                "id": "espasa-cavaller",
+                "nom": "Espasa del Cavaller Sant",
+                "pes": 3,
+                "simbol": "E",
+                "atac": 9,
+                "rang": 1
+            },
+            {
+                "id": "destral-gegant",
+                "nom": "Destral de Gegant",
+                "pes": 5,
+                "simbol": "X",
+                "atac": 15,
+                "rang": 1
+            }
+        ],
+        "armadures": [
+            {
+                "id": "capell-pages",
+                "nom": "Capell de pagès",
+                "pes": 2,
+                "simbol": "q",
+                "defensa": 1,
+                "slot": "CASC"
+            },
+            {
+                "id": "elm-ferro-oxidat",
+                "nom": "Elm de ferro oxidat",
+                "pes": 5,
+                "simbol": "h",
+                "defensa": 3,
+                "slot": "CASC"
+            },
+            {
+                "id": "casc-cavaller",
+                "nom": "Casc de Cavaller Sant",
+                "pes": 9,
+                "simbol": "C",
+                "defensa": 6,
+                "slot": "CASC"
+            },
+            {
+                "id": "camisa-lli",
+                "nom": "Camisa de lli",
+                "pes": 5,
+                "simbol": "c",
+                "defensa": 2,
+                "slot": "COS"
+            },
+            {
+                "id": "cota-malla",
+                "nom": "Cota de malla",
+                "pes": 12,
+                "simbol": "m",
+                "defensa": 5,
+                "slot": "COS"
+            },
+            {
+                "id": "armadura-cuir-drac",
+                "nom": "Armadura de cuir de drac",
+                "pes": 20,
+                "simbol": "A",
+                "defensa": 9,
+                "slot": "COS"
+            },
+            {
+                "id": "calcons-llana",
+                "nom": "Calçons de llana",
+                "pes": 3,
+                "simbol": "k",
+                "defensa": 1,
+                "slot": "CAMES"
+            },
+            {
+                "id": "greves-ferro",
+                "nom": "Greves de ferro",
+                "pes": 7,
+                "simbol": "v",
+                "defensa": 3,
+                "slot": "CAMES"
+            },
+            {
+                "id": "polaines-encantades",
+                "nom": "Polaines encantades",
+                "pes": 12,
+                "simbol": "P",
+                "defensa": 6,
+                "slot": "CAMES"
+            },
+            {
+                "id": "espardenyes-canem",
+                "nom": "Espardenyes de cànem",
+                "pes": 2,
+                "simbol": "s",
+                "defensa": 1,
+                "slot": "PEUS"
+            },
+            {
+                "id": "botes-cuir",
+                "nom": "Botes de cuir",
+                "pes": 4,
+                "simbol": "b",
+                "defensa": 2,
+                "slot": "PEUS"
+            },
+            {
+                "id": "botes-ferro",
+                "nom": "Botes de ferro",
+                "pes": 8,
+                "simbol": "F",
+                "defensa": 4,
+                "slot": "PEUS"
+            }
+        ],
+        "pocions": [
+            {
+                "id": "pocio-vida",
+                "nom": "Poció de vida",
+                "pes": 1,
+                "simbol": "!",
+                "tipus": "VIDA",
+                "valor": 30
+            },
+            {
+                "id": "pocio-veri",
+                "nom": "Poció de verí",
+                "pes": 1,
+                "simbol": "~",
+                "tipus": "VERI",
+                "valor": 5
+            },
+            {
+                "id": "pocio-foc",
+                "nom": "Poció de foc",
+                "pes": 1,
+                "simbol": "%",
+                "tipus": "FOC",
+                "valor": 4
+            },
+            {
+                "id": "pocio-gel",
+                "nom": "Poció de gel",
+                "pes": 1,
+                "simbol": "*",
+                "tipus": "GEL",
+                "valor": 4
+            }
+        ]
+    },
+
+    "colorsPresets": {
+        "vermellCremat": [180, 40, 10],
+        "blancBlavis": [180, 180, 255],
+        "ataronjatFosc": [200, 120, 50],
+        "vermellIntens": [220, 30, 30],
+        "lila": [180, 50, 220],
+        "verdFluid": [50, 200, 80],
+        "blavCel": [80, 160, 255],
+        "groc": [230, 200, 40]
+    },
 
   "mapes": {
     "ordre": ["planta1", "planta2", "planta3", "planta4", "planta5"],
@@ -72,7 +257,7 @@
         "artFitxer": "art/maria.txt"
       }
     ],
-     "posicions": [
+    "posicions": [
       {"mapa": "planta1", "simbol": "M", "x": 13, "y": 2},
       {"mapa": "planta1", "simbol": "G", "x": 13, "y": 3, "area": 5},
       {"mapa": "planta1", "simbol": "B", "x": 13, "y": 4},
@@ -90,8 +275,9 @@
       {"mapa": "planta1", "simbol": "B", "x": 25, "y": 30},
       {"mapa": "planta1", "simbol": "D", "x": 26, "y": 35, "area": 5},
       {"mapa": "planta1", "simbol": "D", "x": 77, "y": 35, "area": 5}
-     ]
+    ]
   },
+
   "items": {
     "posicions": [
       {"mapa": "planta1", "id": "pocio-vida", "x": 105, "y": 1},
@@ -116,41 +302,30 @@
       {"mapa": "planta1", "id": "pocio-gel",  "x": 33,  "y": 24}
     ]
   },
+
   "npcs": {
     "tipus": [
       {
-        "simbols": [
-          "N"
-        ],
+        "simbols": ["N"],
         "nom": "EnPere el Ferreter",
         "dialeg": "Benvingut, aventurer! Tinc eines i armadures de primera qualitat. Compra abans que s'acabi!",
-        "colorR": 80,
-        "colorG": 160,
-        "colorB": 255,
+        "colorR": 80, "colorG": 160, "colorB": 255,
         "estatica": true,
         "artFitxer": "art/npc_pere.txt"
       },
       {
-        "simbols": [
-          "n"
-        ],
+        "simbols": ["n"],
         "nom": "La Griselda l'Herbolera",
         "dialeg": "Les meves pocions curen qualsevol ferida... i alguns mals d'amor. Que vols comprar, estimat?",
-        "colorR": 50,
-        "colorG": 200,
-        "colorB": 80,
+        "colorR": 50, "colorG": 200, "colorB": 80,
         "estatica": true,
         "artFitxer": "art/npc_griselda.txt"
       },
       {
-        "simbols": [
-          "ñ"
-        ],
+        "simbols": ["ñ"],
         "nom": "En Blai el Misteriós",
         "dialeg": "Psst... tinc objectes que no trobaràs enlloc més. Però no preguntis d'on venen.",
-        "colorR": 230,
-        "colorG": 200,
-        "colorB": 40,
+        "colorR": 230, "colorG": 200, "colorB": 40,
         "estatica": true,
         "artFitxer": "art/npc_blai.txt"
       }
@@ -160,5 +335,160 @@
       {"mapa": "planta1", "simbol": "n", "x": 10, "y": 10},
       {"mapa": "planta1", "simbol": "ñ", "x": 10, "y": 10}
     ]
+  },
+
+  "jugador": {
+    "artFitxer": "art/jugador.txt"
+  },
+
+  "equipamentInicial": {
+    "armadures": ["capell-pages", "camisa-lli", "calcons-llana", "espardenyes-canem"],
+    "arma": "falc-llaurador"
   }
+}
+        ],
+        "posicions": [
+            {
+                "mapa": "planta1",
+                "simbol": "M",
+                "x": 28,
+                "y": 2
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "G",
+                "x": 28,
+                "y": 3
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 28,
+                "y": 4
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "D",
+                "x": 28,
+                "y": 5
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "e",
+                "x": 28,
+                "y": 6
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 58,
+                "y": 6
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "D",
+                "x": 80,
+                "y": 6
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 40,
+                "y": 7
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "D",
+                "x": 86,
+                "y": 14
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 27,
+                "y": 15
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "D",
+                "x": 48,
+                "y": 15
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 58,
+                "y": 16
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 27,
+                "y": 22
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 30,
+                "y": 22
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 27,
+                "y": 25
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "D",
+                "x": 60,
+                "y": 29
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 25,
+                "y": 30
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "D",
+                "x": 26,
+                "y": 35
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "D",
+                "x": 77,
+                "y": 35
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "N",
+                "x": 10,
+                "y": 10
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "n",
+                "x": 10,
+                "y": 10
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "ñ",
+                "x": 10,
+                "y": 10
+            }
+        ]
+    },
+
+    "jugador": {
+        "artFitxer": "art/jugador.txt"
+    },
+
+    "equipamentInicial": {
+        "armadures": ["capell-pages", "camisa-lli", "calcons-llana", "espardenyes-canem"],
+        "arma": "falc-llaurador"
+    }
 }
