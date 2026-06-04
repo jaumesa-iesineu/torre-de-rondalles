@@ -132,6 +132,20 @@ public class Joc extends Motor {
         }
 
         mapa = CarregadorMapa.carrega(fitxerMapa);
+
+        //carregam els tipus de terra des del JSON
+        if (config != null && config.terrenys != null) {
+            TipusTerra.inicialitza(config.terrenys);
+        } else {
+            //fallback per si no hi ha terrenys al JSON (no hauria de passar)
+            try {
+                ConfigGame cfgJson = CarregadorGame.carrega("game.json");
+                if (cfgJson != null) TipusTerra.inicialitza(cfgJson.terrenys);
+            } catch (Exception e) {
+                System.err.println("[TERRA] No s'han pogut carregar els terrenys: " + e.getMessage());
+            }
+        }
+
         jugador = creaJugador(trobaInicialX(), trobaInicialY());
         enemics = new ArrayList<>();
         carregaEnemics();
@@ -166,7 +180,8 @@ public class Joc extends Motor {
                 int gx = jugador.getX() + gelDx;
                 int gy = jugador.getY() + gelDy;
                 char terraDesti = mapa.getCelles()[Math.max(0, Math.min(mapa.getAlcada() - 1, gy))][Math.max(0, Math.min(mapa.getAmplada() - 1, gx))];
-                if (mapa.esPasable(gx, gy) && TipusTerra.de(terraDesti) == TipusTerra.GEL) {
+                TipusTerra tt = TipusTerra.de(terraDesti);
+                if (mapa.esPasable(gx, gy) && tt != null && tt.isLlisca()) {
                     jugador.setX(gx);
                     jugador.setY(gy);
                     tickTorn();
@@ -489,7 +504,8 @@ public class Joc extends Motor {
         }
 
         char simbolDesti = mapa.getCelles()[ny][nx];
-        if (TipusTerra.de(simbolDesti) == TipusTerra.AIGUA) {
+        TipusTerra terraDestiT = TipusTerra.de(simbolDesti);
+        if (terraDestiT != null && terraDestiT.isDoblePas()) {
             if (!esperantSegonaAigua || aiguaNx != nx || aiguaNy != ny) {
                 esperantSegonaAigua = true;
                 aiguaNx = nx;
@@ -511,7 +527,8 @@ public class Joc extends Motor {
         jugador.setY(ny);
         jugador.setEstatJugador(Jugador.EstatJugador.MOVIMENT);
 
-        if (TipusTerra.de(mapa.getCelles()[ny][nx]) == TipusTerra.GEL) {
+        TipusTerra terraPeu = TipusTerra.de(mapa.getCelles()[ny][nx]);
+        if (terraPeu != null && terraPeu.isLlisca()) {
             lliscantGel = true;
             gelDx = dx;
             gelDy = dy;
@@ -533,20 +550,14 @@ public class Joc extends Motor {
         jugador.tickGel();
         TipusTerra terra = TipusTerra.de(
                 mapa.getCelles()[jugador.getY()][jugador.getX()]);
+        double modRadi = (terra != null) ? terra.getModRadi() : 1.0;
         // torns extra per penalització de pes (velocitat 5=normal, 4=-1, 3=-2)
         int tornsEnemics = 1 + (5 - jugador.velocitatEfectiva());
         for (int torn = 0; torn < tornsEnemics; torn++) {
             for (Enemic e : enemics) {
                 if (!e.isActiu()) continue;
                 if (!e.haDActuar()) continue;
-                int radEfectiu = switch (terra) {
-                    case GESPA ->
-                        (int) (e.getRadDeteccio() * 0.5);
-                    case METAL ->
-                        (int) (e.getRadDeteccio() * 2.0);
-                    default ->
-                        e.getRadDeteccio();
-                };
+                int radEfectiu = (int) (e.getRadDeteccio() * modRadi);
                 e.actualitzaIAambRadi(jugador, radEfectiu);
                 e.actualitzaIA(jugador, mapa.getCelles());
                 if (torn == 0) {

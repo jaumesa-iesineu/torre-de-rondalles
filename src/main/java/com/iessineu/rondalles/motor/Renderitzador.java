@@ -7,6 +7,7 @@ package com.iessineu.rondalles.motor;
 import com.iessineu.rondalles.entitats.Enemic;
 import com.iessineu.rondalles.entitats.Entitat;
 import com.iessineu.rondalles.mapa.Mapa;
+import com.iessineu.rondalles.mapa.TipusTerra;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.TextCharacter;
@@ -203,25 +204,21 @@ public class Renderitzador { // classe per gestionar la pantalla
 
     //cada tipus de casella té un color base diferent
     private TextColor colorPerCasella(char c) {
+        //si es un tipus de terra definit al JSON, agafam el seu color
+        TipusTerra t = TipusTerra.de(c);
+        if (t != null) {
+            return new TextColor.RGB(t.getColorR(), t.getColorG(), t.getColorB());
+        }
+        //simbols especials que no son terrenys
         return switch (c) {
             case '#' ->
                 new TextColor.RGB(130, 130, 140); //parets
-            case '.' ->
-                new TextColor.RGB(70, 50, 35); //terra
             case 'e' ->
                 new TextColor.RGB(200, 50, 50); //enemic
             case 'i' ->
                 new TextColor.RGB(220, 180, 50); //item
             case 'N' ->
                 new TextColor.RGB(80, 200, 220); //npc
-            case '~' ->
-                new TextColor.RGB(50, 100, 200);  // aigua
-            case ',' ->
-                new TextColor.RGB(60, 160, 60);   // gespa
-            case '=' ->
-                new TextColor.RGB(160, 160, 160); // metall
-            case '*' ->
-                new TextColor.RGB(180, 230, 255); // gel
             case '<' ->
                 new TextColor.RGB(200, 200, 50);  // escales
             case '+' ->
@@ -234,15 +231,14 @@ public class Renderitzador { // classe per gestionar la pantalla
     }
 
     private TextColor fonsCasella(char c) {
+        //si es un tipus de terra, agafam el fons des del JSON
+        TipusTerra t = TipusTerra.de(c);
+        if (t != null) {
+            return new TextColor.RGB(t.getFonsR(), t.getFonsG(), t.getFonsB());
+        }
         return switch (c) {
             case '#' ->
                 new TextColor.RGB(40, 40, 50);
-            case '.' ->
-                new TextColor.RGB(30, 20, 10);
-            case '~' ->
-                new TextColor.RGB(10, 30, 80);
-            case '*' ->
-                new TextColor.RGB(20, 60, 90);
             default ->
                 TextColor.ANSI.BLACK;
         };

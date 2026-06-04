@@ -9,6 +9,7 @@ public class ConfigGame {
 
     public Configuracio configuracio;
     public Map<String, int[]> colorsPresets; //ex: {"vermellCremat": [180,40,10], ...}
+    public List<TerrenyConfig> terrenys;
     public MapesGroup mapes;
     public EnemicsGroup enemics;
     public ItemsGroup items;
@@ -20,6 +21,18 @@ public class ConfigGame {
     public static class Configuracio {
 
         public String mapaInicial;
+    }
+
+    //definició d'un tipus de terra des del JSON
+    public static class TerrenyConfig {
+
+        public List<Character> simbols;
+        public String nom;
+        public int colorR, colorG, colorB;
+        public int fonsR, fonsG, fonsB;
+        public boolean doblePas;
+        public boolean llisca;
+        public double modRadi = 1.0;
     }
 
     public static class MapesGroup {

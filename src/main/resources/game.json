@@ -3,6 +3,44 @@
         "mapaInicial": "planta1"
     },
 
+    "terrenys": [
+        {
+            "simbols": ["."],
+            "nom": "normal",
+            "colorR": 70, "colorG": 50, "colorB": 35,
+            "fonsR": 30, "fonsG": 20, "fonsB": 10,
+            "doblePas": false, "llisca": false, "modRadi": 1.0
+        },
+        {
+            "simbols": ["~"],
+            "nom": "aigua",
+            "colorR": 50, "colorG": 100, "colorB": 200,
+            "fonsR": 10, "fonsG": 30, "fonsB": 80,
+            "doblePas": true, "llisca": false, "modRadi": 1.0
+        },
+        {
+            "simbols": [","],
+            "nom": "gespa",
+            "colorR": 60, "colorG": 160, "colorB": 60,
+            "fonsR": 0, "fonsG": 0, "fonsB": 0,
+            "doblePas": false, "llisca": false, "modRadi": 0.5
+        },
+        {
+            "simbols": ["="],
+            "nom": "metal",
+            "colorR": 160, "colorG": 160, "colorB": 160,
+            "fonsR": 0, "fonsG": 0, "fonsB": 0,
+            "doblePas": false, "llisca": false, "modRadi": 2.0
+        },
+        {
+            "simbols": ["*"],
+            "nom": "gel",
+            "colorR": 180, "colorG": 230, "colorB": 255,
+            "fonsR": 20, "fonsG": 60, "fonsB": 90,
+            "doblePas": false, "llisca": true, "modRadi": 1.0
+        }
+    ],
+
     "catalogItems": {
         "armes": [
             {
