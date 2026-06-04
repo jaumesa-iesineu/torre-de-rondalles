@@ -67,7 +67,26 @@
         "estatica": true,
         "artFitxer": "art/maria.txt"
       }
-    ]
+    ],
+     "posicions": [
+      {"mapa": "planta1", "simbol": "M", "x": 13, "y": 2},
+      {"mapa": "planta1", "simbol": "G", "x": 13, "y": 3},
+      {"mapa": "planta1", "simbol": "B", "x": 13, "y": 4},
+      {"mapa": "planta1", "simbol": "D", "x": 13, "y": 5},
+      {"mapa": "planta1", "simbol": "e", "x": 13, "y": 6},
+      {"mapa": "planta1", "simbol": "B", "x": 13, "y": 6},
+      {"mapa": "planta1", "simbol": "D", "x": 80, "y": 6},
+      {"mapa": "planta1", "simbol": "B", "x": 40, "y": 7},
+      {"mapa": "planta1", "simbol": "D", "x": 86, "y": 14},
+      {"mapa": "planta1", "simbol": "B", "x": 27, "y": 15},
+      {"mapa": "planta1", "simbol": "B", "x": 27, "y": 22},
+      {"mapa": "planta1", "simbol": "B", "x": 30, "y": 22},
+      {"mapa": "planta1", "simbol": "B", "x": 27, "y": 25},
+      {"mapa": "planta1", "simbol": "D", "x": 60, "y": 29},
+      {"mapa": "planta1", "simbol": "B", "x": 25, "y": 30},
+      {"mapa": "planta1", "simbol": "D", "x": 26, "y": 35},
+      {"mapa": "planta1", "simbol": "D", "x": 77, "y": 35}
+     ]
   },
   "npcs": {
     "tipus": [
@@ -109,25 +128,6 @@
       }
     ],
     "posicions": [
-      {"mapa": "planta1", "simbol": "M", "x": 28, "y": 2},
-      {"mapa": "planta1", "simbol": "G", "x": 28, "y": 3},
-      {"mapa": "planta1", "simbol": "B", "x": 28, "y": 4},
-      {"mapa": "planta1", "simbol": "D", "x": 28, "y": 5},
-      {"mapa": "planta1", "simbol": "e", "x": 28, "y": 6},
-      {"mapa": "planta1", "simbol": "B", "x": 58, "y": 6},
-      {"mapa": "planta1", "simbol": "D", "x": 80, "y": 6},
-      {"mapa": "planta1", "simbol": "B", "x": 40, "y": 7},
-      {"mapa": "planta1", "simbol": "D", "x": 86, "y": 14},
-      {"mapa": "planta1", "simbol": "B", "x": 27, "y": 15},
-      {"mapa": "planta1", "simbol": "D", "x": 48, "y": 15},
-      {"mapa": "planta1", "simbol": "B", "x": 58, "y": 16},
-      {"mapa": "planta1", "simbol": "B", "x": 27, "y": 22},
-      {"mapa": "planta1", "simbol": "B", "x": 30, "y": 22},
-      {"mapa": "planta1", "simbol": "B", "x": 27, "y": 25},
-      {"mapa": "planta1", "simbol": "D", "x": 60, "y": 29},
-      {"mapa": "planta1", "simbol": "B", "x": 25, "y": 30},
-      {"mapa": "planta1", "simbol": "D", "x": 26, "y": 35},
-      {"mapa": "planta1", "simbol": "D", "x": 77, "y": 35},
       {"mapa": "planta1", "simbol": "N", "x": 10, "y": 10},
       {"mapa": "planta1", "simbol": "n", "x": 10, "y": 10},
       {"mapa": "planta1", "simbol": "ñ", "x": 10, "y": 10}

@@ -574,7 +574,7 @@ return;
     private void carregaEnemics() {
         //si el game.json té posicions per aquest mapa, les usam (no escanejam el mapa)
         if (config != null) {
-            String idMapaActual = null;
+            //String idMapaActual = null;
             List<PosicioEnemic> posicions = config.getPosicionsPerMapa(idMapaActual);
             if (!posicions.isEmpty()) {
                 for (PosicioEnemic p : posicions) {
