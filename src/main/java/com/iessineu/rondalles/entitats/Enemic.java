@@ -255,6 +255,7 @@ public abstract class Enemic extends Entitat {
         if (cells == null) return true;
         if (ny < 0 || ny >= cells.length || nx < 0 || nx >= cells[ny].length) return false;
         if (cells[ny][nx] == '#') return false;
+        if (cells[ny][nx] == 'i') return false; // no volem trepitjar els items
         if (jugador != null && nx == jugador.getX() && ny == jugador.getY()) return false;
         return true;
     }
@@ -272,7 +273,7 @@ public abstract class Enemic extends Entitat {
         visitat[this.y][this.x] = true;
         for (int[] d : dirs) {
             int nx = this.x + d[0], ny = this.y + d[1];
-            if (ny >= 0 && ny < rows && nx >= 0 && nx < cols && cells[ny][nx] != '#' && !visitat[ny][nx]) {
+            if (ny >= 0 && ny < rows && nx >= 0 && nx < cols && cells[ny][nx] != '#' && cells[ny][nx] != 'i' && !visitat[ny][nx]) {
                 visitat[ny][nx] = true;
                 firstX[ny * cols + nx] = nx;
                 firstY[ny * cols + nx] = ny;
@@ -285,7 +286,7 @@ public abstract class Enemic extends Entitat {
             if (cx == tx && cy == ty) return new int[]{firstX[cy * cols + cx], firstY[cy * cols + cx]};
             for (int[] d : dirs) {
                 int nx = cx + d[0], ny = cy + d[1];
-                if (ny >= 0 && ny < rows && nx >= 0 && nx < cols && cells[ny][nx] != '#' && !visitat[ny][nx]) {
+                if (ny >= 0 && ny < rows && nx >= 0 && nx < cols && cells[ny][nx] != '#' && cells[ny][nx] != 'i' && !visitat[ny][nx]) {
                     visitat[ny][nx] = true;
                     firstX[ny * cols + nx] = firstX[cy * cols + cx];
                     firstY[ny * cols + nx] = firstY[cy * cols + cx];
