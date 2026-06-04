@@ -255,7 +255,8 @@
         "nom": "DimoniBoiet",
         "vida": 10, "atac": 5, "radi": 5,
         "colorR": 180, "colorG": 40, "colorB": 10,
-        "estatica": false,
+        "patroIA": "perseguir",
+        "esBoss": false,
         "artFitxer": "art/dimoni.txt"
       },
       {
@@ -263,9 +264,11 @@
         "nom": "Bubota",
         "vida": 20, "atac": 5, "radi": 100,
         "colorR": 180, "colorG": 180, "colorB": 255,
-        "estatica": false,
         "velocitat": 2,
         "travessaParets": true,
+        "patroIA": "perseguir",
+        "requereixDescobriment": true,
+        "esBoss": false,
         "artFitxer": "art/bubota.txt"
       },
       {
@@ -273,8 +276,9 @@
         "nom": "Gegant",
         "vida": 40, "atac": 10, "radi": 4,
         "colorR": 200, "colorG": 120, "colorB": 50,
-        "estatica": false,
         "velocitat": 2,
+        "patroIA": "guardia",
+        "esBoss": true,
         "artFitxer": "art/gegant.txt"
       },
       {
@@ -282,8 +286,9 @@
         "nom": "Drac",
         "vida": 50, "atac": 20, "radi": 8,
         "colorR": 220, "colorG": 30, "colorB": 30,
-        "estatica": false,
         "velocitat": 2,
+        "patroIA": "guardia",
+        "esBoss": true,
         "artFitxer": "art/drac.txt"
       },
       {
@@ -291,7 +296,8 @@
         "nom": "NaMariaEnganxa",
         "vida": 30, "atac": 9999, "radi": 0,
         "colorR": 180, "colorG": 50, "colorB": 220,
-        "estatica": true,
+        "patroIA": "estatic",
+        "esBoss": true,
         "artFitxer": "art/maria.txt"
       }
     ],

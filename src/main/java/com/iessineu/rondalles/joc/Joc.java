@@ -8,12 +8,7 @@ import com.iessineu.rondalles.audio.GestorMusica;
 import com.iessineu.rondalles.mapa.TipusTerra;
 import com.iessineu.rondalles.entitats.NpcComerciants;
 
-import com.iessineu.rondalles.entitats.Drac;
-import com.iessineu.rondalles.entitats.Gegant;
-import com.iessineu.rondalles.entitats.NaMariaEnganxa;
 import com.iessineu.rondalles.combat.SistemaCombat;
-import com.iessineu.rondalles.entitats.Bubota;
-import com.iessineu.rondalles.entitats.DimoniBoiet;
 import com.iessineu.rondalles.entitats.Enemic;
 import com.iessineu.rondalles.entitats.Entitat;
 import com.iessineu.rondalles.entitats.Jugador;
@@ -332,7 +327,7 @@ public class Joc extends Motor {
             int idx = c - '1';
             Item item = jugador.getInventari().get(idx);
             if (item != null) {
-                String nom = enemicCombat.getClass().getSimpleName().toUpperCase();
+                String nom = enemicCombat.getNom().toUpperCase();
                 if (item instanceof Pocio pocio && pocio.getTipus() != Pocio.Tipus.VIDA) {
                     pocio.aplicaEfecteEnemic(enemicCombat);
                     jugador.getInventari().elimina(idx);
@@ -373,7 +368,7 @@ public class Joc extends Motor {
         }
 
         if (c == 'a' || c == 'A') {
-            String nom = enemicCombat.getClass().getSimpleName().toUpperCase();
+            String nom = enemicCombat.getNom().toUpperCase();
             int danyFet = SistemaCombat.atacaEnemic(jugador, enemicCombat);
             afegeixLog("Has atacat! " + nom + " ha rebut " + danyFet + " de dany.");
             if (enemicCombat.esMort()) {
@@ -488,7 +483,7 @@ public class Joc extends Motor {
         if (enemic != null) {
             enemicCombat = enemic;
             logCombat.clear();
-            afegeixLog("Combat amb " + enemic.getClass().getSimpleName().toUpperCase() + "!");
+            afegeixLog("Combat amb " + enemic.getNom().toUpperCase() + "!");
             estat = Estat.COMBAT;
             GestorMusica.reprodueix(esBoss(enemic) ? GestorMusica.Pista.BOSS : GestorMusica.Pista.COMBAT);
             return;
@@ -570,7 +565,7 @@ public class Joc extends Motor {
     }
 
     private boolean esBoss(Enemic e) {
-        return e instanceof Drac || e instanceof Gegant || e instanceof NaMariaEnganxa;
+        return e != null && e.isBoss();
     }
 
     private void passaSeguantPis() {
@@ -939,28 +934,11 @@ public class Joc extends Motor {
     }
 
     private Enemic creaEnemic(String simbol, int x, int y) {
-        Enemic enemic = switch (simbol) {
-            case "e", "d" ->
-                new DimoniBoiet(x, y);
-            case "B" ->
-                new Bubota(x, y);
-            case "D" ->
-                new Drac(x, y);
-            case "G" ->
-                new Gegant(x, y);
-            case "M" ->
-                new NaMariaEnganxa(x, y);
-            default ->
-                null;
-        };
-        if (enemic != null && config != null) {
-            TipusEnemic def = config.getTipusEnemic(simbol);
-            if (def != null) {
-                enemic.aplicaDefinicio(def.vida, def.atac, def.radi, def.colorR, def.colorG, def.colorB, def.artAscii);
-                enemic.setVelocitat(def.velocitat);
-                enemic.setTravessaParets(def.travessaParets);
-            }
-        }
+        if (config == null) return null;
+        TipusEnemic def = config.getTipusEnemic(simbol);
+        if (def == null) return null;
+        Enemic enemic = new Enemic(x, y, simbol.charAt(0));
+        enemic.aplicaDefinicio(def);
         return enemic;
     }
 

@@ -1,9 +1,10 @@
 package com.iessineu.rondalles.entitats;
 
 import com.googlecode.lanterna.TextColor;
+import com.iessineu.rondalles.joc.TipusEnemic;
 import java.util.List;
 
-public abstract class Enemic extends Entitat {
+public class Enemic extends Entitat {
 
     // color i art carregats des del game.json
     protected TextColor colorDef = null;
@@ -56,6 +57,14 @@ public abstract class Enemic extends Entitat {
     //per evitar que es posin uns damunt dels altres
     private List<Enemic> totsEnemics;
 
+    //nom per als logs de combat (ex: "Bubota", "Drac")
+    private String nom;
+
+    //patrons d'IA definits al JSON
+    private String patroIA = "perseguir";
+    private boolean requereixDescobriment;
+    private boolean esBoss;
+
     public void setTotsEnemics(List<Enemic> l) {
         this.totsEnemics = l;
     }
@@ -100,6 +109,14 @@ public abstract class Enemic extends Entitat {
         this.descobert = d;
     }
 
+    public boolean isBoss() {
+        return esBoss;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
     //retorna true si l'enemic pot actuar aquest torn (segons la seva velocitat)
     public boolean haDActuar() {
         contadorMoviment++;
@@ -127,21 +144,62 @@ public abstract class Enemic extends Entitat {
         }
     }
 
-    public Enemic(int x, int y, char simbol, int vida, int atac, int radDeteccio) {
+    //constructor simple: les stats es carreguen despres amb aplicaDefinicio
+    public Enemic(int x, int y, char simbol) {
         super(x, y, simbol);
-
-        this.vidaMaxima = vida;
-        this.vida = vida;
-        this.atac = atac;
-        this.radDeteccio = radDeteccio;
         this.estatEnemic = EstatEnemic.PATRULLANT;
         this.spawnX = x;
         this.spawnY = y;
     }
 
-    public abstract void actualitzaIA(Jugador jugador, char[][] cells);
+    // --- IA generica segons el patro definit al JSON ---
 
-    public abstract void actualitzaIAambRadi(Jugador jugador, int radEfectiu);
+    public void actualitzaIA(Jugador jugador, char[][] cells) {
+        switch (patroIA) {
+            case "guardia" -> actualitzaIAGuardia(jugador, cells);
+            case "estatic" -> {} //trampa estatica, no fa res
+            default -> actualitzaIAPerseguir(jugador, cells);
+        }
+    }
+
+    public void actualitzaIAambRadi(Jugador jugador, int radEfectiu) {
+        if ("estatic".equals(patroIA)) return; //trampa, no reacciona
+        boolean pot = true;
+        if (requereixDescobriment && !isDescobert()) pot = false;
+        if (pot && distanciaAl(jugador) < radEfectiu) {
+            canviaEstat(EstatEnemic.PERSEGUINT);
+        } else {
+            canviaEstat(EstatEnemic.PATRULLANT);
+        }
+    }
+
+    private void actualitzaIAPerseguir(Jugador jugador, char[][] cells) {
+        if (potPerseguir(jugador, cells)) {
+            canviaEstat(EstatEnemic.PERSEGUINT);
+            mouCapA(jugador.getX(), jugador.getY(), cells, jugador);
+        } else {
+            canviaEstat(EstatEnemic.PATRULLANT);
+        }
+    }
+
+    private boolean potPerseguir(Jugador jugador, char[][] cells) {
+        if (requereixDescobriment && !isDescobert()) return false;
+        return distanciaAl(jugador) <= radDeteccio && potVeure(jugador, cells);
+    }
+
+    private void actualitzaIAGuardia(Jugador jugador, char[][] cells) {
+        if (dinsArea(jugador.getX(), jugador.getY()) && distanciaAl(jugador) <= radDeteccio && potVeure(jugador, cells)) {
+            canviaEstat(EstatEnemic.PERSEGUINT);
+            int[] pas = primerPasBFS(jugador.getX(), jugador.getY(), cells);
+            if (pas[0] != -1) mouCapA(pas[0], pas[1], cells, jugador);
+        } else if (!dinsArea(jugador.getX(), jugador.getY()) && distanciaAlSpawn() > 1.0) {
+            //el jugador ha sortit de l'area, tornam al spawn
+            canviaEstat(EstatEnemic.PATRULLANT);
+            tornaAlSpawn(cells);
+        } else {
+            canviaEstat(EstatEnemic.PATRULLANT);
+        }
+    }
 
     protected boolean potVeure(Jugador jugador, char[][] cells) {
 
@@ -323,21 +381,20 @@ public abstract class Enemic extends Entitat {
         return vidaMaxima;
     }
 
-    public void aplicaDefinicio(
-            int vida,
-            int atac,
-            int radi,
-            int r,
-            int g,
-            int b,
-            String[] art) {
-
-        this.vida = vida;
-        this.vidaMaxima = vida;
-        this.atac = atac;
-        this.radDeteccio = radi;
-        this.colorDef = new TextColor.RGB(r, g, b);
-        this.artAscii = art;
+    //carrega totes les propietats desde la definicio del JSON
+    public void aplicaDefinicio(TipusEnemic def) {
+        this.nom = def.nom;
+        this.vida = def.vida;
+        this.vidaMaxima = def.vida;
+        this.atac = def.atac;
+        this.radDeteccio = def.radi;
+        this.colorDef = new TextColor.RGB(def.colorR, def.colorG, def.colorB);
+        this.artAscii = def.artAscii;
+        setVelocitat(def.velocitat);
+        setTravessaParets(def.travessaParets);
+        this.patroIA = def.patroIA != null ? def.patroIA : "perseguir";
+        this.requereixDescobriment = def.requereixDescobriment;
+        this.esBoss = def.esBoss;
     }
 
     protected void mouCapA(int tx, int ty, char[][] cells, Jugador jugador) {
