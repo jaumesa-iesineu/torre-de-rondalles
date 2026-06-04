@@ -4,7 +4,6 @@
  */
 package com.iessineu.rondalles.joc;
 
-
 import com.iessineu.rondalles.audio.GestorMusica;
 import com.iessineu.rondalles.mapa.TipusTerra;
 import com.iessineu.rondalles.entitats.NpcComerciants;
@@ -45,11 +44,10 @@ public class Joc extends Motor {
     private Enemic enemicCombat = null;
     private List<String> logCombat = new ArrayList<>();
 
-
     // --- Pisos ---
     private int pisActual = 1;
     private static final String[] FITXERS_PISOS = {
-        "pis1.game","pis2.game","pis3.game","pis4.game","pis5.game"
+        "pis1.game", "pis2.game", "pis3.game", "pis4.game", "pis5.game"
     };
 
     // --- NPCs ---
@@ -74,6 +72,7 @@ public class Joc extends Motor {
 
     //configuració carregada del game.json
     private ConfigGame config;
+    private String[] artJugador;
 
     private static final int RADI_VISIO = 10;
 
@@ -119,7 +118,9 @@ public class Joc extends Motor {
             } else {
                 idMapaActual = config.getMapaInicial();
                 MapaConfig inicial = config.getMapaConfig(idMapaActual);
-                if (inicial != null) fitxerMapa = inicial.fitxer;
+                if (inicial != null) {
+                    fitxerMapa = inicial.fitxer;
+                }
             }
         } catch (Exception e) {
             idMapaActual = "planta1";
@@ -132,10 +133,15 @@ public class Joc extends Motor {
         carregaEnemics();
         carregaItemsMapa();
         carregaNpcs();
+        carregaEquipamentInicial();
+        carregaArtJugador();
+        renderer.setArtJugador(artJugador);
 
         explorat = new boolean[mapa.getAlcada()][mapa.getAmplada()];
         mapaRecord = new char[mapa.getAlcada()][mapa.getAmplada()];
-        for (char[] fila : mapaRecord) java.util.Arrays.fill(fila, ' ');
+        for (char[] fila : mapaRecord) {
+            java.util.Arrays.fill(fila, ' ');
+        }
 
         GestorMusica.reprodueix(GestorMusica.Pista.MENU);
     }
@@ -185,8 +191,21 @@ public class Joc extends Motor {
             estat = Estat.MON;
             return;
         }
-        if (tecla.getKeyType() == KeyType.Character && (tecla.getCharacter() == 'e' || tecla.getCharacter() == 'E')) {
-            estat = Estat.MON;
+        if (tecla.getKeyType() == KeyType.Character) {
+            char c = tecla.getCharacter();
+            if (c == 'e' || c == 'E') {
+                estat = Estat.MON;
+                return;
+            }
+            if (c >= '1' && c <= '4') {
+                int idx = c - '1';
+                Item item = jugador.getInventari().get(idx);
+                if (item instanceof com.iessineu.rondalles.inventari.Armadura arm) {
+                    jugador.getInventari().equipaArmadura(arm, jugador);
+                } else if (item instanceof com.iessineu.rondalles.inventari.Arma arma) {
+                    jugador.getInventari().equipaArma(arma, jugador);
+                }
+            }
         }
     }
 
@@ -205,7 +224,9 @@ public class Joc extends Motor {
             }
             return;
         }
-        if (tecla.getKeyType() == KeyType.Escape) corrent = false;
+        if (tecla.getKeyType() == KeyType.Escape) {
+            corrent = false;
+        }
 
     }
 
@@ -224,22 +245,33 @@ public class Joc extends Motor {
         }
         if (tecla.getKeyType() == KeyType.Enter) {
             switch (opcioMenuPausa) {
-                case 0 -> estat = Estat.MON;
+                case 0 ->
+                    estat = Estat.MON;
 
-                case 1 -> { estat = Estat.MON; }
-                case 2 -> corrent = false;
+                case 1 -> {
+                    estat = Estat.MON;
+                }
+                case 2 ->
+                    corrent = false;
 
             }
         }
         if (tecla.getKeyType() == KeyType.Character) {
             char c = tecla.getCharacter();
-            if (c == 'r' || c == 'R') { estat = Estat.MON; return; }
-            if (c == 'x' || c == 'X') { corrent = false; }
+            if (c == 'r' || c == 'R') {
+                estat = Estat.MON;
+                return;
+            }
+            if (c == 'x' || c == 'X') {
+                corrent = false;
+            }
         }
     }
 
     private void gestionaCombat(KeyStroke tecla) {
-        if (tecla.getKeyType() != KeyType.Character) return;
+        if (tecla.getKeyType() != KeyType.Character) {
+            return;
+        }
         char c = tecla.getCharacter();
 
         if (c >= '1' && c <= '9') {
@@ -256,8 +288,12 @@ public class Joc extends Motor {
                     afegeixLog("Has usat: " + item.getNom() + ".");
                 }
                 String tickLog = SistemaCombat.tickEnemics(enemicCombat);
-                if (!tickLog.isEmpty()) afegeixLog(tickLog);
-                jugador.tickVeri(); jugador.tickFoc(); jugador.tickGel();
+                if (!tickLog.isEmpty()) {
+                    afegeixLog(tickLog);
+                }
+                jugador.tickVeri();
+                jugador.tickFoc();
+                jugador.tickGel();
                 int danyRebut = SistemaCombat.atacaJugador(enemicCombat, jugador);
                 if (danyRebut == -1) {
                     afegeixLog("Has esquivat l'atac de " + nom + "!");
@@ -272,16 +308,15 @@ public class Joc extends Motor {
             return;
         }
         if (c == 'f' || c == 'F') {
-    enemicCombat = null;
+            enemicCombat = null;
 
+            GestorMusica.reprodueix(
+                    GestorMusica.Pista.valueOf("PIS_" + Math.min(pisActual, 5))
+            );
 
-    GestorMusica.reprodueix(
-        GestorMusica.Pista.valueOf("PIS_" + Math.min(pisActual, 5))
-    );
-
-    estat = Estat.MON;
-    return;
-}
+            estat = Estat.MON;
+            return;
+        }
 
         if (c == 'a' || c == 'A') {
             String nom = enemicCombat.getClass().getSimpleName().toUpperCase();
@@ -296,19 +331,19 @@ public class Joc extends Motor {
                 int bossY = enemicCombat.getY();
 
                 enemics.remove(enemicCombat);
-enemicCombat = null;
+                enemicCombat = null;
 
-if (eraBoss) {
-    mapa.setCella(bossX, bossY, '<');
-    afegeixLog("Has derrotat es boss! Han aparegut unes escales (<).");
-}
+                if (eraBoss) {
+                    mapa.setCella(bossX, bossY, '<');
+                    afegeixLog("Has derrotat es boss! Han aparegut unes escales (<).");
+                }
 
-GestorMusica.reprodueix(
-    GestorMusica.Pista.valueOf("PIS_" + Math.min(pisActual, 5))
-);
+                GestorMusica.reprodueix(
+                        GestorMusica.Pista.valueOf("PIS_" + Math.min(pisActual, 5))
+                );
 
-estat = Estat.MON;
-return;
+                estat = Estat.MON;
+                return;
             }
             SistemaCombat.tickEnemics(enemicCombat);
             jugador.tickVeri();
@@ -322,23 +357,29 @@ return;
             }
 
             if (jugador.esMort()) {
-    GestorMusica.reprodueix(GestorMusica.Pista.GAME_OVER);
-    corrent = false;
-}
+                GestorMusica.reprodueix(GestorMusica.Pista.GAME_OVER);
+                corrent = false;
+            }
 
         }
     }
 
     private void afegeixLog(String msg) {
         logCombat.add(msg);
-        if (logCombat.size() > MAX_LOG) logCombat.remove(0);
+        if (logCombat.size() > MAX_LOG) {
+            logCombat.remove(0);
+        }
     }
 
     private void gestionaMoviment(KeyStroke tecla) {
         if (tecla.getKeyType() == KeyType.Character) {
             char c = tecla.getCharacter();
             if (c == 'e' || c == 'E') {
-                for (Enemic e : enemics) if (e.isActiu()) e.actualitzaIA(jugador, mapa.getCelles());
+                for (Enemic e : enemics) {
+                    if (e.isActiu()) {
+                        e.actualitzaIA(jugador, mapa.getCelles());
+                    }
+                }
                 estat = Estat.INVENTARI;
                 return;
             }
@@ -354,15 +395,22 @@ return;
         if (lliscantGel) {
             int gx = jugador.getX() + gelDx;
             int gy = jugador.getY() + gelDy;
-            char terraDesti = mapa.getCelles()[Math.max(0,Math.min(mapa.getAlcada()-1,gy))]
-                                             [Math.max(0,Math.min(mapa.getAmplada()-1,gx))];
+            char terraDesti = mapa.getCelles()[Math.max(0, Math.min(mapa.getAlcada() - 1, gy))][Math.max(0, Math.min(mapa.getAmplada() - 1, gx))];
             if (mapa.esPasable(gx, gy) && TipusTerra.de(terraDesti) == TipusTerra.GEL) {
-                jugador.setX(gx); jugador.setY(gy); tickTorn();
+                jugador.setX(gx);
+                jugador.setY(gy);
+                tickTorn();
             } else {
                 lliscantGel = false;
-                if (mapa.esPasable(gx, gy)) { jugador.setX(gx); jugador.setY(gy); tickTorn(); }
+                if (mapa.esPasable(gx, gy)) {
+                    jugador.setX(gx);
+                    jugador.setY(gy);
+                    tickTorn();
+                }
             }
-            if (jugador.esMort()) corrent = false;
+            if (jugador.esMort()) {
+                corrent = false;
+            }
             return;
         }
 
@@ -371,13 +419,26 @@ return;
         int dx = 0, dy = 0;
 
         switch (tecla.getKeyType()) {
-            case ArrowUp    -> { ny--; dy = -1; }
-            case ArrowDown  -> { ny++; dy =  1; }
-            case ArrowLeft  -> { nx--; dx = -1; }
-            case ArrowRight -> { nx++; dx =  1; }
-            default -> { return; }
+            case ArrowUp -> {
+                ny--;
+                dy = -1;
+            }
+            case ArrowDown -> {
+                ny++;
+                dy = 1;
+            }
+            case ArrowLeft -> {
+                nx--;
+                dx = -1;
+            }
+            case ArrowRight -> {
+                nx++;
+                dx = 1;
+            }
+            default -> {
+                return;
+            }
         }
-
 
         NpcComerciants npc = trobaNpcA(nx, ny);
         if (npc != null) {
@@ -386,7 +447,6 @@ return;
             estat = npc.isEnigmaResult() ? Estat.COMERCIANT : Estat.ENIGMA;
             return;
         }
-
 
         Enemic enemic = trobaEnemicA(nx, ny);
         if (enemic != null) {
@@ -398,13 +458,16 @@ return;
             return;
         }
 
-        if (!mapa.esPasable(nx, ny)) return;
-
+        if (!mapa.esPasable(nx, ny)) {
+            return;
+        }
 
         char simbolDesti = mapa.getCelles()[ny][nx];
         if (TipusTerra.de(simbolDesti) == TipusTerra.AIGUA) {
             if (!esperantSegonaAigua || aiguaNx != nx || aiguaNy != ny) {
-                esperantSegonaAigua = true; aiguaNx = nx; aiguaNy = ny;
+                esperantSegonaAigua = true;
+                aiguaNx = nx;
+                aiguaNy = ny;
                 return;
 
             }
@@ -413,12 +476,13 @@ return;
             esperantSegonaAigua = false;
         }
 
-
         if (simbolDesti == '<') {
-            passaSeguantPis(); return;
+            passaSeguantPis();
+            return;
         }
 
-        jugador.setX(nx); jugador.setY(ny);
+        jugador.setX(nx);
+        jugador.setY(ny);
         jugador.setEstatJugador(Jugador.EstatJugador.MOVIMENT);
 
         if (TipusTerra.de(mapa.getCelles()[ny][nx]) == TipusTerra.GEL) {
@@ -432,26 +496,39 @@ return;
         recullItemSiNHiHa(nx, ny);
         tickTorn();
 
-        if (jugador.esMort()) corrent = false;
+        if (jugador.esMort()) {
+            corrent = false;
+        }
     }
 
     private void tickTorn() {
-        jugador.tickVeri(); jugador.tickFoc(); jugador.tickGel();
+        jugador.tickVeri();
+        jugador.tickFoc();
+        jugador.tickGel();
         TipusTerra terra = TipusTerra.de(
-            mapa.getCelles()[jugador.getY()][jugador.getX()]);
+                mapa.getCelles()[jugador.getY()][jugador.getX()]);
         // torns extra per penalització de pes (velocitat 5=normal, 4=-1, 3=-2)
         int tornsEnemics = 1 + (5 - jugador.velocitatEfectiva());
         for (int torn = 0; torn < tornsEnemics; torn++) {
             for (Enemic e : enemics) {
-                if (!e.isActiu()) continue;
+                if (!e.isActiu()) {
+                    continue;
+                }
                 int radEfectiu = switch (terra) {
-                    case GESPA -> (int)(e.getRadDeteccio() * 0.5);
-                    case METAL -> (int)(e.getRadDeteccio() * 2.0);
-                    default    -> e.getRadDeteccio();
+                    case GESPA ->
+                        (int) (e.getRadDeteccio() * 0.5);
+                    case METAL ->
+                        (int) (e.getRadDeteccio() * 2.0);
+                    default ->
+                        e.getRadDeteccio();
                 };
                 e.actualitzaIAambRadi(jugador, radEfectiu);
                 e.actualitzaIA(jugador, mapa.getCelles());
-                if (torn == 0) { e.tickVeri(); e.tickFoc(); e.tickGel(); }
+                if (torn == 0) {
+                    e.tickVeri();
+                    e.tickFoc();
+                    e.tickGel();
+                }
             }
         }
     }
@@ -463,23 +540,32 @@ return;
     private void passaSeguantPis() {
         pisActual++;
         if (pisActual > FITXERS_PISOS.length) {
-    GestorMusica.reprodueix(GestorMusica.Pista.VICTORIA);
-    estat = Estat.VICTORIA;
-    return;
-}
+            GestorMusica.reprodueix(GestorMusica.Pista.VICTORIA);
+            estat = Estat.VICTORIA;
+            return;
+        }
         try {
             fitxerMapa = FITXERS_PISOS[pisActual - 1];
             mapa = CarregadorMapa.carrega(fitxerMapa);
-            jugador.setX(trobaInicialX()); jugador.setY(trobaInicialY());
-            enemics.clear(); itemsMapa.clear(); npcs.clear();
-            carregaEnemics(); carregaItemsMapa(); carregaNpcs();
+            jugador.setX(trobaInicialX());
+            jugador.setY(trobaInicialY());
+            enemics.clear();
+            itemsMapa.clear();
+            npcs.clear();
+            carregaEnemics();
+            carregaItemsMapa();
+            carregaNpcs();
 
             explorat = new boolean[mapa.getAlcada()][mapa.getAmplada()];
             mapaRecord = new char[mapa.getAlcada()][mapa.getAmplada()];
-            for (char[] fila : mapaRecord) java.util.Arrays.fill(fila, ' ');
+            for (char[] fila : mapaRecord) {
+                java.util.Arrays.fill(fila, ' ');
+            }
 
             GestorMusica.reprodueix(GestorMusica.Pista.valueOf("PIS_" + pisActual));
-        } catch (Exception ex) { corrent = false; }
+        } catch (Exception ex) {
+            corrent = false;
+        }
     }
 
     //Bresenham des del jugador fins a (x1,y1); retorna false si una paret talla la línia
@@ -490,11 +576,22 @@ return;
         int cx = x0, cy = y0;
         while (cx != x1 || cy != y1) {
             int e2 = 2 * err;
-            if (e2 > -dy) { err -= dy; cx += sx; }
-            if (e2 < dx)  { err += dx; cy += sy; }
-            if (cx == x1 && cy == y1) break;
-            if (cy >= 0 && cy < celles.length && cx >= 0 && cx < celles[cy].length)
-                if (celles[cy][cx] == '#') return false;
+            if (e2 > -dy) {
+                err -= dy;
+                cx += sx;
+            }
+            if (e2 < dx) {
+                err += dx;
+                cy += sy;
+            }
+            if (cx == x1 && cy == y1) {
+                break;
+            }
+            if (cy >= 0 && cy < celles.length && cx >= 0 && cx < celles[cy].length) {
+                if (celles[cy][cx] == '#') {
+                    return false;
+                }
+            }
         }
         return true;
     }
@@ -506,8 +603,10 @@ return;
         int jx = jugador.getX(), jy = jugador.getY();
         for (int y = 0; y < mapa.getAlcada(); y++) {
             for (int x = 0; x < mapa.getAmplada(); x++) {
-                double dist = Math.sqrt(((x - jx) * (x - jx)/3) + ((y - jy) * (y - jy)*2));//Posat per a que se vegi la visió redona
-                if (dist > RADI_VISIO) continue;
+                double dist = Math.sqrt(((x - jx) * (x - jx) / 3) + ((y - jy) * (y - jy) * 2));//Posat per a que se vegi la visió redona
+                if (dist > RADI_VISIO) {
+                    continue;
+                }
                 if (teLiniaDVista(jx, jy, x, y, celles)) {
                     visible[y][x] = true;
                     explorat[y][x] = true;
@@ -517,31 +616,43 @@ return;
         }
         //items i enemics visibles també es recorden
         for (ItemMapa im : itemsMapa) {
-            if (visible[im.getY()][im.getX()]) mapaRecord[im.getY()][im.getX()] = im.getItem().getSimbol();
+            if (visible[im.getY()][im.getX()]) {
+                mapaRecord[im.getY()][im.getX()] = im.getItem().getSimbol();
+            }
         }
         for (Enemic e : enemics) {
-            if (e.isActiu() && visible[e.getY()][e.getX()]) mapaRecord[e.getY()][e.getX()] = e.getSimbol();
+            if (e.isActiu() && visible[e.getY()][e.getX()]) {
+                mapaRecord[e.getY()][e.getX()] = e.getSimbol();
+            }
         }
         return visible;
     }
 
     private void carregaNpcs() {
         char[][] celles = mapa.getCelles();
-        for (int y = 0; y < celles.length; y++)
-            for (int x = 0; x < celles[y].length; x++)
+        for (int y = 0; y < celles.length; y++) {
+            for (int x = 0; x < celles[y].length; x++) {
                 if (celles[y][x] == 'N') {
                     npcs.add(new NpcComerciants(x, y, pisActual));
                 }
+            }
+        }
     }
 
     private NpcComerciants trobaNpcA(int x, int y) {
-        for (NpcComerciants n : npcs)
-            if (n.getX() == x && n.getY() == y) return n;
+        for (NpcComerciants n : npcs) {
+            if (n.getX() == x && n.getY() == y) {
+                return n;
+            }
+        }
         return null;
     }
 
     private void gestionaEnigma(KeyStroke tecla) {
-        if (tecla.getKeyType() == KeyType.Escape) { estat = Estat.MON; return; }
+        if (tecla.getKeyType() == KeyType.Escape) {
+            estat = Estat.MON;
+            return;
+        }
         if (tecla.getKeyType() == KeyType.Enter) {
             if (npcActual.comprovaSolucio(enigmaInput)) {
                 estat = Estat.COMERCIANT;
@@ -550,33 +661,101 @@ return;
             }
             return;
         }
-        if (tecla.getKeyType() == KeyType.Backspace && enigmaInput.length() > 0)
+        if (tecla.getKeyType() == KeyType.Backspace && enigmaInput.length() > 0) {
             enigmaInput = enigmaInput.substring(0, enigmaInput.length() - 1);
-        if (tecla.getKeyType() == KeyType.Character)
+        }
+        if (tecla.getKeyType() == KeyType.Character) {
             enigmaInput += tecla.getCharacter();
+        }
     }
 
     private void gestionaComerciants(KeyStroke tecla) {
-        if (tecla.getKeyType() == KeyType.Escape || tecla.getKeyType() == KeyType.Enter)
+        if (tecla.getKeyType() == KeyType.Escape || tecla.getKeyType() == KeyType.Enter) {
             estat = Estat.MON;
+        }
     }
 
-
     private Enemic trobaEnemicA(int x, int y) {
-        for (Enemic e : enemics)
-            if (e.isActiu() && e.getX() == x && e.getY() == y) return e;
+        for (Enemic e : enemics) {
+            if (e.isActiu() && e.getX() == x && e.getY() == y) {
+                return e;
+            }
+        }
         return null;
     }
 
     private void recullItemSiNHiHa(int x, int y) {
         ItemMapa trobat = null;
         for (ItemMapa im : itemsMapa) {
-            if (im.getX() == x && im.getY() == y) { trobat = im; break; }
+            if (im.getX() == x && im.getY() == y) {
+                trobat = im;
+                break;
+            }
         }
-        if (trobat == null) return;
+        if (trobat == null) {
+            return;
+        }
         jugador.afegeixItem(trobat.getItem());
         mapa.setCella(x, y, '.');
         itemsMapa.remove(trobat);
+    }
+
+    private void carregaEquipamentInicial() {
+        // config.equipamentInicial pot ser null si la config ve de la BD (PartidaRepository)
+        // en aquest cas llegim l'equipamentInicial directament del game.json del classpath
+        ConfigGame.EquipamentInicial eq = null;
+        if (config != null && config.equipamentInicial != null) {
+            eq = config.equipamentInicial;
+        } else {
+            try {
+                ConfigGame cfgJson = CarregadorGame.carrega("game.json");
+                if (cfgJson != null) {
+                    eq = cfgJson.equipamentInicial;
+                }
+            } catch (Exception e) {
+                System.err.println("[EQUIP] No s'ha pogut llegir equipamentInicial del game.json: " + e.getMessage());
+            }
+        }
+        if (eq == null) {
+            return;
+        }
+        if (eq.armadures != null) {
+            for (String id : eq.armadures) {
+                try {
+                    com.iessineu.rondalles.inventari.Armadura arm = RegistreItems.get().armadura(id);
+                    jugador.getInventari().equipaArmadura(arm, jugador);
+                } catch (Exception e) {
+                    System.err.println("[EQUIP] Error carregant armadura '" + id + "': " + e.getMessage());
+                }
+            }
+        }
+        if (eq.arma != null) {
+            try {
+                com.iessineu.rondalles.inventari.Arma arma = RegistreItems.get().arma(eq.arma);
+                jugador.getInventari().equipaArma(arma, jugador);
+            } catch (Exception e) {
+                System.err.println("[EQUIP] Error carregant arma '" + eq.arma + "': " + e.getMessage());
+            }
+        }
+    }
+
+    private void carregaArtJugador() {
+        if (config != null && config.jugador != null && config.jugador.artAscii != null) {
+            artJugador = config.jugador.artAscii;
+            return;
+        }
+        try {
+            ConfigGame cfgJson = CarregadorGame.carrega("game.json");
+            if (cfgJson != null && cfgJson.jugador != null) {
+                artJugador = cfgJson.jugador.artAscii;
+            }
+        } catch (Exception e) {
+            System.err.println("[ART] No s'ha pogut carregar art del jugador: " + e.getMessage());
+        }
+    }
+
+    public String[] getArtJugador() {
+        return artJugador;
     }
 
     private void carregaItemsMapa() {
@@ -601,10 +780,14 @@ return;
             for (int x = 0; x < celles[y].length; x++) {
                 if (celles[y][x] == 'i') {
                     String id = switch (comptador % 4) {
-                        case 0 -> "pocio-vida";
-                        case 1 -> "pocio-veri";
-                        case 2 -> "pocio-foc";
-                        default -> "pocio-gel";
+                        case 0 ->
+                            "pocio-vida";
+                        case 1 ->
+                            "pocio-veri";
+                        case 2 ->
+                            "pocio-foc";
+                        default ->
+                            "pocio-gel";
                     };
                     itemsMapa.add(new ItemMapa(x, y, RegistreItems.get().pocio(id)));
                     comptador++;
@@ -621,7 +804,9 @@ return;
             if (!posicions.isEmpty()) {
                 for (PosicioEnemic p : posicions) {
                     Enemic enemic = creaEnemic(p.simbol, p.x, p.y);
-                    if (enemic != null) enemics.add(enemic);
+                    if (enemic != null) {
+                        enemics.add(enemic);
+                    }
                 }
                 return;
             }
@@ -641,16 +826,24 @@ return;
 
     private Enemic creaEnemic(String simbol, int x, int y) {
         Enemic enemic = switch (simbol) {
-            case "e", "d" -> new DimoniBoiet(x, y);
-            case "B"      -> new Bubota(x, y);
-            case "D"      -> new Drac(x, y);
-            case "G"      -> new Gegant(x, y);
-            case "M"      -> new NaMariaEnganxa(x, y);
-            default       -> null;
+            case "e", "d" ->
+                new DimoniBoiet(x, y);
+            case "B" ->
+                new Bubota(x, y);
+            case "D" ->
+                new Drac(x, y);
+            case "G" ->
+                new Gegant(x, y);
+            case "M" ->
+                new NaMariaEnganxa(x, y);
+            default ->
+                null;
         };
         if (enemic != null && config != null) {
             TipusEnemic def = config.getTipusEnemic(simbol);
-            if (def != null) enemic.aplicaDefinicio(def.vida, def.atac, def.radi, def.colorR, def.colorG, def.colorB, def.artAscii);
+            if (def != null) {
+                enemic.aplicaDefinicio(def.vida, def.atac, def.radi, def.colorR, def.colorG, def.colorB, def.artAscii);
+            }
         }
         return enemic;
     }
@@ -690,27 +883,42 @@ return;
         }
     }
 
-
-
     private int trobaInicialX() {
         char[][] celles = mapa.getCelles();
-        for (int y = 0; y < celles.length; y++)
-            for (int x = 0; x < celles[y].length; x++)
-                if (celles[y][x] == '@') { mapa.setCella(x, y, '.'); return x; }
-        for (int y = 0; y < celles.length; y++)
-            for (int x = 0; x < celles[y].length; x++)
-                if (celles[y][x] == '.') return x;
+        for (int y = 0; y < celles.length; y++) {
+            for (int x = 0; x < celles[y].length; x++) {
+                if (celles[y][x] == '@') {
+                    mapa.setCella(x, y, '.');
+                    return x;
+                }
+            }
+        }
+        for (int y = 0; y < celles.length; y++) {
+            for (int x = 0; x < celles[y].length; x++) {
+                if (celles[y][x] == '.') {
+                    return x;
+                }
+            }
+        }
         return 1;
     }
 
     private int trobaInicialY() {
         char[][] celles = mapa.getCelles();
-        for (int y = 0; y < celles.length; y++)
-            for (int x = 0; x < celles[y].length; x++)
-                if (celles[y][x] == '@') return y;
-        for (int y = 0; y < celles.length; y++)
-            for (int x = 0; x < celles[y].length; x++)
-                if (celles[y][x] == '.') return y;
+        for (int y = 0; y < celles.length; y++) {
+            for (int x = 0; x < celles[y].length; x++) {
+                if (celles[y][x] == '@') {
+                    return y;
+                }
+            }
+        }
+        for (int y = 0; y < celles.length; y++) {
+            for (int x = 0; x < celles[y].length; x++) {
+                if (celles[y][x] == '.') {
+                    return y;
+                }
+            }
+        }
         return 1;
     }
 }

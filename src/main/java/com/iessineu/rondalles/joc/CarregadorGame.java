@@ -15,7 +15,9 @@ public class CarregadorGame {
     // carrega el game.json empaquetado als resources (ús intern per defecte)
     public static ConfigGame carrega(String rutaRecurs) throws Exception {
         InputStream is = CarregadorGame.class.getClassLoader().getResourceAsStream(rutaRecurs);
-        if (is == null) throw new RuntimeException("No s'ha trobat: " + rutaRecurs);
+        if (is == null) {
+            throw new RuntimeException("No s'ha trobat: " + rutaRecurs);
+        }
         ConfigGame config;
         try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
             config = new Gson().fromJson(reader, ConfigGame.class);
@@ -36,18 +38,28 @@ public class CarregadorGame {
     // aplica un mod sobre una config base: els camps del mod sobreescriuen els de la base (last wins)
     // s'ha de cridar en ordre, del primer mod al darrer
     public static void aplicaMod(ConfigGame base, ConfigGame mod) {
-        if (mod == null) return;
+        if (mod == null) {
+            return;
+        }
 
         if (mod.configuracio != null && mod.configuracio.mapaInicial != null) {
-            if (base.configuracio == null) base.configuracio = new ConfigGame.Configuracio();
+            if (base.configuracio == null) {
+                base.configuracio = new ConfigGame.Configuracio();
+            }
             base.configuracio.mapaInicial = mod.configuracio.mapaInicial;
         }
 
         if (mod.mapes != null) {
-            if (base.mapes == null) base.mapes = new ConfigGame.MapesGroup();
-            if (mod.mapes.ordre != null) base.mapes.ordre = mod.mapes.ordre;
+            if (base.mapes == null) {
+                base.mapes = new ConfigGame.MapesGroup();
+            }
+            if (mod.mapes.ordre != null) {
+                base.mapes.ordre = mod.mapes.ordre;
+            }
             if (mod.mapes.registres != null) {
-                if (base.mapes.registres == null) base.mapes.registres = new ArrayList<>();
+                if (base.mapes.registres == null) {
+                    base.mapes.registres = new ArrayList<>();
+                }
                 for (MapaConfig mc : mod.mapes.registres) {
                     base.mapes.registres.removeIf(b -> b.id.equals(mc.id));
                     base.mapes.registres.add(mc);
@@ -56,9 +68,13 @@ public class CarregadorGame {
         }
 
         if (mod.enemics != null) {
-            if (base.enemics == null) base.enemics = new ConfigGame.EnemicsGroup();
+            if (base.enemics == null) {
+                base.enemics = new ConfigGame.EnemicsGroup();
+            }
             if (mod.enemics.tipus != null) {
-                if (base.enemics.tipus == null) base.enemics.tipus = new ArrayList<>();
+                if (base.enemics.tipus == null) {
+                    base.enemics.tipus = new ArrayList<>();
+                }
                 for (TipusEnemic te : mod.enemics.tipus) {
                     // un tipus s'identifica pel primer símbol; si coincideix, el mod el sobreescriu
                     String primerSimbol = (te.simbols != null && !te.simbols.isEmpty()) ? te.simbols.get(0) : null;
@@ -70,32 +86,44 @@ public class CarregadorGame {
                 }
             }
             if (mod.enemics.posicions != null) {
-                if (base.enemics.posicions == null) base.enemics.posicions = new ArrayList<>();
+                if (base.enemics.posicions == null) {
+                    base.enemics.posicions = new ArrayList<>();
+                }
                 base.enemics.posicions.addAll(mod.enemics.posicions);
             }
         }
 
         if (mod.items != null) {
-            if (base.items == null) base.items = new ConfigGame.ItemsGroup();
+            if (base.items == null) {
+                base.items = new ConfigGame.ItemsGroup();
+            }
             if (mod.items.posicions != null) {
-                if (base.items.posicions == null) base.items.posicions = new ArrayList<>();
+                if (base.items.posicions == null) {
+                    base.items.posicions = new ArrayList<>();
+                }
                 base.items.posicions.addAll(mod.items.posicions);
             }
         }
     }
 
     private static void resolgArt(ConfigGame config) {
-        if (config.enemics == null || config.enemics.tipus == null) return;
-        for (TipusEnemic t : config.enemics.tipus) {
-            if (t.artFitxer != null && !t.artFitxer.isBlank()) {
-                t.artAscii = carregaArt(t.artFitxer);
+        if (config.enemics != null && config.enemics.tipus != null) {
+            for (TipusEnemic t : config.enemics.tipus) {
+                if (t.artFitxer != null && !t.artFitxer.isBlank()) {
+                    t.artAscii = carregaArt(t.artFitxer);
+                }
             }
+        }
+        if (config.jugador != null && config.jugador.artFitxer != null && !config.jugador.artFitxer.isBlank()) {
+            config.jugador.artAscii = carregaArt(config.jugador.artFitxer);
         }
     }
 
     private static String[] carregaArt(String rutaRecurs) {
         InputStream is = CarregadorGame.class.getClassLoader().getResourceAsStream(rutaRecurs);
-        if (is == null) return null;
+        if (is == null) {
+            return null;
+        }
         try (BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             return br.lines().toArray(String[]::new);
         } catch (Exception e) {

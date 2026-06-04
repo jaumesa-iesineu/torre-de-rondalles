@@ -39,7 +39,13 @@ public class Renderitzador { // classe per gestionar la pantalla
     private static final int RADI_LLANTERNA = 10;
 
     //amplada del panell dret d'estadístiques (columnes)
-    private static final int AMPLE_HUD = 24;
+    private static final int AMPLE_HUD = 30;
+
+    private String[] artJugador;
+
+    public void setArtJugador(String[] art) {
+        this.artJugador = art;
+    }
 
     public Renderitzador() throws IOException {
         java.awt.Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize();
@@ -306,6 +312,31 @@ public class Renderitzador { // classe per gestionar la pantalla
             fila++;
         }
 
+        //equip
+        if (fila < filaMax - 1) {
+            fila++;
+            pintaText(col, fila++, "--- EQUIP ---", gris);
+            var armaEq = jugador.getInventari().getArmaEquipada();
+            if (fila < filaMax - 1) {
+                String txtA = "ARM " + (armaEq != null ? armaEq.getSimbol() + " " + armaEq.getNom() : "---");
+                if (txtA.length() > innerW) {
+                    txtA = txtA.substring(0, innerW);
+                }
+                pintaText(col, fila++, txtA, armaEq != null ? armaEq.getColor() : gris);
+            }
+            String[] slotNoms = {"CAP", "PIT", "CAM", "PEU"};
+            var armadures = jugador.getInventari().getArmaduresEquipades();
+            for (int i = 0; i < 4 && fila < filaMax - 1; i++) {
+                com.iessineu.rondalles.inventari.Armadura.Slot s = com.iessineu.rondalles.inventari.Armadura.Slot.values()[i];
+                com.iessineu.rondalles.inventari.Armadura arm = armadures.get(s);
+                String txt = slotNoms[i] + " " + (arm != null ? arm.getSimbol() + " " + arm.getNom() : "---");
+                if (txt.length() > innerW) {
+                    txt = txt.substring(0, innerW);
+                }
+                pintaText(col, fila++, txt, arm != null ? arm.getColor() : gris);
+            }
+        }
+
         //estats temporals (verí, foc, gel)
         boolean anyEstat = jugador.getTornsVeri() > 0 || jugador.getTornsFoc() > 0 || jugador.getTornsGel() > 0;
         if (anyEstat && fila < filaMax - 1) {
@@ -318,7 +349,23 @@ public class Renderitzador { // classe per gestionar la pantalla
                 pintaText(col, fila++, "FOC   " + jugador.getTornsFoc() + " torns", new TextColor.RGB(220, 120, 30));
             }
             if (jugador.getTornsGel() > 0 && fila < filaMax - 1) {
-                pintaText(col, fila, "GEL   " + jugador.getTornsGel() + " torns", new TextColor.RGB(80, 180, 220));
+                pintaText(col, fila++, "GEL   " + jugador.getTornsGel() + " torns", new TextColor.RGB(80, 180, 220));
+            }
+        }
+
+        //ascii art del jugador al racó inferior
+        if (artJugador != null && artJugador.length > 0) {
+            int artLines = artJugador.length;
+            int artStartFila = filaMax - artLines - 1;
+            if (artStartFila > fila) {
+                TextColor colorArt = new TextColor.RGB(120, 200, 120);
+                for (int i = 0; i < artLines && artStartFila + i < filaMax - 1; i++) {
+                    String linia = artJugador[i];
+                    if (linia.length() > innerW) {
+                        linia = linia.substring(0, innerW);
+                    }
+                    pintaText(col, artStartFila + i, linia, colorArt);
+                }
             }
         }
     }
@@ -565,6 +612,31 @@ public class Renderitzador { // classe per gestionar la pantalla
         pintaText(cHud, fHud, "CAR  " + jugador.categoriaCarrega().name(), colorCar);
         fHud++;
 
+        //equip
+        var armaEqC = jugador.getInventari().getArmaEquipada();
+        if (armaEqC != null) {
+            String tA = "ARM  " + armaEqC.getSimbol() + " " + armaEqC.getNom();
+            if (tA.length() > wBoxJug - 2) {
+                tA = tA.substring(0, wBoxJug - 2);
+            }
+            pintaText(cHud, fHud, tA, armaEqC.getColor());
+            fHud++;
+        }
+        String[] sNoms = {"CAP", "PIT", "CAM", "PEU"};
+        var armEqC = jugador.getInventari().getArmaduresEquipades();
+        for (int i = 0; i < 4; i++) {
+            com.iessineu.rondalles.inventari.Armadura.Slot s = com.iessineu.rondalles.inventari.Armadura.Slot.values()[i];
+            com.iessineu.rondalles.inventari.Armadura arm = armEqC.get(s);
+            if (arm != null) {
+                String tS = sNoms[i] + "  " + arm.getSimbol() + " " + arm.getNom();
+                if (tS.length() > wBoxJug - 2) {
+                    tS = tS.substring(0, wBoxJug - 2);
+                }
+                pintaText(cHud, fHud, tS, arm.getColor());
+                fHud++;
+            }
+        }
+
         if (jugador.getTornsVeri() > 0) {
             pintaText(cHud, fHud, "VERI " + jugador.getTornsVeri() + " torns", new TextColor.RGB(100, 220, 80));
             fHud++;
@@ -591,12 +663,16 @@ public class Renderitzador { // classe per gestionar la pantalla
 
         for (int i = 0; i < com.iessineu.rondalles.inventari.Inventari.MAX_SLOTS; i++) {
             var slot = jugador.getInventari().getSlot(i);
-            if (slot == null) continue;
+            if (slot == null) {
+                continue;
+            }
             String quant = slot.quantitat() > 1 ? " x" + slot.quantitat() : "";
             String prefix = "[ " + (i + 1) + " ]  " + slot.item().getSimbol() + " ";
             int maxNom = wBoxJug - prefix.length() - quant.length() - 2;
             String nomTallat = slot.item().getNom();
-            if (nomTallat.length() > maxNom) nomTallat = nomTallat.substring(0, Math.max(0, maxNom));
+            if (nomTallat.length() > maxNom) {
+                nomTallat = nomTallat.substring(0, Math.max(0, maxNom));
+            }
             pintaText(cHud, fHud, prefix + nomTallat + quant, slot.item().getColor());
             fHud++;
         }
@@ -718,8 +794,13 @@ public class Renderitzador { // classe per gestionar la pantalla
             pintaTextFons(colArm + i * 14, filaArm, txt, arm != null ? arm.getColor() : gris, fonsPanell);
         }
 
+        //arma equipada
+        var armaEq = jugador.getInventari().getArmaEquipada();
+        String txtArma = "ARM: " + (armaEq != null ? armaEq.getSimbol() + " " + armaEq.getNom() : "---");
+        pintaTextFons(colArm + 4 * 14, filaArm, txtArma, armaEq != null ? armaEq.getColor() : gris, fonsPanell);
+
         //instruccions
-        pintaTextFons(colIni + 2, filaIni + alcadaPanel - 2, "ESC / E per tancar", gris, fonsPanell);
+        pintaTextFons(colIni + 2, filaIni + alcadaPanel - 2, "1-4 equipar  |  ESC/E tancar", gris, fonsPanell);
 
         screen.refresh();
     }
