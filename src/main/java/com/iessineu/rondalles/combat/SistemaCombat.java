@@ -22,9 +22,21 @@ public class SistemaCombat {
         return dany;
     }
 
-    public static void tickEnemics(Enemic enemic) {
-        enemic.tickVeri();
-        enemic.tickFoc();
-        enemic.tickGel();
+    public static String tickEnemics(Enemic enemic) {
+        StringBuilder sb = new StringBuilder();
+        String nom = enemic.getClass().getSimpleName().toUpperCase();
+        if (enemic.getTornsVeri() > 0) {
+            enemic.tickVeri();
+            sb.append(nom).append(" rep 3 de dany pel verí. ");
+        } else { enemic.tickVeri(); }
+        if (enemic.getTornsFoc() > 0) {
+            enemic.tickFoc();
+            sb.append(nom).append(" té l'atac reduït pel foc. ");
+        } else { enemic.tickFoc(); }
+        if (enemic.getTornsGel() > 0) {
+            enemic.tickGel();
+            sb.append(nom).append(" té la defensa reduïda pel gel. ");
+        } else { enemic.tickGel(); }
+        return sb.toString().trim();
     }
 }

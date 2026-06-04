@@ -18,7 +18,9 @@ import com.iessineu.rondalles.entitats.DimoniBoiet;
 import com.iessineu.rondalles.entitats.Enemic;
 import com.iessineu.rondalles.entitats.Entitat;
 import com.iessineu.rondalles.entitats.Jugador;
+import com.iessineu.rondalles.inventari.Item;
 import com.iessineu.rondalles.inventari.ItemMapa;
+import com.iessineu.rondalles.inventari.Pocio;
 import com.iessineu.rondalles.inventari.RegistreItems;
 import com.iessineu.rondalles.mapa.CarregadorMapa;
 import com.iessineu.rondalles.mapa.Mapa;
@@ -241,7 +243,32 @@ public class Joc extends Motor {
         char c = tecla.getCharacter();
 
         if (c >= '1' && c <= '9') {
-            jugador.usaItem(c - '1');
+            int idx = c - '1';
+            Item item = jugador.getInventari().get(idx);
+            if (item != null) {
+                String nom = enemicCombat.getClass().getSimpleName().toUpperCase();
+                if (item instanceof Pocio pocio && pocio.getTipus() != Pocio.Tipus.VIDA) {
+                    pocio.aplicaEfecteEnemic(enemicCombat);
+                    jugador.getInventari().elimina(idx);
+                    afegeixLog("Has llançat " + item.getNom() + " a " + nom + "!");
+                } else {
+                    jugador.usaItem(idx);
+                    afegeixLog("Has usat: " + item.getNom() + ".");
+                }
+                String tickLog = SistemaCombat.tickEnemics(enemicCombat);
+                if (!tickLog.isEmpty()) afegeixLog(tickLog);
+                jugador.tickVeri(); jugador.tickFoc(); jugador.tickGel();
+                int danyRebut = SistemaCombat.atacaJugador(enemicCombat, jugador);
+                if (danyRebut == -1) {
+                    afegeixLog("Has esquivat l'atac de " + nom + "!");
+                } else {
+                    afegeixLog(nom + " aprofita! Has rebut " + danyRebut + " de dany.");
+                }
+                if (jugador.esMort()) {
+                    GestorMusica.reprodueix(GestorMusica.Pista.GAME_OVER);
+                    corrent = false;
+                }
+            }
             return;
         }
         if (c == 'f' || c == 'F') {

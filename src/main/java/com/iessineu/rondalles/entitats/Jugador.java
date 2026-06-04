@@ -118,17 +118,18 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
         pes += item.getPes();
     }
 
-    public void usaItem(int index) { //usa l'item del slot indicat (0-based)
+    public String usaItem(int index) { //usa l'item del slot indicat (0-based); retorna nom o null
         if (index < 0 || index >= com.iessineu.rondalles.inventari.Inventari.MAX_SLOTS) {
-            return;
+            return null;
         }
         if (inventari.get(index) == null) {
-            return;
+            return null;
         }
         Item item = inventari.get(index);
         item.aplicaEfecte(this);
         pes -= item.getPes();
         inventari.elimina(index);
+        return item.getNom();
     }
 
     public void tickVeri() {
