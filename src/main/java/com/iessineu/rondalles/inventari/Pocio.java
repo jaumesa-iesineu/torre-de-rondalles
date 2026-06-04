@@ -1,6 +1,7 @@
 package com.iessineu.rondalles.inventari;
 
 import com.googlecode.lanterna.TextColor;
+import com.iessineu.rondalles.entitats.Enemic;
 import com.iessineu.rondalles.entitats.Jugador;
 
 public class Pocio extends Item {
@@ -44,6 +45,15 @@ public class Pocio extends Item {
             case GEL ->
                 new TextColor.RGB(80, 180, 220);
         };
+    }
+
+    public void aplicaEfecteEnemic(Enemic enemic) {
+        switch (tipus) {
+            case VERI -> enemic.setTornsVeri(valor);
+            case FOC  -> enemic.setTornsFoc(valor);
+            case GEL  -> enemic.setTornsGel(valor);
+            case VIDA -> {} // VIDA no té efecte sobre enemics
+        }
     }
 
     public Tipus getTipus() {
