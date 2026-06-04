@@ -16,6 +16,7 @@ public class ConfigGame {
     public PortesGroup portes;
     public EquipamentInicial equipamentInicial;
     public JugadorConfig jugador;
+    public List<EnigmeConfig> enigmes;
 
     //grups niats que reflecteixen l'estructura del JSON
     public static class Configuracio {
@@ -72,6 +73,14 @@ public class ConfigGame {
         public int velocitat = 5;
         public int evasio = 10;
         public int pesMaxim = 50;
+    }
+
+    //un enigme per planta
+    public static class EnigmeConfig {
+
+        public int planta;
+        public String pregunta;
+        public String resposta;
     }
 
     //cerca el tipus que conté el simbol donat dins la seva llista de simbols
@@ -140,5 +149,14 @@ public class ConfigGame {
 
     public String getMapaInicial() {
         return configuracio != null ? configuracio.mapaInicial : "planta1";
+    }
+
+    //retorna l'enigme per un numero de planta (o el primer si no troba)
+    public EnigmeConfig getEnigmaPerPlanta(int planta) {
+        if (enigmes == null) return null;
+        for (EnigmeConfig e : enigmes) {
+            if (e.planta == planta) return e;
+        }
+        return enigmes.isEmpty() ? null : enigmes.get(0);
     }
 }

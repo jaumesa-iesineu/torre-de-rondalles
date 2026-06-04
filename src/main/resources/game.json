@@ -396,6 +396,14 @@
     "pesMaxim": 50
   },
 
+  "enigmes": [
+    {"planta": 1, "pregunta": "Tenc ales però no vol, tenc cua però no és animal. Què sóc?", "resposta": "una fletxa"},
+    {"planta": 2, "pregunta": "Com més gran em fas, menys pots veure. Què sóc?", "resposta": "la foscor"},
+    {"planta": 3, "pregunta": "Estic sempre davant teu però no es pot veure. Què sóc?", "resposta": "el futur"},
+    {"planta": 4, "pregunta": "Parleu de mi però mai m'heu vist. Qui sóc?", "resposta": "el silenci"},
+    {"planta": 5, "pregunta": "Tenc boca però no puc parlar, tenc llit però no puc dormir. Què sóc?", "resposta": "un riu"}
+  ],
+
   "equipamentInicial": {
     "armadures": ["capell-pages", "camisa-lli", "calcons-llana", "espardenyes-canem"],
     "arma": "falc-llaurador"

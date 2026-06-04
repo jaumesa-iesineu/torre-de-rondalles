@@ -696,7 +696,7 @@ public class Joc extends Motor {
         for (int y = 0; y < celles.length; y++) {
             for (int x = 0; x < celles[y].length; x++) {
                 if (celles[y][x] == 'N') {
-                    npcs.add(new NpcComerciants(x, y, pisActual));
+                    npcs.add(new NpcComerciants(x, y, pisActual, config));
                 }
             }
         }
