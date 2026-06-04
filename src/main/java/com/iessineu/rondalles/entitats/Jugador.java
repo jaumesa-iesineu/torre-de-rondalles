@@ -72,16 +72,35 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
         //per interactuar amb cofres etc
     }
 
+    public enum Carrega {
+        LLEUGER, NORMAL, PESAT
+    }
+
+    public Carrega categoriaCarrega() {
+        double pct = (double) pes / pesMaxim;
+        if (pct <= 0.50) {
+            return Carrega.LLEUGER;
+        }
+        if (pct <= 0.80) {
+            return Carrega.NORMAL;
+        }
+        return Carrega.PESAT;
+    }
+
     //funció que calcula sa velocitat depenent de es pes / pesMaxim
     public int velocitatEfectiva() {
-        double percentatge = (double) pes / pesMaxim;
-        if (percentatge <= 0.50) {
-            return velocitat;
-        }
-        if (percentatge <= 0.80) {
-            return Math.max(1, velocitat - 1);
-        }
-        return Math.max(1, velocitat - 2);
+        return switch (categoriaCarrega()) {
+            case LLEUGER ->
+                velocitat;
+            case NORMAL ->
+                Math.max(1, velocitat - 1);
+            case PESAT ->
+                Math.max(1, velocitat - 2);
+        };
+    }
+
+    public int evasioEfectiva() {
+        return categoriaCarrega() == Carrega.PESAT ? Math.max(0, evasio - 5) : evasio;
     }
 
     public void setAtacExtra(int atacExtra) {
@@ -97,7 +116,8 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     }
 
     public boolean esquiva() {
-        return evasio > 0 && java.util.concurrent.ThreadLocalRandom.current().nextInt(100) < evasio;
+        int eva = evasioEfectiva();
+        return eva > 0 && java.util.concurrent.ThreadLocalRandom.current().nextInt(100) < eva;
     }
 
     public void rebreDany(int dany) {
@@ -189,10 +209,21 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
         return pesMaxim;
     }
 
-    public int getEvasio() { return evasio; }
-    public void setEvasio(int e) { evasio = e; }
-    public int getVelocitat() { return velocitat; }
-    public void setVelocitat(int v) { velocitat = v; }
+    public int getEvasio() {
+        return evasio;
+    }
+
+    public void setEvasio(int e) {
+        evasio = e;
+    }
+
+    public int getVelocitat() {
+        return velocitat;
+    }
+
+    public void setVelocitat(int v) {
+        velocitat = v;
+    }
 
     public int getVisio() {
         return visio;
@@ -221,20 +252,49 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
         return dirY;
     }
 
-    public void setVida(int v) { vida = Math.max(0, v); }
-    public void setVidaMaxima(int v) { vidaMaxima = v; }
-    public void setAtac(int a) { atac = a; }
-    public void setDefensa(int d) { defensa = d; }
+    public void setVida(int v) {
+        vida = Math.max(0, v);
+    }
 
-    public void setTornsVeri(int t) { tornsVeri = t; }
-    public void setTornsFoc(int t) { tornsFoc = t; }
-    public void setTornsGel(int t) { tornsGel = t; }
+    public void setVidaMaxima(int v) {
+        vidaMaxima = v;
+    }
 
-    public int getTornsVeri() { return tornsVeri; }
-    public int getTornsFoc() { return tornsFoc; }
-    public int getTornsGel() { return tornsGel; }
+    public void setAtac(int a) {
+        atac = a;
+    }
 
-    public Inventari getInventari() { return inventari; }
+    public void setDefensa(int d) {
+        defensa = d;
+    }
+
+    public void setTornsVeri(int t) {
+        tornsVeri = t;
+    }
+
+    public void setTornsFoc(int t) {
+        tornsFoc = t;
+    }
+
+    public void setTornsGel(int t) {
+        tornsGel = t;
+    }
+
+    public int getTornsVeri() {
+        return tornsVeri;
+    }
+
+    public int getTornsFoc() {
+        return tornsFoc;
+    }
+
+    public int getTornsGel() {
+        return tornsGel;
+    }
+
+    public Inventari getInventari() {
+        return inventari;
+    }
 
     @Override
     public TextColor getColor() {

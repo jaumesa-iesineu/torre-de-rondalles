@@ -59,7 +59,8 @@ public class Renderitzador { // classe per gestionar la pantalla
                 BufferedImage icon = ImageIO.read(is);
                 terminal.setIconImage(icon);
             }
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
         terminal.setExtendedState(JFrame.MAXIMIZED_BOTH);
         //la finestra ha d'estar visible abans de cridar startScreen
         //si no, les dimensions són 0x0 i peta
@@ -73,20 +74,22 @@ public class Renderitzador { // classe per gestionar la pantalla
     public void dibuixa(Mapa mapa, int jx, int jy, List<Entitat> entitats, com.iessineu.rondalles.entitats.Jugador jugador, List<com.iessineu.rondalles.inventari.ItemMapa> itemsMapa, boolean[][] visible, boolean[][] explorat, char[][] mapaRecord) throws IOException {
         screen.clear();
 
-        int cols   = screen.getTerminalSize().getColumns();
-        int files  = screen.getTerminalSize().getRows();
+        int cols = screen.getTerminalSize().getColumns();
+        int files = screen.getTerminalSize().getRows();
         int colSep = cols - AMPLE_HUD; //columna on comença el panell dret
 
-        TextColor blanc    = new TextColor.RGB(180, 180, 195);
+        TextColor blanc = new TextColor.RGB(180, 180, 195);
         TextColor grisMarc = new TextColor.RGB(70, 70, 85);
-        TextColor daurat   = new TextColor.RGB(220, 180, 50);
+        TextColor daurat = new TextColor.RGB(220, 180, 50);
 
         //marc: fila superior
         pintaText(0, 0, "╔" + "═".repeat(colSep - 1) + "╦" + "═".repeat(AMPLE_HUD - 2) + "╗", blanc);
         //fila del títol
         pintaText(0, 1, "║", grisMarc);
         String titol = " TORRE DE RONDALLES  ~  " + mapa.getNom();
-        if (titol.length() > colSep - 2) titol = titol.substring(0, colSep - 2);
+        if (titol.length() > colSep - 2) {
+            titol = titol.substring(0, colSep - 2);
+        }
         pintaText(1, 1, titol, daurat);
         pintaText(colSep, 1, "║", grisMarc);
         String titolHud = "PERSONATGE";
@@ -96,8 +99,8 @@ public class Renderitzador { // classe per gestionar la pantalla
         pintaText(0, 2, "╠" + "═".repeat(colSep - 1) + "╣" + " ".repeat(AMPLE_HUD - 2) + "║", blanc);
         //bordes laterals
         for (int i = 3; i < files - 1; i++) {
-            pintaText(0, i,        "║", grisMarc);
-            pintaText(colSep, i,   "║", grisMarc);
+            pintaText(0, i, "║", grisMarc);
+            pintaText(colSep, i, "║", grisMarc);
             pintaText(cols - 1, i, "║", grisMarc);
         }
         //fila inferior
@@ -127,11 +130,13 @@ public class Renderitzador { // classe per gestionar la pantalla
             for (int mx = 0; mx < celles[my].length; mx++) {
                 int sc = 1 + (mx - camX);
                 int sf = 3 + (my - camY);
-                if (sc < 1 || sc >= colSep || sf < 3 || sf >= files - 1) continue;
+                if (sc < 1 || sc >= colSep || sf < 3 || sf >= files - 1) {
+                    continue;
+                }
                 boolean esVisible = visible == null || visible[my][mx];
                 boolean esExplorada = explorat != null && explorat[my][mx];
                 if (esVisible) {
-                    double dist   = Math.sqrt((mx - jx) * (mx - jx) + (my - jy) * (my - jy));
+                    double dist = Math.sqrt((mx - jx) * (mx - jx) + (my - jy) * (my - jy));
                     double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.75;
                     screen.setCharacter(sc, sf, new TextCharacter(celles[my][mx], fosqueix(colorPerCasella(celles[my][mx]), factor), fosqueix(fonsCasella(celles[my][mx]), factor)));
                 } else if (esExplorada) {
@@ -142,25 +147,39 @@ public class Renderitzador { // classe per gestionar la pantalla
 
         //entitats per damunt (només si visibles)
         for (Entitat e : entitats) {
-            if (!e.isActiu()) continue;
-            if (visible != null && (e.getY() >= visible.length || e.getX() >= visible[e.getY()].length)) continue;
-            if (visible != null && !visible[e.getY()][e.getX()]) continue;
+            if (!e.isActiu()) {
+                continue;
+            }
+            if (visible != null && (e.getY() >= visible.length || e.getX() >= visible[e.getY()].length)) {
+                continue;
+            }
+            if (visible != null && !visible[e.getY()][e.getX()]) {
+                continue;
+            }
             int sc = 1 + (e.getX() - camX);
             int sf = 3 + (e.getY() - camY);
-            if (sc < 1 || sc >= colSep || sf < 3 || sf >= files - 1) continue;
-            double dist   = Math.sqrt((e.getX() - jx) * (e.getX() - jx) + (e.getY() - jy) * (e.getY() - jy));
+            if (sc < 1 || sc >= colSep || sf < 3 || sf >= files - 1) {
+                continue;
+            }
+            double dist = Math.sqrt((e.getX() - jx) * (e.getX() - jx) + (e.getY() - jy) * (e.getY() - jy));
             double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.5;
             screen.setCharacter(sc, sf, new TextCharacter(e.getSimbol(), fosqueix(e.getColor(), factor), TextColor.ANSI.BLACK));
         }
 
         //ítems del terra (només si visibles)
         for (com.iessineu.rondalles.inventari.ItemMapa im : itemsMapa) {
-            if (visible != null && (im.getY() >= visible.length || im.getX() >= visible[im.getY()].length)) continue;
-            if (visible != null && !visible[im.getY()][im.getX()]) continue;
+            if (visible != null && (im.getY() >= visible.length || im.getX() >= visible[im.getY()].length)) {
+                continue;
+            }
+            if (visible != null && !visible[im.getY()][im.getX()]) {
+                continue;
+            }
             int sc = 1 + (im.getX() - camX);
             int sf = 3 + (im.getY() - camY);
-            if (sc < 1 || sc >= colSep || sf < 3 || sf >= files - 1) continue;
-            double dist   = Math.sqrt((im.getX() - jx) * (im.getX() - jx) + (im.getY() - jy) * (im.getY() - jy));
+            if (sc < 1 || sc >= colSep || sf < 3 || sf >= files - 1) {
+                continue;
+            }
+            double dist = Math.sqrt((im.getX() - jx) * (im.getX() - jx) + (im.getY() - jy) * (im.getY() - jy));
             double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.75;
             screen.setCharacter(sc, sf, new TextCharacter(im.getItem().getSimbol(), fosqueix(im.getItem().getColor(), factor), TextColor.ANSI.BLACK));
         }
@@ -168,8 +187,9 @@ public class Renderitzador { // classe per gestionar la pantalla
         //jugador sempre verd per damunt de tot
         int psc = 1 + (jx - camX);
         int psf = 3 + (jy - camY);
-        if (psc >= 1 && psc < colSep && psf >= 3 && psf < files - 1)
+        if (psc >= 1 && psc < colSep && psf >= 3 && psf < files - 1) {
             screen.setCharacter(psc, psf, new TextCharacter('@', TextColor.ANSI.GREEN_BRIGHT, TextColor.ANSI.BLACK));
+        }
 
         dibuixaHUD(jugador, colSep + 1, 3, files - 1);
         screen.refresh();
@@ -178,36 +198,54 @@ public class Renderitzador { // classe per gestionar la pantalla
     //cada tipus de casella té un color base diferent
     private TextColor colorPerCasella(char c) {
         return switch (c) {
-            case '#' -> new TextColor.RGB(130, 130, 140); //parets
-            case '.' -> new TextColor.RGB(70, 50, 35); //terra
-            case 'e' -> new TextColor.RGB(200, 50, 50); //enemic
-            case 'i' -> new TextColor.RGB(220, 180, 50); //item
-            case 'N' -> new TextColor.RGB(80, 200, 220); //npc
-            case '~' -> new TextColor.RGB(50, 100, 200);  // aigua
-            case ',' -> new TextColor.RGB(60, 160, 60);   // gespa
-            case '=' -> new TextColor.RGB(160, 160, 160); // metall
-            case '*' -> new TextColor.RGB(180, 230, 255); // gel
-            case '<' -> new TextColor.RGB(200, 200, 50);  // escales
-            default -> new TextColor.RGB(90, 90, 90);
+            case '#' ->
+                new TextColor.RGB(130, 130, 140); //parets
+            case '.' ->
+                new TextColor.RGB(70, 50, 35); //terra
+            case 'e' ->
+                new TextColor.RGB(200, 50, 50); //enemic
+            case 'i' ->
+                new TextColor.RGB(220, 180, 50); //item
+            case 'N' ->
+                new TextColor.RGB(80, 200, 220); //npc
+            case '~' ->
+                new TextColor.RGB(50, 100, 200);  // aigua
+            case ',' ->
+                new TextColor.RGB(60, 160, 60);   // gespa
+            case '=' ->
+                new TextColor.RGB(160, 160, 160); // metall
+            case '*' ->
+                new TextColor.RGB(180, 230, 255); // gel
+            case '<' ->
+                new TextColor.RGB(200, 200, 50);  // escales
+            default ->
+                new TextColor.RGB(90, 90, 90);
         };
     }
 
     private TextColor fonsCasella(char c) {
         return switch (c) {
-            case '#' -> new TextColor.RGB(40, 40, 50);
-            case '.' -> new TextColor.RGB(30, 20, 10);
-            case '~' -> new TextColor.RGB(10, 30, 80);
-            case '*' -> new TextColor.RGB(20, 60, 90);
-            default  -> TextColor.ANSI.BLACK;
+            case '#' ->
+                new TextColor.RGB(40, 40, 50);
+            case '.' ->
+                new TextColor.RGB(30, 20, 10);
+            case '~' ->
+                new TextColor.RGB(10, 30, 80);
+            case '*' ->
+                new TextColor.RGB(20, 60, 90);
+            default ->
+                TextColor.ANSI.BLACK;
         };
     }
 
     //aplica un factor d'oscuritat als components rgb del color
     private TextColor fosqueix(TextColor color, double factor) {
-        if (!(color instanceof TextColor.RGB rgb)) return color;
-        int r = Math.max(0, Math.min(255, (int)(rgb.getRed() * factor)));
-        int g = Math.max(0, Math.min(255, (int)(rgb.getGreen() * factor)));
-        int b = Math.max(0, Math.min(255, (int)(rgb.getBlue() * factor)));
+        if (!(color instanceof TextColor.RGB rgb)) {
+            return color;
+        }
+        int r = Math.max(0, Math.min(255, (int) (rgb.getRed() * factor)));
+        int g = Math.max(0, Math.min(255, (int) (rgb.getGreen() * factor)));
+        int b = Math.max(0, Math.min(255, (int) (rgb.getBlue() * factor)));
         return new TextColor.RGB(r, g, b);
     }
 
@@ -215,39 +253,52 @@ public class Renderitzador { // classe per gestionar la pantalla
         int innerW = AMPLE_HUD - 2;
 
         TextColor vermell = new TextColor.RGB(220, 60, 60);
-        TextColor groc    = new TextColor.RGB(180, 160, 80);
+        TextColor groc = new TextColor.RGB(180, 160, 80);
         TextColor taronja = new TextColor.RGB(200, 120, 50);
-        TextColor blau    = new TextColor.RGB(100, 160, 220);
-        TextColor gris    = new TextColor.RGB(100, 100, 115);
+        TextColor blau = new TextColor.RGB(100, 160, 220);
+        TextColor gris = new TextColor.RGB(100, 100, 115);
 
         //barra de vida
         int barW = 12;
         int plens = jugador.getVidaMaxima() > 0
-            ? Math.max(0, Math.min(barW, (int)((double)jugador.getVida() / jugador.getVidaMaxima() * barW)))
-            : 0;
+                ? Math.max(0, Math.min(barW, (int) ((double) jugador.getVida() / jugador.getVidaMaxima() * barW)))
+                : 0;
         pintaText(col, fila, "HP [" + "█".repeat(plens) + "░".repeat(barW - plens) + "]", colorVida(jugador.getVida(), jugador.getVidaMaxima()));
         fila++;
         String vidaStr = jugador.getVida() + " / " + jugador.getVidaMaxima();
-        pintaText(col + innerW - vidaStr.length(), fila, vidaStr, vermell);
+        pintaText(col + innerW - vidaStr.length() - 1, fila, vidaStr, vermell);
         fila += 2;
 
         //estadistiques bàsiques
-        pintaText(col, fila++, "ATK  " + jugador.getAtacTotal(),    taronja);
+        pintaText(col, fila++, "ATK  " + jugador.getAtacTotal(), taronja);
         pintaText(col, fila++, "DEF  " + jugador.getDefensaTotal(), blau);
         pintaText(col, fila++, "VEL  " + jugador.velocitatEfectiva(), new TextColor.RGB(100, 200, 255));
-        pintaText(col, fila++, "EVA  " + jugador.getEvasio() + "%",  new TextColor.RGB(180, 255, 180));
+        pintaText(col, fila++, "EVA  " + jugador.evasioEfectiva() + "%", new TextColor.RGB(180, 255, 180));
         pintaText(col, fila++, "PES  " + jugador.getPes() + " / " + jugador.getpesMaxim(), groc);
+        TextColor colorCarrega = switch (jugador.categoriaCarrega()) {
+            case LLEUGER ->
+                new TextColor.RGB(80, 220, 80);
+            case NORMAL ->
+                new TextColor.RGB(230, 200, 40);
+            case PESAT ->
+                new TextColor.RGB(220, 60, 60);
+        };
+        pintaText(col, fila++, "CAR  " + jugador.categoriaCarrega().name(), colorCarrega);
         fila++;
 
         //inventari
         pintaText(col, fila++, "--- INVENTARI ---", gris);
         for (int i = 0; i < com.iessineu.rondalles.inventari.Inventari.MAX_SLOTS; i++) {
-            if (fila >= filaMax - 2) break;
+            if (fila >= filaMax - 2) {
+                break;
+            }
             var slot = jugador.getInventari().getSlot(i);
             if (slot != null) {
                 String q = slot.quantitat() > 1 ? " x" + slot.quantitat() : "";
                 String linia = "[" + (i + 1) + "] " + slot.item().getSimbol() + " " + slot.item().getNom() + q;
-                if (linia.length() > innerW) linia = linia.substring(0, innerW);
+                if (linia.length() > innerW) {
+                    linia = linia.substring(0, innerW);
+                }
                 pintaText(col, fila, linia, slot.item().getColor());
             } else {
                 pintaText(col, fila, "[" + (i + 1) + "] -", gris);
@@ -260,95 +311,104 @@ public class Renderitzador { // classe per gestionar la pantalla
         if (anyEstat && fila < filaMax - 1) {
             fila++;
             pintaText(col, fila++, "--- ESTATS ---", gris);
-            if (jugador.getTornsVeri() > 0 && fila < filaMax - 1)
+            if (jugador.getTornsVeri() > 0 && fila < filaMax - 1) {
                 pintaText(col, fila++, "VERI  " + jugador.getTornsVeri() + " torns", new TextColor.RGB(100, 220, 80));
-            if (jugador.getTornsFoc() > 0 && fila < filaMax - 1)
+            }
+            if (jugador.getTornsFoc() > 0 && fila < filaMax - 1) {
                 pintaText(col, fila++, "FOC   " + jugador.getTornsFoc() + " torns", new TextColor.RGB(220, 120, 30));
-            if (jugador.getTornsGel() > 0 && fila < filaMax - 1)
+            }
+            if (jugador.getTornsGel() > 0 && fila < filaMax - 1) {
                 pintaText(col, fila, "GEL   " + jugador.getTornsGel() + " torns", new TextColor.RGB(80, 180, 220));
+            }
         }
     }
 
     private void pintaText(int col, int fila, String text, TextColor color) { //pintaText pinta text a la pantalla sense sortir dels límits
         int maxC = screen.getTerminalSize().getColumns();
         int maxF = screen.getTerminalSize().getRows();
-        if (fila < 0 || fila >= maxF) return;
+        if (fila < 0 || fila >= maxF) {
+            return;
+        }
         for (int i = 0; i < text.length(); i++) {
             int c = col + i;
-            if (c >= 0 && c < maxC)
+            if (c >= 0 && c < maxC) {
                 screen.setCharacter(c, fila, new TextCharacter(text.charAt(i), color, TextColor.ANSI.BLACK));
+            }
         }
     }
 
     private void pintaTextFons(int col, int fila, String text, TextColor color, TextColor fons) {
         int maxC = screen.getTerminalSize().getColumns();
         int maxF = screen.getTerminalSize().getRows();
-        if (fila < 0 || fila >= maxF) return;
+        if (fila < 0 || fila >= maxF) {
+            return;
+        }
         for (int i = 0; i < text.length(); i++) {
             int c = col + i;
-            if (c >= 0 && c < maxC)
+            if (c >= 0 && c < maxC) {
                 screen.setCharacter(c, fila, new TextCharacter(text.charAt(i), color, fons));
+            }
         }
     }
 
-        private static final String[] DIMONI_ART = {
-    "   , ,, ,                              ",
-    "   | || |    ,/  _____  \\.             ",
-    "   \\_||_/    ||_/     \\_||             ",
-    "     ||       \\_| . . |_/              ",
-    "     ||         |  L  |                ",
-    "    ,||         |`==='|                ",
-    "    |>|      ___`>  -<'___             ",
-    "    |>||\\    /             \\           ",
-    "    \\>| \\  /  ,    .    .  |           ",
-    "     ||  \\/  /| .  |  . |  |           ",
-    "     ||\\  ` / | ___|___ |  |     (     ",
-    "  (( || `--'  | _______ |  |     ))  ( ",
-    "(  )\\|| (  )\\ | - --- - | -| (  ( \\ ))",
-    "(\\/  || ))/ ( | -- - -- |  | )) )  \\((",
-    " ( ()||((( ())|         |  |( (( () ) "
+    private static final String[] DIMONI_ART = {
+        "   , ,, ,                              ",
+        "   | || |    ,/  _____  \\.             ",
+        "   \\_||_/    ||_/     \\_||             ",
+        "     ||       \\_| . . |_/              ",
+        "     ||         |  L  |                ",
+        "    ,||         |`==='|                ",
+        "    |>|      ___`>  -<'___             ",
+        "    |>||\\    /             \\           ",
+        "    \\>| \\  /  ,    .    .  |           ",
+        "     ||  \\/  /| .  |  . |  |           ",
+        "     ||\\  ` / | ___|___ |  |     (     ",
+        "  (( || `--'  | _______ |  |     ))  ( ",
+        "(  )\\|| (  )\\ | - --- - | -| (  ( \\ ))",
+        "(\\/  || ))/ ( | -- - -- |  | )) )  \\((",
+        " ( ()||((( ())|         |  |( (( () ) "
     };
     private static final String[] GEGANT_ART = {
-    "                      __,='`````'=/__                    ",
-    "                     '//  (o) \\(o) \\ `'         _,-,    ",
-    "                     //|     ,_)   (`\\      ,-'`_,-\\     ",
-    "                   ,-~~~\\  `'==='  /-,      \\==```` \\__  ",
-    "                  /        `----'     `\\     \\       \\/  ",
-    "               ,-`                  ,   \\  ,.-\\       \\  ",
-    "              /      ,               \\,-`\\`_,-`\\_,..--'\\ ",
-    "             ,`    ,/,              ,>,   )     \\--`````\\ ",
-    "             (      `\\`---'`  `-,-'`_,<   \\      \\_,.--'`",
-    "              `.      `--. _,-'`_,-`  |    \\              ",
-    "               [`-.___   <`_,-'`------(    /              ",
-    "               (`` _,-\\   \\ --`````````|--`               ",
-    "                >-`_,-`\\,-` ,          |                  ",
-    "              <`_,'     ,  /\\          /                  ",
-    "               `  \\/\\,-/ `/  \\/`\\_/V\\_/                  ",
-    "                  (  ._. )    ( .__. )                   ",
-    "                  |      |    |      |                   ",
-    "                   \\,---_|    |_---./                    ",
-    "                   ooOO(_)    (_)OOoo                    "
-};
-    
-        private static final String[] BUBOTA_ART = {
-    "        .-----.",
-    "      .' -   - '.",
-    "     /  .-. .-.  \\",
-    "     |  | | | |  |",
-    "      \\ \\o/ \\o/ /",
-    "     _/    ^    \\_",
-    "    | \\  '---'  / |",
-    "    / /`--. .--`\\ \\",
-    "   / /'---` `---'\\ \\",
-    "   '.__.       .__.'",
-    "      `|     |`",
-    "       |     \\",
-    "       \\      '--.",
-    "       '.        `\\",
-    "         `'---.   |",
-    "            ,__) /",
-    "             `..'"
-};
+        "                      __,='`````'=/__                    ",
+        "                     '//  (o) \\(o) \\ `'         _,-,    ",
+        "                     //|     ,_)   (`\\      ,-'`_,-\\     ",
+        "                   ,-~~~\\  `'==='  /-,      \\==```` \\__  ",
+        "                  /        `----'     `\\     \\       \\/  ",
+        "               ,-`                  ,   \\  ,.-\\       \\  ",
+        "              /      ,               \\,-`\\`_,-`\\_,..--'\\ ",
+        "             ,`    ,/,              ,>,   )     \\--`````\\ ",
+        "             (      `\\`---'`  `-,-'`_,<   \\      \\_,.--'`",
+        "              `.      `--. _,-'`_,-`  |    \\              ",
+        "               [`-.___   <`_,-'`------(    /              ",
+        "               (`` _,-\\   \\ --`````````|--`               ",
+        "                >-`_,-`\\,-` ,          |                  ",
+        "              <`_,'     ,  /\\          /                  ",
+        "               `  \\/\\,-/ `/  \\/`\\_/V\\_/                  ",
+        "                  (  ._. )    ( .__. )                   ",
+        "                  |      |    |      |                   ",
+        "                   \\,---_|    |_---./                    ",
+        "                   ooOO(_)    (_)OOoo                    "
+    };
+
+    private static final String[] BUBOTA_ART = {
+        "        .-----.",
+        "      .' -   - '.",
+        "     /  .-. .-.  \\",
+        "     |  | | | |  |",
+        "      \\ \\o/ \\o/ /",
+        "     _/    ^    \\_",
+        "    | \\  '---'  / |",
+        "    / /`--. .--`\\ \\",
+        "   / /'---` `---'\\ \\",
+        "   '.__.       .__.'",
+        "      `|     |`",
+        "       |     \\",
+        "       \\      '--.",
+        "       '.        `\\",
+        "         `'---.   |",
+        "            ,__) /",
+        "             `..'"
+    };
     private static final String[] MARIA_ART = {
         "        _____        ",
         "       /     \\       ",
@@ -409,9 +469,10 @@ public class Renderitzador { // classe per gestionar la pantalla
         TextColor vermell = new TextColor.RGB(220, 70, 70);
 
         //marc exterior complet
-        pintaText(0, 0,        "╔" + "═".repeat(cols - 2) + "╗", blanc);
-        for (int i = 1; i < rows - 1; i++)
-            pintaText(0, i,    "║" + " ".repeat(cols - 2) + "║", gris);
+        pintaText(0, 0, "╔" + "═".repeat(cols - 2) + "╗", blanc);
+        for (int i = 1; i < rows - 1; i++) {
+            pintaText(0, i, "║" + " ".repeat(cols - 2) + "║", gris);
+        }
         pintaText(0, rows - 1, "╚" + "═".repeat(cols - 2) + "╝", blanc);
 
         //títol centrat
@@ -424,8 +485,9 @@ public class Renderitzador { // classe per gestionar la pantalla
         //separador vertical: 2/3 esquerra per al drac, 1/3 dreta per al HUD
         int colSep = cols * 2 / 3;
         pintaText(colSep, 2, "╦", blanc);
-        for (int i = 3; i < rows - 6; i++)
+        for (int i = 3; i < rows - 6; i++) {
             pintaText(colSep, i, "║", gris);
+        }
         pintaText(colSep, rows - 6, "╩", blanc);
 
         //--- ZONA ESQUERRA: caixa enemic + art ---
@@ -445,16 +507,24 @@ public class Renderitzador { // classe per gestionar la pantalla
         String[] art = enemic.getArtAscii();
         if (art == null) {
             art = switch (enemic.getLletra()) {
-                case 'd', 'e' -> DIMONI_ART;
-                case 'D'      -> DRAC_ART;
-                case 'B'      -> BUBOTA_ART;
-                case 'G'      -> GEGANT_ART;
-                case 'M'      -> MARIA_ART;
-                default       -> new String[]{};
+                case 'd', 'e' ->
+                    DIMONI_ART;
+                case 'D' ->
+                    DRAC_ART;
+                case 'B' ->
+                    BUBOTA_ART;
+                case 'G' ->
+                    GEGANT_ART;
+                case 'M' ->
+                    MARIA_ART;
+                default ->
+                    new String[]{};
             };
         }
         for (String linia : art) {
-            if (fila >= rows - 8) break;
+            if (fila >= rows - 8) {
+                break;
+            }
             pintaText(4, fila, linia, colorEnemic);
             fila++;
         }
@@ -479,6 +549,20 @@ public class Renderitzador { // classe per gestionar la pantalla
         pintaText(cHud, fHud, "ATK  " + jugador.getAtacTotal(), new TextColor.RGB(220, 130, 50));
         fHud++;
         pintaText(cHud, fHud, "DEF  " + jugador.getDefensaTotal(), new TextColor.RGB(100, 160, 220));
+        fHud++;
+        pintaText(cHud, fHud, "VEL  " + jugador.velocitatEfectiva(), new TextColor.RGB(100, 200, 255));
+        fHud++;
+        pintaText(cHud, fHud, "EVA  " + jugador.evasioEfectiva() + "%", new TextColor.RGB(180, 255, 180));
+        fHud++;
+        TextColor colorCar = switch (jugador.categoriaCarrega()) {
+            case LLEUGER ->
+                new TextColor.RGB(80, 220, 80);
+            case NORMAL ->
+                new TextColor.RGB(230, 200, 40);
+            case PESAT ->
+                new TextColor.RGB(220, 60, 60);
+        };
+        pintaText(cHud, fHud, "CAR  " + jugador.categoriaCarrega().name(), colorCar);
         fHud++;
 
         if (jugador.getTornsVeri() > 0) {
@@ -509,7 +593,11 @@ public class Renderitzador { // classe per gestionar la pantalla
             var slot = jugador.getInventari().getSlot(i);
             if (slot == null) continue;
             String quant = slot.quantitat() > 1 ? " x" + slot.quantitat() : "";
-            pintaText(cHud, fHud, "[ " + (i + 1) + " ]  " + slot.item().getSimbol() + " " + slot.item().getNom() + quant, daurat);
+            String prefix = "[ " + (i + 1) + " ]  " + slot.item().getSimbol() + " ";
+            int maxNom = wBoxJug - prefix.length() - quant.length() - 2;
+            String nomTallat = slot.item().getNom();
+            if (nomTallat.length() > maxNom) nomTallat = nomTallat.substring(0, Math.max(0, maxNom));
+            pintaText(cHud, fHud, prefix + nomTallat + quant, slot.item().getColor());
             fHud++;
         }
 
@@ -518,14 +606,17 @@ public class Renderitzador { // classe per gestionar la pantalla
         //--- CAIXA DE LOG (amplada total, sota tot) ---
         int filaLog = rows - 6;
         int ampleLog = cols - 4;
-        pintaText(1, filaLog,     "╔" + "═".repeat(ampleLog) + "╗", blanc);
-        for (int i = 1; i <= 3; i++)
+        pintaText(1, filaLog, "╔" + "═".repeat(ampleLog) + "╗", blanc);
+        for (int i = 1; i <= 3; i++) {
             pintaText(1, filaLog + i, "║" + " ".repeat(ampleLog) + "║", gris);
+        }
         pintaText(1, filaLog + 4, "╚" + "═".repeat(ampleLog) + "╝", blanc);
 
         for (int i = 0; i < log.size() && i < 3; i++) {
             String msg = "> " + log.get(i);
-            if (msg.length() > ampleLog - 2) msg = msg.substring(0, ampleLog - 2);
+            if (msg.length() > ampleLog - 2) {
+                msg = msg.substring(0, ampleLog - 2);
+            }
             pintaText(3, filaLog + 1 + i, msg, colorMissatge(log.get(i)));
         }
 
@@ -533,22 +624,32 @@ public class Renderitzador { // classe per gestionar la pantalla
     }
 
     private String barraVida(int vida, int max, int ample) {
-        int plens = max > 0 ? (int)((double)vida / max * ample) : 0;
+        int plens = max > 0 ? (int) ((double) vida / max * ample) : 0;
         plens = Math.max(0, Math.min(ample, plens));
-        return "HP  [" + "█".repeat(plens) + "░".repeat(ample - plens) + "]  " + vida + " / " + max;
+        return "[" + "█".repeat(plens) + "░".repeat(ample - plens) + "] " + vida + "/" + max;
     }
 
     private TextColor colorVida(int vida, int max) {
-        double pct = max > 0 ? (double)vida / max : 0;
-        if (pct > 0.50) return new TextColor.RGB(80,  200, 80);
-        if (pct > 0.25) return new TextColor.RGB(220, 180, 50);
+        double pct = max > 0 ? (double) vida / max : 0;
+        if (pct > 0.50) {
+            return new TextColor.RGB(80, 200, 80);
+        }
+        if (pct > 0.25) {
+            return new TextColor.RGB(220, 180, 50);
+        }
         return new TextColor.RGB(220, 60, 60);
     }
 
     private TextColor colorMissatge(String msg) {
-        if (msg.startsWith("Has atacat"))                             return new TextColor.RGB(220, 180, 50);
-        if (msg.contains("contraataca"))                              return new TextColor.RGB(220, 80,  80);
-        if (msg.contains("caigut") || msg.startsWith("T'enfrentes")) return new TextColor.RGB(160, 180, 255);
+        if (msg.startsWith("Has atacat")) {
+            return new TextColor.RGB(220, 180, 50);
+        }
+        if (msg.contains("contraataca")) {
+            return new TextColor.RGB(220, 80, 80);
+        }
+        if (msg.contains("caigut") || msg.startsWith("T'enfrentes")) {
+            return new TextColor.RGB(160, 180, 255);
+        }
         return new TextColor.RGB(180, 180, 180);
     }
 
@@ -569,9 +670,11 @@ public class Renderitzador { // classe per gestionar la pantalla
         int filaIni = (rows - alcadaPanel) / 2;
 
         //fons del panell
-        for (int f = filaIni; f < filaIni + alcadaPanel; f++)
-            for (int c = colIni; c < colIni + amplePanel; c++)
+        for (int f = filaIni; f < filaIni + alcadaPanel; f++) {
+            for (int c = colIni; c < colIni + amplePanel; c++) {
                 screen.setCharacter(c, f, new TextCharacter(' ', blanc, fonsPanell));
+            }
+        }
 
         //marc
         pintaTextFons(colIni, filaIni, "╔" + "═".repeat(amplePanel - 2) + "╗", blanc, fonsPanell);
@@ -594,8 +697,8 @@ public class Renderitzador { // classe per gestionar la pantalla
             pintaTextFons(c, filaSlots - 1, " [" + (i + 1) + "] ", gris, fonsPanell);
             if (slot != null) {
                 String quant = slot.quantitat() > 1 ? "x" + slot.quantitat() : " ";
-                pintaTextFons(c + 1, filaSlots,     String.valueOf(slot.item().getSimbol()), slot.item().getColor(), fonsPanell);
-                pintaTextFons(c + 3, filaSlots,     quant, blanc, fonsPanell);
+                pintaTextFons(c + 1, filaSlots, String.valueOf(slot.item().getSimbol()), slot.item().getColor(), fonsPanell);
+                pintaTextFons(c + 3, filaSlots, quant, blanc, fonsPanell);
                 String nom = slot.item().getNom().length() > 9 ? slot.item().getNom().substring(0, 9) : slot.item().getNom();
                 pintaTextFons(c, filaSlots + 1, nom, gris, fonsPanell);
             } else {
@@ -651,7 +754,7 @@ public class Renderitzador { // classe per gestionar la pantalla
             int x = cx - linia.length() / 2;
             for (int j = 0; j < linia.length(); j++) {
                 screen.setCharacter(x + j, titolY + i,
-                    new TextCharacter(linia.charAt(j), TextColor.ANSI.YELLOW_BRIGHT, TextColor.ANSI.BLACK));
+                        new TextCharacter(linia.charAt(j), TextColor.ANSI.YELLOW_BRIGHT, TextColor.ANSI.BLACK));
             }
         }
 
@@ -660,7 +763,7 @@ public class Renderitzador { // classe per gestionar la pantalla
         int sx = cx - subtitol.length() / 2;
         for (int j = 0; j < subtitol.length(); j++) {
             screen.setCharacter(sx + j, titolY + titol.length + 1,
-                new TextCharacter(subtitol.charAt(j), TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
+                    new TextCharacter(subtitol.charAt(j), TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
         }
 
         //opcions del menú amb fletxa de selecció
@@ -670,9 +773,10 @@ public class Renderitzador { // classe per gestionar la pantalla
             String text = prefix + opcions[i];
             int ox = cx - text.length() / 2;
             TextColor color = (i == opcioSeleccionada) ? TextColor.ANSI.YELLOW_BRIGHT : TextColor.ANSI.WHITE;
-            for (int j = 0; j < text.length(); j++)
+            for (int j = 0; j < text.length(); j++) {
                 screen.setCharacter(ox + j, oy + i * 2,
-                    new TextCharacter(text.charAt(j), color, TextColor.ANSI.BLACK));
+                        new TextCharacter(text.charAt(j), color, TextColor.ANSI.BLACK));
+            }
         }
 
         screen.refresh();
@@ -695,16 +799,18 @@ public class Renderitzador { // classe per gestionar la pantalla
         //títol pausa
         String titolPausa = "  *** PAUSA ***  ";
         int tx = cx - titolPausa.length() / 2;
-        for (int j = 0; j < titolPausa.length(); j++)
+        for (int j = 0; j < titolPausa.length(); j++) {
             screen.setCharacter(tx + j, boxY,
-                new TextCharacter(titolPausa.charAt(j), TextColor.ANSI.CYAN_BRIGHT, TextColor.ANSI.BLACK));
+                    new TextCharacter(titolPausa.charAt(j), TextColor.ANSI.CYAN_BRIGHT, TextColor.ANSI.BLACK));
+        }
 
         //instruccions
         String instruccions = "Fletxes + ENTER per seleccionar";
         int ix = cx - instruccions.length() / 2;
-        for (int j = 0; j < instruccions.length(); j++)
+        for (int j = 0; j < instruccions.length(); j++) {
             screen.setCharacter(ix + j, boxY + 1,
-                new TextCharacter(instruccions.charAt(j), TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
+                    new TextCharacter(instruccions.charAt(j), TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
+        }
 
         //opcions del menú
         for (int i = 0; i < opcions.length; i++) {
@@ -713,17 +819,19 @@ public class Renderitzador { // classe per gestionar la pantalla
             String text = prefix + opcions[i];
             int ox = cx - text.length() / 2;
             TextColor color = seleccionada ? TextColor.ANSI.YELLOW_BRIGHT : TextColor.ANSI.WHITE;
-            for (int j = 0; j < text.length(); j++)
+            for (int j = 0; j < text.length(); j++) {
                 screen.setCharacter(ox + j, boxY + 3 + i,
-                    new TextCharacter(text.charAt(j), color, TextColor.ANSI.BLACK));
+                        new TextCharacter(text.charAt(j), color, TextColor.ANSI.BLACK));
+            }
         }
 
         //nota de tecla ràpida ESC
         String escNota = "[ ESC ] Reanudar";
         int en = cx - escNota.length() / 2;
-        for (int j = 0; j < escNota.length(); j++)
+        for (int j = 0; j < escNota.length(); j++) {
             screen.setCharacter(en + j, boxY + 3 + opcions.length + 1,
-                new TextCharacter(escNota.charAt(j), TextColor.ANSI.CYAN, TextColor.ANSI.BLACK));
+                    new TextCharacter(escNota.charAt(j), TextColor.ANSI.CYAN, TextColor.ANSI.BLACK));
+        }
 
         screen.refresh();
     }
@@ -732,34 +840,34 @@ public class Renderitzador { // classe per gestionar la pantalla
         screen.close();
     }
 
-public void dibuixaEnigma(String pregunta, String inputActual) throws IOException {
-    screen.clear();
-    int cols = screen.getTerminalSize().getColumns();
-    int files = screen.getTerminalSize().getRows();
-    int cx = cols / 2, cy = files / 2;
-    TextColor blanc = new TextColor.RGB(220,220,220);
-    TextColor groc  = new TextColor.RGB(220,180,50);
-    TextColor verd  = new TextColor.RGB(80,200,120);
+    public void dibuixaEnigma(String pregunta, String inputActual) throws IOException {
+        screen.clear();
+        int cols = screen.getTerminalSize().getColumns();
+        int files = screen.getTerminalSize().getRows();
+        int cx = cols / 2, cy = files / 2;
+        TextColor blanc = new TextColor.RGB(220, 220, 220);
+        TextColor groc = new TextColor.RGB(220, 180, 50);
+        TextColor verd = new TextColor.RGB(80, 200, 120);
 
-    pintaText(cx - 10, cy - 4, "[ ENIGMA DEL NPC ]", groc);
-    pintaText(cx - pregunta.length()/2, cy - 2, pregunta, blanc);
-    pintaText(cx - 15, cy + 1, "Resposta: " + inputActual + "_", verd);
-    pintaText(cx - 12, cy + 3, "ENTER per confirmar  |  ESC per sortir", new TextColor.RGB(110,110,110));
-    screen.refresh();
-}
+        pintaText(cx - 10, cy - 4, "[ ENIGMA DEL NPC ]", groc);
+        pintaText(cx - pregunta.length() / 2, cy - 2, pregunta, blanc);
+        pintaText(cx - 15, cy + 1, "Resposta: " + inputActual + "_", verd);
+        pintaText(cx - 12, cy + 3, "ENTER per confirmar  |  ESC per sortir", new TextColor.RGB(110, 110, 110));
+        screen.refresh();
+    }
 
-public void dibuixaComerciants(int pis) throws IOException {
-    screen.clear();
-    int cols = screen.getTerminalSize().getColumns();
-    int files = screen.getTerminalSize().getRows();
-    int cx = cols / 2, cy = files / 2;
-    TextColor blanc = new TextColor.RGB(220,220,220);
-    TextColor groc  = new TextColor.RGB(220,180,50);
+    public void dibuixaComerciants(int pis) throws IOException {
+        screen.clear();
+        int cols = screen.getTerminalSize().getColumns();
+        int files = screen.getTerminalSize().getRows();
+        int cx = cols / 2, cy = files / 2;
+        TextColor blanc = new TextColor.RGB(220, 220, 220);
+        TextColor groc = new TextColor.RGB(220, 180, 50);
 
-    pintaText(cx - 12, cy - 3, "[ COMERCIANT - PIS " + pis + " ]", groc);
-    pintaText(cx - 15, cy,     "Benvingut! (comerç per implementar)", blanc);
-    pintaText(cx - 10, cy + 3, "ESC / ENTER per sortir", new TextColor.RGB(110,110,110));
-    screen.refresh();
-}
+        pintaText(cx - 12, cy - 3, "[ COMERCIANT - PIS " + pis + " ]", groc);
+        pintaText(cx - 15, cy, "Benvingut! (comerç per implementar)", blanc);
+        pintaText(cx - 10, cy + 3, "ESC / ENTER per sortir", new TextColor.RGB(110, 110, 110));
+        screen.refresh();
+    }
 
 }

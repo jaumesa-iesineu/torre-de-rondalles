@@ -300,7 +300,7 @@ enemicCombat = null;
 
 if (eraBoss) {
     mapa.setCella(bossX, bossY, '<');
-    afegeixLog("Has derrotat el boss! Han aparegut unes escales (<).");
+    afegeixLog("Has derrotat es boss! Han aparegut unes escales (<).");
 }
 
 GestorMusica.reprodueix(
@@ -392,7 +392,7 @@ return;
         if (enemic != null) {
             enemicCombat = enemic;
             logCombat.clear();
-            afegeixLog("T'enfrentes al " + enemic.getClass().getSimpleName().toUpperCase() + "!");
+            afegeixLog("Combat amb " + enemic.getClass().getSimpleName().toUpperCase() + "!");
             estat = Estat.COMBAT;
             GestorMusica.reprodueix(esBoss(enemic) ? GestorMusica.Pista.BOSS : GestorMusica.Pista.COMBAT);
             return;
