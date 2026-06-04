@@ -128,7 +128,7 @@ public class Joc extends Motor {
         }
 
         mapa = CarregadorMapa.carrega(fitxerMapa);
-        jugador = new Jugador(trobaInicialX(), trobaInicialY());
+        jugador = creaJugador(trobaInicialX(), trobaInicialY());
         enemics = new ArrayList<>();
         carregaEnemics();
         for (Enemic e : enemics) e.setTotsEnemics(enemics);
@@ -710,6 +710,24 @@ public class Joc extends Motor {
         jugador.afegeixItem(trobat.getItem());
         mapa.setCella(x, y, '.');
         itemsMapa.remove(trobat);
+    }
+
+    private Jugador creaJugador(int x, int y) {
+        ConfigGame.JugadorConfig jc = null;
+        if (config != null && config.jugador != null) {
+            jc = config.jugador;
+        } else {
+            try {
+                ConfigGame cfgJson = CarregadorGame.carrega("game.json");
+                if (cfgJson != null) jc = cfgJson.jugador;
+            } catch (Exception e) {
+                System.err.println("[JUGADOR] No s'han pogut llegir els stats: " + e.getMessage());
+            }
+        }
+        if (jc != null) {
+            return new Jugador(x, y, jc.vidaMaxima, jc.atac, jc.velocitat, jc.evasio, jc.pesMaxim);
+        }
+        return new Jugador(x, y);
     }
 
     private void carregaEquipamentInicial() {

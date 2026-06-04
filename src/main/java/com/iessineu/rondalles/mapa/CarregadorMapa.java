@@ -51,7 +51,9 @@ public class CarregadorMapa {
                 if (linia.startsWith("//")) {
                     continue;
                 }
-                if (!linia.isBlank()) files.add(linia);
+                if (!linia.isBlank()) {
+                    files.add(linia);
+                }
             }
         }
 

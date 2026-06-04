@@ -484,7 +484,12 @@
     },
 
     "jugador": {
-        "artFitxer": "art/jugador.txt"
+        "artFitxer": "art/jugador.txt",
+        "vidaMaxima": 100,
+        "atac": 3,
+        "velocitat": 5,
+        "evasio": 10,
+        "pesMaxim": 50
     },
 
     "equipamentInicial": {

@@ -18,5 +18,5 @@ public enum Estat {
     INVENTARI, //overlay d'inventari, mapa de fons, costa 1 torn
     VICTORIA, //jugador ha derrotat Es Drac a la planta 5
     COMERCIANT, // overlay de comerç amb el NPC
-    ENIGMA      // pantalla d'enigma del NPC
+    ENIGMA // pantalla d'enigma del NPC
 }

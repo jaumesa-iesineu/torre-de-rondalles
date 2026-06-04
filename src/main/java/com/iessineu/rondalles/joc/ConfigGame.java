@@ -48,6 +48,11 @@ public class ConfigGame {
 
         public String artFitxer;
         public String[] artAscii;
+        public int vidaMaxima = 100;
+        public int atac = 3;
+        public int velocitat = 5;
+        public int evasio = 10;
+        public int pesMaxim = 50;
     }
 
     //cerca el tipus que conté el simbol donat dins la seva llista de simbols

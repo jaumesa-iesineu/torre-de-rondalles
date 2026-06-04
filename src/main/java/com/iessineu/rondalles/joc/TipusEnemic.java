@@ -4,6 +4,7 @@ import java.util.List;
 
 //POJO que Gson omple amb les dades de cada tipus d'enemic del game.json
 public class TipusEnemic {
+
     public List<String> simbols; //ex: ["d","e"] — un sol tipus pot tenir varis simbols
     public String nom;
     public int vida;

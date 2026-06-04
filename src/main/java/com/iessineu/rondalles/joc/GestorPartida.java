@@ -67,9 +67,11 @@ public class GestorPartida {
             int amplada = alcada > 0 ? joc.explorat[0].length : 0;
             dos.writeShort(amplada);
             dos.writeShort(alcada);
-            for (boolean[] fila : joc.explorat)
-                for (boolean cel : fila)
+            for (boolean[] fila : joc.explorat) {
+                for (boolean cel : fila) {
                     dos.writeByte(cel ? 1 : 0);
+                }
+            }
 
         } catch (Exception e) {
             System.err.println("Error desant partida: " + e.getMessage());
@@ -86,12 +88,19 @@ public class GestorPartida {
     }
 
     public static void carrega(Joc joc) {
-        if (!existeix()) return;
+        if (!existeix()) {
+            return;
+        }
         try (DataInputStream dis = new DataInputStream(new FileInputStream(FITXER))) {
             //validar magic bytes
-            for (byte b : MAGIC)
-                if (dis.readByte() != b) throw new RuntimeException("Fitxer de partida invàlid");
-            if (dis.readByte() != VERSION) throw new RuntimeException("Versió de partida incompatible");
+            for (byte b : MAGIC) {
+                if (dis.readByte() != b) {
+                    throw new RuntimeException("Fitxer de partida invàlid");
+                }
+            }
+            if (dis.readByte() != VERSION) {
+                throw new RuntimeException("Versió de partida incompatible");
+            }
 
             //mapa
             int idLen = dis.readShort();
@@ -123,8 +132,11 @@ public class GestorPartida {
                     String nom = new String(nomBytes, StandardCharsets.UTF_8);
                     int quantitat = dis.readShort();
                     Item item = RegistreItems.get().itemPerNom(nom);
-                    if (item != null)
-                        for (int q = 0; q < quantitat; q++) j.afegeixItem(item);
+                    if (item != null) {
+                        for (int q = 0; q < quantitat; q++) {
+                            j.afegeixItem(item);
+                        }
+                    }
                 }
             }
 
@@ -141,12 +153,14 @@ public class GestorPartida {
 
             //fog of war
             int amplada = dis.readShort();
-            int alcada  = dis.readShort();
+            int alcada = dis.readShort();
             if (joc.explorat != null && joc.explorat.length == alcada
                     && alcada > 0 && joc.explorat[0].length == amplada) {
-                for (int y = 0; y < alcada; y++)
-                    for (int x = 0; x < amplada; x++)
+                for (int y = 0; y < alcada; y++) {
+                    for (int x = 0; x < amplada; x++) {
                         joc.explorat[y][x] = dis.readByte() == 1;
+                    }
+                }
             }
 
         } catch (Exception e) {

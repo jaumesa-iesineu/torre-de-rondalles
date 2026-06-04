@@ -16,7 +16,9 @@ public class SistemaCombat {
     }
 
     public static int atacaJugador(Enemic enemic, Jugador jugador) {
-        if (jugador.esquiva()) return -1; // -1 = esquivat
+        if (jugador.esquiva()) {
+            return -1; // -1 = esquivat
+        }
         int dany = calculaDany(enemic.getAtacEfectiu(), jugador.getDefensaTotal());
         jugador.rebreDany(dany);
         return dany;
@@ -28,15 +30,21 @@ public class SistemaCombat {
         if (enemic.getTornsVeri() > 0) {
             enemic.tickVeri();
             sb.append(nom).append(" rep 3 de dany pel verí. ");
-        } else { enemic.tickVeri(); }
+        } else {
+            enemic.tickVeri();
+        }
         if (enemic.getTornsFoc() > 0) {
             enemic.tickFoc();
             sb.append(nom).append(" té l'atac reduït pel foc. ");
-        } else { enemic.tickFoc(); }
+        } else {
+            enemic.tickFoc();
+        }
         if (enemic.getTornsGel() > 0) {
             enemic.tickGel();
             sb.append(nom).append(" té la defensa reduïda pel gel. ");
-        } else { enemic.tickGel(); }
+        } else {
+            enemic.tickGel();
+        }
         return sb.toString().trim();
     }
 }

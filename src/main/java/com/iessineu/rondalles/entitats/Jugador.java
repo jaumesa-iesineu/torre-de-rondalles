@@ -48,16 +48,20 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     private int tornsFoc = 0; //baixa atac
     private int tornsGel = 0; //baixa defensa
 
-    public Jugador(int x, int y) { // constructor de la classe Jugador
+    public Jugador(int x, int y) {
+        this(x, y, 100, 3, 5, 10, 50);
+    }
+
+    public Jugador(int x, int y, int vidaMaxima, int atac, int velocitat, int evasio, int pesMaxim) {
         super(x, y, '@');
-        this.vidaMaxima = 100;
+        this.vidaMaxima = vidaMaxima;
         this.vida = vidaMaxima;
-        this.atac = 3;
+        this.atac = atac;
         this.defensa = 0;
-        this.pesMaxim = 50;
+        this.pesMaxim = pesMaxim;
         this.pes = 0;
-        this.velocitat = 5;
-        this.evasio = 10;
+        this.velocitat = velocitat;
+        this.evasio = evasio;
         this.visio = 5;
         this.estatJugador = EstatJugador.IDLE;
     }

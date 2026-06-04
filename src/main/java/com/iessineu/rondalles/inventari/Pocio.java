@@ -49,10 +49,14 @@ public class Pocio extends Item {
 
     public void aplicaEfecteEnemic(Enemic enemic) {
         switch (tipus) {
-            case VERI -> enemic.setTornsVeri(valor);
-            case FOC  -> enemic.setTornsFoc(valor);
-            case GEL  -> enemic.setTornsGel(valor);
-            case VIDA -> {} // VIDA no té efecte sobre enemics
+            case VERI ->
+                enemic.setTornsVeri(valor);
+            case FOC ->
+                enemic.setTornsFoc(valor);
+            case GEL ->
+                enemic.setTornsGel(valor);
+            case VIDA -> {
+            } // VIDA no té efecte sobre enemics
         }
     }
 
