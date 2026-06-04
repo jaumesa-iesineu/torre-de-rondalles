@@ -4,7 +4,6 @@
  */
 package com.iessineu.rondalles;
 
-import com.iessineu.rondalles.db.PartidaRepository;
 import com.iessineu.rondalles.editor.EditorMapes;
 import com.iessineu.rondalles.joc.CarregadorGame;
 import com.iessineu.rondalles.joc.ConfigGame;
@@ -19,11 +18,11 @@ import java.util.List;
 public class Main {
 
     //arguments acceptats:
-    //(res)  -> carrega la config des de la BD SQLite (joc empaquetado)
-    //-game/-g <fitxer> -> carrega la config des d'un JSON extern (màxim 1)
+    //(res)     -> carrega la config des de la BD SQLite (joc empaquetado)
+    //--game <fitxer> -> carrega el JSON extern i el sincronitza a SQLite (màxim 1)
     //-mod/-m <fitxer> -> aplica un mod JSON sobre la config base (es pot repetir, ordre important)
-    //-mute -> arranca sense música
-    //mapes -> obre l'editor de mapes buit
+    //-mute     -> arranca sense música
+    //mapes     -> obre l'editor de mapes buit
     //mapes <fitxer> -> obre l'editor de mapes amb un fitxer existent
     public static void main(String[] args) throws Exception {
 
@@ -42,7 +41,7 @@ public class Main {
 
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
-                case "-game", "-g" -> {
+                case "--game" -> {
                     if (i + 1 < args.length) fitxerGame = args[++i];
                 }
                 case "-mod", "-m" -> {
@@ -52,13 +51,12 @@ public class Main {
             }
         }
 
-        //carregam la config base: JSON extern si han passat -game, BD SQLite si no
+        //carregam la configuració directament des del JSON
         ConfigGame config;
         if (fitxerGame != null) {
             config = CarregadorGame.carregaFitxerExtern(fitxerGame);
         } else {
-            PartidaRepository.inicialitzaDefecte();
-            config = PartidaRepository.carregaConfig();
+            config = CarregadorGame.carrega("game.json");
         }
 
         //aplicam els mods en ordre (last wins per conflictes)

@@ -29,7 +29,6 @@ import com.iessineu.rondalles.motor.Motor;
 import com.iessineu.rondalles.motor.Renderitzador;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import com.iessineu.rondalles.db.PartidaRepository;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -111,7 +110,6 @@ public class Joc extends Motor {
             if (config == null) {
                 config = CarregadorGame.carrega("game.json");
             }
-            PartidaRepository.inicialitza(config);
             MapaConfig mc = config.getMapaConfig(fitxerMapa);
             if (mc != null) {
                 idMapaActual = fitxerMapa;
@@ -130,6 +128,7 @@ public class Joc extends Motor {
         jugador = new Jugador(trobaInicialX(), trobaInicialY());
         enemics = new ArrayList<>();
         carregaEnemics();
+        for (Enemic e : enemics) e.setTotsEnemics(enemics);
         carregaItemsMapa();
         carregaNpcs();
 
@@ -444,6 +443,7 @@ return;
         for (int torn = 0; torn < tornsEnemics; torn++) {
             for (Enemic e : enemics) {
                 if (!e.isActiu()) continue;
+                if (!e.haDActuar()) continue;
                 int radEfectiu = switch (terra) {
                     case GESPA -> (int)(e.getRadDeteccio() * 0.5);
                     case METAL -> (int)(e.getRadDeteccio() * 2.0);
@@ -472,7 +472,7 @@ return;
             mapa = CarregadorMapa.carrega(fitxerMapa);
             jugador.setX(trobaInicialX()); jugador.setY(trobaInicialY());
             enemics.clear(); itemsMapa.clear(); npcs.clear();
-            carregaEnemics(); carregaItemsMapa(); carregaNpcs();
+            carregaEnemics(); for (Enemic e : enemics) e.setTotsEnemics(enemics); carregaItemsMapa(); carregaNpcs();
 
             explorat = new boolean[mapa.getAlcada()][mapa.getAmplada()];
             mapaRecord = new char[mapa.getAlcada()][mapa.getAmplada()];
@@ -621,7 +621,11 @@ return;
             if (!posicions.isEmpty()) {
                 for (PosicioEnemic p : posicions) {
                     Enemic enemic = creaEnemic(p.simbol, p.x, p.y);
-                    if (enemic != null) enemics.add(enemic);
+                    if (enemic != null) {
+                        enemic.setSpawn(p.x, p.y);
+                        enemic.setArea(p.area);
+                        enemics.add(enemic);
+                    }
                 }
                 return;
             }
@@ -637,6 +641,7 @@ return;
                 }
             }
         }
+
     }
 
     private Enemic creaEnemic(String simbol, int x, int y) {
@@ -650,7 +655,11 @@ return;
         };
         if (enemic != null && config != null) {
             TipusEnemic def = config.getTipusEnemic(simbol);
-            if (def != null) enemic.aplicaDefinicio(def.vida, def.atac, def.radi, def.colorR, def.colorG, def.colorB, def.artAscii);
+            if (def != null) {
+                enemic.aplicaDefinicio(def.vida, def.atac, def.radi, def.colorR, def.colorG, def.colorB, def.artAscii);
+                enemic.setVelocitat(def.velocitat);
+                enemic.setTravessaParets(def.travessaParets);
+            }
         }
         return enemic;
     }

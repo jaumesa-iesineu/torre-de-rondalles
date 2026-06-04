@@ -13,6 +13,8 @@ public class TipusEnemic {
     public int colorG;
     public int colorB;
     public boolean estatica;
+    public int velocitat = 1; //cada quants torns pot actuar (1=cada torn, 2=cada 2, etc.)
+    public boolean travessaParets; //pot passar a través de parets (#)
     public String artFitxer;  //ruta a resources/art/xxx.txt (prioritat sobre artAscii)
     public String[] artAscii; //fallback inline si no hi ha artFitxer
 }

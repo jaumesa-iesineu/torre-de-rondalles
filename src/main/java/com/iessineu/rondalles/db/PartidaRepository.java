@@ -30,6 +30,11 @@ public class PartidaRepository {
 
     //crea les taules i les omple amb les dades per defecte del game.json si estan buides
     public static void inicialitza(ConfigGame config) {
+        inicialitza(config, false);
+    }
+
+    //amb forcar=true, esborra les dades existents i les torna a posar des del config
+    public static void inicialitza(ConfigGame config, boolean forcar) {
         try (Connection conn = DriverManager.getConnection(URL);
              Statement st = conn.createStatement()) {
 
@@ -48,17 +53,19 @@ public class PartidaRepository {
 
             st.executeUpdate("""
                 CREATE TABLE IF NOT EXISTS tipus_enemics (
-                    simbols   TEXT PRIMARY KEY,
-                    nom       TEXT NOT NULL,
-                    vida      INTEGER NOT NULL,
-                    atac      INTEGER NOT NULL,
-                    radi      INTEGER NOT NULL,
-                    color_r   INTEGER NOT NULL,
-                    color_g   INTEGER NOT NULL,
-                    color_b   INTEGER NOT NULL,
-                    estatica  INTEGER NOT NULL,
-                    art_fitxer TEXT,
-                    art_ascii  TEXT
+                    simbols    TEXT PRIMARY KEY,
+                    nom        TEXT NOT NULL,
+                    vida       INTEGER NOT NULL,
+                    atac       INTEGER NOT NULL,
+                    radi       INTEGER NOT NULL,
+                    color_r    INTEGER NOT NULL,
+                    color_g    INTEGER NOT NULL,
+                    color_b    INTEGER NOT NULL,
+                    estatica       INTEGER NOT NULL,
+                    velocitat      INTEGER NOT NULL DEFAULT 1,
+                    travessa_parets INTEGER NOT NULL DEFAULT 0,
+                    art_fitxer     TEXT,
+                    art_ascii      TEXT
                 )""");
 
             st.executeUpdate("""
@@ -67,13 +74,26 @@ public class PartidaRepository {
                     mapa   TEXT NOT NULL,
                     simbol TEXT NOT NULL,
                     x      INTEGER NOT NULL,
-                    y      INTEGER NOT NULL
+                    y      INTEGER NOT NULL,
+                    area   INTEGER NOT NULL DEFAULT 0
                 )""");
 
-            if (taulaBuida(conn, "configuracio"))    ompleConfiguracio(conn, config);
-            if (taulaBuida(conn, "mapes"))           ompleMapes(conn, config);
-            if (taulaBuida(conn, "tipus_enemics"))   ompleEnemics(conn, config);
-            if (taulaBuida(conn, "posicions_enemics")) omplePosicions(conn, config);
+            //migració: afegir columnes noves si no existeixen (BD creades abans dels canvis)
+            try { st.executeUpdate("ALTER TABLE posicions_enemics ADD COLUMN area INTEGER NOT NULL DEFAULT 0"); } catch (Exception ignored) {}
+            try { st.executeUpdate("ALTER TABLE tipus_enemics ADD COLUMN velocitat INTEGER NOT NULL DEFAULT 1"); } catch (Exception ignored) {}
+            try { st.executeUpdate("ALTER TABLE tipus_enemics ADD COLUMN travessa_parets INTEGER NOT NULL DEFAULT 0"); } catch (Exception ignored) {}
+
+            if (forcar) {
+                st.executeUpdate("DELETE FROM configuracio");
+                st.executeUpdate("DELETE FROM mapes");
+                st.executeUpdate("DELETE FROM tipus_enemics");
+                st.executeUpdate("DELETE FROM posicions_enemics");
+            }
+
+            if (forcar || taulaBuida(conn, "configuracio"))    ompleConfiguracio(conn, config);
+            if (forcar || taulaBuida(conn, "mapes"))           ompleMapes(conn, config);
+            if (forcar || taulaBuida(conn, "tipus_enemics"))   ompleEnemics(conn, config);
+            if (forcar || taulaBuida(conn, "posicions_enemics")) omplePosicions(conn, config);
 
         } catch (Exception e) {
             System.err.println("Error inicialitzant BD: " + e.getMessage());
@@ -111,7 +131,7 @@ public class PartidaRepository {
     private static void ompleEnemics(Connection conn, ConfigGame config) throws Exception {
         if (config.enemics == null || config.enemics.tipus == null) return;
         try (PreparedStatement ps = conn.prepareStatement(
-                "INSERT OR IGNORE INTO tipus_enemics VALUES (?,?,?,?,?,?,?,?,?,?,?)")) {
+                "INSERT OR IGNORE INTO tipus_enemics VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)")) {
             for (TipusEnemic t : config.enemics.tipus) {
                 //simbols guardats com a text coma-separat ex: "d,e"
                 String simbolsStr = t.simbols != null ? String.join(",", t.simbols) : "";
@@ -124,9 +144,11 @@ public class PartidaRepository {
                 ps.setInt(7, t.colorG);
                 ps.setInt(8, t.colorB);
                 ps.setInt(9, t.estatica ? 1 : 0);
-                ps.setString(10, t.artFitxer);
+                ps.setInt(10, t.velocitat);
+                ps.setInt(11, t.travessaParets ? 1 : 0);
+                ps.setString(12, t.artFitxer);
                 String art = t.artAscii != null ? String.join("\n", t.artAscii) : null;
-                ps.setString(11, art);
+                ps.setString(13, art);
                 ps.executeUpdate();
             }
         }
@@ -159,7 +181,7 @@ public class PartidaRepository {
             config.enemics = new ConfigGame.EnemicsGroup();
             config.enemics.tipus = new ArrayList<>();
             config.enemics.posicions = new ArrayList<>();
-            try (ResultSet rs = st.executeQuery("SELECT simbols,nom,vida,atac,radi,color_r,color_g,color_b,estatica,art_ascii FROM tipus_enemics")) {
+            try (ResultSet rs = st.executeQuery("SELECT simbols,nom,vida,atac,radi,color_r,color_g,color_b,estatica,velocitat,travessa_parets,art_ascii FROM tipus_enemics")) {
                 while (rs.next()) {
                     TipusEnemic te = new TipusEnemic();
                     String simbolsStr = rs.getString(1);
@@ -172,18 +194,21 @@ public class PartidaRepository {
                     te.colorG = rs.getInt(7);
                     te.colorB = rs.getInt(8);
                     te.estatica = rs.getInt(9) == 1;
-                    String art = rs.getString(10);
+                    te.velocitat = rs.getInt(10);
+                    te.travessaParets = rs.getInt(11) == 1;
+                    String art = rs.getString(12);
                     te.artAscii = art != null ? art.split("\n") : null;
                     config.enemics.tipus.add(te);
                 }
             }
-            try (ResultSet rs = st.executeQuery("SELECT mapa,simbol,x,y FROM posicions_enemics")) {
+            try (ResultSet rs = st.executeQuery("SELECT mapa,simbol,x,y,area FROM posicions_enemics")) {
                 while (rs.next()) {
                     PosicioEnemic pe = new PosicioEnemic();
                     pe.mapa = rs.getString(1);
                     pe.simbol = rs.getString(2);
                     pe.x = rs.getInt(3);
                     pe.y = rs.getInt(4);
+                    pe.area = rs.getInt(5);
                     config.enemics.posicions.add(pe);
                 }
             }
@@ -197,12 +222,13 @@ public class PartidaRepository {
     private static void omplePosicions(Connection conn, ConfigGame config) throws Exception {
         if (config.enemics == null || config.enemics.posicions == null) return;
         try (PreparedStatement ps = conn.prepareStatement(
-                "INSERT INTO posicions_enemics (mapa, simbol, x, y) VALUES (?,?,?,?)")) {
+                "INSERT INTO posicions_enemics (mapa, simbol, x, y, area) VALUES (?,?,?,?,?)")) {
             for (PosicioEnemic p : config.enemics.posicions) {
                 ps.setString(1, p.mapa);
                 ps.setString(2, p.simbol);
                 ps.setInt(3, p.x);
                 ps.setInt(4, p.y);
+                ps.setInt(5, p.area);
                 ps.executeUpdate();
             }
         }

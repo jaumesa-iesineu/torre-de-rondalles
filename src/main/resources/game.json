@@ -41,6 +41,8 @@
         "vida": 20, "atac": 5, "radi": 7,
         "colorR": 180, "colorG": 180, "colorB": 255,
         "estatica": false,
+        "velocitat": 2,
+        "travessaParets": true,
         "artFitxer": "art/bubota.txt"
       },
       {
@@ -49,6 +51,7 @@
         "vida": 40, "atac": 10, "radi": 4,
         "colorR": 200, "colorG": 120, "colorB": 50,
         "estatica": false,
+        "velocitat": 2,
         "artFitxer": "art/gegant.txt"
       },
       {
@@ -57,6 +60,7 @@
         "vida": 50, "atac": 20, "radi": 8,
         "colorR": 220, "colorG": 30, "colorB": 30,
         "estatica": false,
+        "velocitat": 2,
         "artFitxer": "art/drac.txt"
       },
       {
@@ -70,22 +74,22 @@
     ],
      "posicions": [
       {"mapa": "planta1", "simbol": "M", "x": 13, "y": 2},
-      {"mapa": "planta1", "simbol": "G", "x": 13, "y": 3},
+      {"mapa": "planta1", "simbol": "G", "x": 13, "y": 3, "area": 5},
       {"mapa": "planta1", "simbol": "B", "x": 13, "y": 4},
-      {"mapa": "planta1", "simbol": "D", "x": 13, "y": 5},
+      {"mapa": "planta1", "simbol": "D", "x": 13, "y": 5, "area": 5},
       {"mapa": "planta1", "simbol": "e", "x": 13, "y": 6},
       {"mapa": "planta1", "simbol": "B", "x": 13, "y": 6},
-      {"mapa": "planta1", "simbol": "D", "x": 80, "y": 6},
+      {"mapa": "planta1", "simbol": "D", "x": 80, "y": 6, "area": 5},
       {"mapa": "planta1", "simbol": "B", "x": 40, "y": 7},
-      {"mapa": "planta1", "simbol": "D", "x": 86, "y": 14},
+      {"mapa": "planta1", "simbol": "D", "x": 86, "y": 14, "area": 5},
       {"mapa": "planta1", "simbol": "B", "x": 27, "y": 15},
       {"mapa": "planta1", "simbol": "B", "x": 27, "y": 22},
       {"mapa": "planta1", "simbol": "B", "x": 30, "y": 22},
       {"mapa": "planta1", "simbol": "B", "x": 27, "y": 25},
-      {"mapa": "planta1", "simbol": "D", "x": 60, "y": 29},
+      {"mapa": "planta1", "simbol": "D", "x": 60, "y": 29, "area": 5},
       {"mapa": "planta1", "simbol": "B", "x": 25, "y": 30},
-      {"mapa": "planta1", "simbol": "D", "x": 26, "y": 35},
-      {"mapa": "planta1", "simbol": "D", "x": 77, "y": 35}
+      {"mapa": "planta1", "simbol": "D", "x": 26, "y": 35, "area": 5},
+      {"mapa": "planta1", "simbol": "D", "x": 77, "y": 35, "area": 5}
      ]
   },
   "items": {

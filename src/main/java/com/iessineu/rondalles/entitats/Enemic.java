@@ -1,6 +1,7 @@
 package com.iessineu.rondalles.entitats;
 
 import com.googlecode.lanterna.TextColor;
+import java.util.List;
 
 public abstract class Enemic extends Entitat {
 
@@ -34,6 +35,87 @@ public abstract class Enemic extends Entitat {
 
     protected EstatEnemic estatEnemic;
 
+    //camps per area-boss
+    private int spawnX;
+    private int spawnY;
+    private int area;
+
+    //velocitat de l'enemic (cada quants torns pot actuar)
+    private int velocitat = 1;
+    private int contadorMoviment = 0;
+
+    //pot passar a través de parets (configurable des del JSON)
+    protected boolean travessaParets;
+
+    //primer contacte: fins que no veu el jugador sense parets pel mig, no activa visió fantasma
+    private boolean haVistJugador;
+
+    //per evitar que es posin uns damunt dels altres
+    private List<Enemic> totsEnemics;
+
+    public void setTotsEnemics(List<Enemic> l) {
+        this.totsEnemics = l;
+    }
+
+    public void setSpawn(int x, int y) {
+        this.spawnX = x;
+        this.spawnY = y;
+    }
+
+    public int getSpawnX() { return spawnX; }
+    public int getSpawnY() { return spawnY; }
+
+    public void setArea(int area) {
+        this.area = area;
+    }
+
+    public int getArea() {
+        return area;
+    }
+
+    public void setVelocitat(int v) {
+        this.velocitat = Math.max(1, v);
+    }
+
+    public int getVelocitat() {
+        return velocitat;
+    }
+
+    public void setTravessaParets(boolean b) {
+        this.travessaParets = b;
+    }
+
+    public boolean getTravessaParets() {
+        return travessaParets;
+    }
+
+    //retorna true si l'enemic pot actuar aquest torn (segons la seva velocitat)
+    public boolean haDActuar() {
+        contadorMoviment++;
+        boolean actua = contadorMoviment >= velocitat;
+        if (actua) contadorMoviment = 0;
+        return actua;
+    }
+
+    protected boolean dinsArea(int px, int py) {
+        if (area <= 0) return true; //si no hi ha area, sempre es dins
+        //quadrat simple al voltant del spawn (±area en X i Y)
+        return Math.abs(spawnX - px) <= area && Math.abs(spawnY - py) <= area;
+    }
+
+    protected double distanciaAlSpawn() {
+        int dx = spawnX - this.x;
+        int dy = spawnY - this.y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    protected void tornaAlSpawn(char[][] cells) {
+        int[] pas = primerPasBFS(spawnX, spawnY, cells);
+        if (pas[0] != -1) {
+            mouCapA(pas[0], pas[1], cells, null);
+        }
+    }
+
     public Enemic(int x, int y, char simbol, int vida, int atac, int radDeteccio) {
         super(x, y, simbol);
 
@@ -42,6 +124,8 @@ public abstract class Enemic extends Entitat {
         this.atac = atac;
         this.radDeteccio = radDeteccio;
         this.estatEnemic = EstatEnemic.PATRULLANT;
+        this.spawnX = x;
+        this.spawnY = y;
     }
 
     public abstract void actualitzaIA(Jugador jugador, char[][] cells);
@@ -71,6 +155,8 @@ public abstract class Enemic extends Entitat {
         int cx = x0;
         int cy = y0;
 
+        boolean paretsBloquejades = !(travessaParets && haVistJugador);
+
         while (cx != x1 || cy != y1) {
 
             int e2 = 2 * err;
@@ -92,12 +178,15 @@ public abstract class Enemic extends Entitat {
             if (cy >= 0 && cy < cells.length
                     && cx >= 0 && cx < cells[cy].length) {
 
-                if (cells[cy][cx] == '#') {
+                if (paretsBloquejades && cells[cy][cx] == '#') {
                     return false;
                 }
             }
         }
 
+        if (travessaParets && !haVistJugador) {
+            haVistJugador = true;
+        }
         return true;
     }
 
@@ -254,9 +343,17 @@ public abstract class Enemic extends Entitat {
     private boolean pucMourem(int nx, int ny, char[][] cells, Jugador jugador) {
         if (cells == null) return true;
         if (ny < 0 || ny >= cells.length || nx < 0 || nx >= cells[ny].length) return false;
-        if (cells[ny][nx] == '#') return false;
-        if (cells[ny][nx] == 'i') return false; // no volem trepitjar els items
+        if (!travessaParets) {
+            if (cells[ny][nx] == '#') return false;
+            if (cells[ny][nx] == 'i') return false; // no volem trepitjar els items
+        }
         if (jugador != null && nx == jugador.getX() && ny == jugador.getY()) return false;
+        //que no es posin uns damunt dels altres
+        if (totsEnemics != null) {
+            for (Enemic altre : totsEnemics) {
+                if (altre != this && altre.isActiu() && altre.getX() == nx && altre.getY() == ny) return false;
+            }
+        }
         return true;
     }
 
@@ -273,7 +370,7 @@ public abstract class Enemic extends Entitat {
         visitat[this.y][this.x] = true;
         for (int[] d : dirs) {
             int nx = this.x + d[0], ny = this.y + d[1];
-            if (ny >= 0 && ny < rows && nx >= 0 && nx < cols && cells[ny][nx] != '#' && cells[ny][nx] != 'i' && !visitat[ny][nx]) {
+            if (ny >= 0 && ny < rows && nx >= 0 && nx < cols && !visitat[ny][nx] && esTravessable(cells, nx, ny)) {
                 visitat[ny][nx] = true;
                 firstX[ny * cols + nx] = nx;
                 firstY[ny * cols + nx] = ny;
@@ -286,7 +383,7 @@ public abstract class Enemic extends Entitat {
             if (cx == tx && cy == ty) return new int[]{firstX[cy * cols + cx], firstY[cy * cols + cx]};
             for (int[] d : dirs) {
                 int nx = cx + d[0], ny = cy + d[1];
-                if (ny >= 0 && ny < rows && nx >= 0 && nx < cols && cells[ny][nx] != '#' && cells[ny][nx] != 'i' && !visitat[ny][nx]) {
+                if (ny >= 0 && ny < rows && nx >= 0 && nx < cols && !visitat[ny][nx] && esTravessable(cells, nx, ny)) {
                     visitat[ny][nx] = true;
                     firstX[ny * cols + nx] = firstX[cy * cols + cx];
                     firstY[ny * cols + nx] = firstY[cy * cols + cx];
@@ -295,6 +392,11 @@ public abstract class Enemic extends Entitat {
             }
         }
         return new int[]{-1, -1};
+    }
+
+    private boolean esTravessable(char[][] cells, int nx, int ny) {
+        if (travessaParets) return true;
+        return cells[ny][nx] != '#' && cells[ny][nx] != 'i';
     }
 
     public String[] getArtAscii() {

@@ -15,10 +15,18 @@ public class Drac extends Enemic { // boss final de la planta 5
 
     @Override
     public void actualitzaIA(Jugador jugador, char[][] cells) {
-        if (distanciaAl(jugador) <= radDeteccio && potVeure(jugador, cells)) {
+        boolean a = dinsArea(jugador.getX(), jugador.getY());
+        boolean b = distanciaAl(jugador) <= radDeteccio;
+        boolean c = potVeure(jugador, cells);
+        double ds = distanciaAlSpawn();
+        if (a && b && c) {
             canviaEstat(EstatEnemic.PERSEGUINT);
             int[] pas = primerPasBFS(jugador.getX(), jugador.getY(), cells);
             if (pas[0] != -1) mouCapA(pas[0], pas[1], cells, jugador);
+        } else if (!a && ds > 1.0) {
+
+            canviaEstat(EstatEnemic.PATRULLANT);
+            tornaAlSpawn(cells);
         } else {
             canviaEstat(EstatEnemic.PATRULLANT);
         }
