@@ -55,7 +55,7 @@ public class Joc extends Motor {
 
     // --- Menú inicial amb fletxa ---
     private int opcioMenuInicial = 0;
-    private static final String[] OPCIONS_INICIALS = {"Iniciar partida", "Sortir"};
+    private String[] opcionsInicials = {"Iniciar partida", "Sortir"};
 
     // --- Terra especial ---
     private boolean esperantSegonaAigua = false;
@@ -63,9 +63,9 @@ public class Joc extends Motor {
     private boolean lliscantGel = false;
     private int gelDx = 0, gelDy = 0;
     private long ultimPasGel = 0;
-    private static final long MS_PAS_GEL = 140;
+    private long msPasGel = 140;
 
-    private static final int MAX_LOG = 3;
+    private int maxLog = 3;
 
     private String fitxerMapa;
     private char[][] mapaRecord;
@@ -74,7 +74,7 @@ public class Joc extends Motor {
     private ConfigGame config;
     private String[] artJugador;
 
-    private static final int RADI_VISIO = 10;
+    private int radiVisio = 10;
 
     private int opcioMenuPausa = 0;
 
@@ -82,7 +82,7 @@ public class Joc extends Motor {
 
     public List<int[]> enemicsMorts = new ArrayList<>();
     public boolean[][] explorat;
-    private static final String[] OPCIONS_PAUSA = {"Reanudar", "Guardar", "Carregar", "Sortir"};
+    private String[] opcionsPausa = {"Reanudar", "Guardar", "Carregar", "Sortir"};
 
     public Joc(String fitxerMapa) {
         this.fitxerMapa = fitxerMapa;
@@ -141,6 +141,29 @@ public class Joc extends Motor {
             }
         }
 
+        //carregam les constants des del JSON
+        if (config != null && config.configuracio != null) {
+            ConfigGame.Configuracio cfg = config.configuracio;
+            radiVisio = cfg.radiVisio;
+            msPasGel = cfg.msPasGel;
+            maxLog = cfg.maxLog;
+            renderer.setRadiLlanterna(cfg.radiLlanterna);
+            renderer.setAmpleHud(cfg.ampleHud);
+        }
+
+        //carregam els textos d'UI des del JSON
+        if (config != null && config.texts != null) {
+            ConfigGame.TextsConfig t = config.texts;
+            renderer.setWindowTitle(t.windowTitle);
+            renderer.setHeaderTitle(t.headerTitle);
+            renderer.setSubtitle(t.subtitle);
+            renderer.setPauseTitle(t.pauseTitle);
+            renderer.setPauseInstructions(t.pauseInstructions);
+            renderer.setPauseResumeHint(t.pauseResumeHint);
+            opcionsInicials = new String[]{t.menuIniciar, t.menuSortir};
+            opcionsPausa = new String[]{t.menuReanudar, t.menuGuardar, t.menuCarregar, t.menuSortir};
+        }
+
         jugador = creaJugador(trobaInicialX(), trobaInicialY());
         enemics = new ArrayList<>();
         carregaEnemics();
@@ -170,7 +193,7 @@ public class Joc extends Motor {
     protected void actualitza(KeyStroke tecla) {
         if (lliscantGel) {
             long ara = System.currentTimeMillis();
-            if (ara - ultimPasGel >= MS_PAS_GEL) {
+            if (ara - ultimPasGel >= msPasGel) {
                 ultimPasGel = ara;
                 int gx = jugador.getX() + gelDx;
                 int gy = jugador.getY() + gelDy;
@@ -281,11 +304,11 @@ public class Joc extends Motor {
 
     private void gestionaPausa(KeyStroke tecla) {
         if (tecla.getKeyType() == KeyType.ArrowUp) {
-            opcioMenuPausa = (opcioMenuPausa + OPCIONS_PAUSA.length - 1) % OPCIONS_PAUSA.length;
+            opcioMenuPausa = (opcioMenuPausa + opcionsPausa.length - 1) % opcionsPausa.length;
             return;
         }
         if (tecla.getKeyType() == KeyType.ArrowDown) {
-            opcioMenuPausa = (opcioMenuPausa + 1) % OPCIONS_PAUSA.length;
+            opcioMenuPausa = (opcioMenuPausa + 1) % opcionsPausa.length;
             return;
         }
         if (tecla.getKeyType() == KeyType.Escape) {
@@ -415,7 +438,7 @@ public class Joc extends Motor {
 
     private void afegeixLog(String msg) {
         logCombat.add(msg);
-        if (logCombat.size() > MAX_LOG) {
+        if (logCombat.size() > maxLog) {
             logCombat.remove(0);
         }
     }
@@ -638,7 +661,7 @@ public class Joc extends Motor {
         for (int y = 0; y < mapa.getAlcada(); y++) {
             for (int x = 0; x < mapa.getAmplada(); x++) {
                 double dist = Math.sqrt(((x - jx) * (x - jx) / 3) + ((y - jy) * (y - jy) * 2));//Posat per a que se vegi la visió redona
-                if (dist > RADI_VISIO) {
+                if (dist > radiVisio) {
                     continue;
                 }
                 if (teLiniaDVista(jx, jy, x, y, celles)) {
@@ -800,10 +823,11 @@ public class Joc extends Motor {
                 System.err.println("[JUGADOR] No s'han pogut llegir els stats: " + e.getMessage());
             }
         }
+        int ms = (config != null && config.configuracio != null) ? config.configuracio.maxSlotsInventari : 4;
         if (jc != null) {
-            return new Jugador(x, y, jc.vidaMaxima, jc.atac, jc.velocitat, jc.evasio, jc.pesMaxim);
+            return new Jugador(x, y, jc.vidaMaxima, jc.atac, jc.velocitat, jc.evasio, jc.pesMaxim, ms);
         }
-        return new Jugador(x, y);
+        return new Jugador(x, y, 100, 3, 5, 10, 50, ms);
     }
 
     private void carregaEquipamentInicial() {
@@ -946,11 +970,11 @@ public class Joc extends Motor {
     protected void renderitza() {
         try {
             if (estat == Estat.MENU_INICIAL) {
-                renderer.dibuixaMenuInicial(opcioMenuInicial, OPCIONS_INICIALS);
+                renderer.dibuixaMenuInicial(opcioMenuInicial, opcionsInicials);
                 return;
             }
             if (estat == Estat.PAUSA) {
-                renderer.dibuixaPausa(opcioMenuPausa, OPCIONS_PAUSA);
+                renderer.dibuixaPausa(opcioMenuPausa, opcionsPausa);
                 return;
             }
             if (estat == Estat.ENIGMA) {

@@ -17,11 +17,18 @@ public class ConfigGame {
     public EquipamentInicial equipamentInicial;
     public JugadorConfig jugador;
     public List<EnigmeConfig> enigmes;
+    public TextsConfig texts;
 
     //grups niats que reflecteixen l'estructura del JSON
     public static class Configuracio {
 
         public String mapaInicial;
+        public int radiLlanterna = 10;
+        public int ampleHud = 30;
+        public int radiVisio = 10;
+        public int msPasGel = 140;
+        public int maxLog = 3;
+        public int maxSlotsInventari = 4;
     }
 
     //definició d'un tipus de terra des del JSON
@@ -158,5 +165,21 @@ public class ConfigGame {
             if (e.planta == planta) return e;
         }
         return enigmes.isEmpty() ? null : enigmes.get(0);
+    }
+
+    //textos d'interfície d'usuari (títol, menús, etc.)
+    public static class TextsConfig {
+
+        public String windowTitle = "RONDALLES";
+        public String headerTitle = " TORRE DE RONDALLES  ~  ";
+        public String subtitle = "~ Un joc de rondalles mallorquines ~";
+        public String menuIniciar = "Iniciar partida";
+        public String menuSortir = "Sortir";
+        public String menuReanudar = "Reanudar";
+        public String menuGuardar = "Guardar";
+        public String menuCarregar = "Carregar";
+        public String pauseTitle = "  *** PAUSA ***  ";
+        public String pauseInstructions = "Fletxes + ENTER per seleccionar";
+        public String pauseResumeHint = "[ ESC ] Reanudar";
     }
 }

@@ -43,16 +43,20 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     private int dirX = 0; // darrera direcció horitzontal (per Pinky)
     private int dirY = 1; // darrera direcció vertical (per Pinky)
 
-    private Inventari inventari = new Inventari(); //el que du a sobre
+    private Inventari inventari;
     private int tornsVeri = 0;
     private int tornsFoc = 0; //baixa atac
     private int tornsGel = 0; //baixa defensa
 
     public Jugador(int x, int y) {
-        this(x, y, 100, 3, 5, 10, 50);
+        this(x, y, 100, 3, 5, 10, 50, 4);
     }
 
     public Jugador(int x, int y, int vidaMaxima, int atac, int velocitat, int evasio, int pesMaxim) {
+        this(x, y, vidaMaxima, atac, velocitat, evasio, pesMaxim, 4);
+    }
+
+    public Jugador(int x, int y, int vidaMaxima, int atac, int velocitat, int evasio, int pesMaxim, int maxSlots) {
         super(x, y, '@');
         this.vidaMaxima = vidaMaxima;
         this.vida = vidaMaxima;
@@ -64,6 +68,7 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
         this.evasio = evasio;
         this.visio = 5;
         this.estatJugador = EstatJugador.IDLE;
+        this.inventari = new Inventari(maxSlots);
     }
 
     @Override
@@ -143,7 +148,7 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
     }
 
     public String usaItem(int index) { //usa l'item del slot indicat (0-based); retorna nom o null
-        if (index < 0 || index >= com.iessineu.rondalles.inventari.Inventari.MAX_SLOTS) {
+        if (index < 0 || index >= inventari.getMaxSlots()) {
             return null;
         }
         if (inventari.get(index) == null) {

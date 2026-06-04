@@ -1,6 +1,12 @@
 {
     "configuracio": {
-        "mapaInicial": "planta1"
+        "mapaInicial": "planta1",
+        "radiLlanterna": 10,
+        "ampleHud": 30,
+        "radiVisio": 10,
+        "msPasGel": 140,
+        "maxLog": 3,
+        "maxSlotsInventari": 4
     },
 
     "terrenys": [
@@ -404,8 +410,22 @@
     {"planta": 5, "pregunta": "Tenc boca però no puc parlar, tenc llit però no puc dormir. Què sóc?", "resposta": "un riu"}
   ],
 
-  "equipamentInicial": {
-    "armadures": ["capell-pages", "camisa-lli", "calcons-llana", "espardenyes-canem"],
-    "arma": "falc-llaurador"
-  }
+    "equipamentInicial": {
+        "armadures": ["capell-pages", "camisa-lli", "calcons-llana", "espardenyes-canem"],
+        "arma": "falc-llaurador"
+    },
+
+    "texts": {
+        "windowTitle": "RONDALLES",
+        "headerTitle": " TORRE DE RONDALLES  ~  ",
+        "subtitle": "~ Un joc de rondalles mallorquines ~",
+        "menuIniciar": "Iniciar partida",
+        "menuSortir": "Sortir",
+        "menuReanudar": "Reanudar",
+        "menuGuardar": "Guardar",
+        "menuCarregar": "Carregar",
+        "pauseTitle": "  *** PAUSA ***  ",
+        "pauseInstructions": "Fletxes + ENTER per seleccionar",
+        "pauseResumeHint": "[ ESC ] Reanudar"
+    }
 }
