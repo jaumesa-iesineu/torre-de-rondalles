@@ -50,6 +50,9 @@ public abstract class Enemic extends Entitat {
     //primer contacte: fins que no veu el jugador sense parets pel mig, no activa visió fantasma
     private boolean haVistJugador;
 
+    //l'enemic només comença a perseguir quan el jugador l'ha vist
+    private boolean descobert;
+
     //per evitar que es posin uns damunt dels altres
     private List<Enemic> totsEnemics;
 
@@ -87,6 +90,14 @@ public abstract class Enemic extends Entitat {
 
     public boolean getTravessaParets() {
         return travessaParets;
+    }
+
+    public boolean isDescobert() {
+        return descobert;
+    }
+
+    public void setDescobert(boolean d) {
+        this.descobert = d;
     }
 
     //retorna true si l'enemic pot actuar aquest torn (segons la seva velocitat)
@@ -178,7 +189,7 @@ public abstract class Enemic extends Entitat {
             if (cy >= 0 && cy < cells.length
                     && cx >= 0 && cx < cells[cy].length) {
 
-                if (paretsBloquejades && cells[cy][cx] == '#') {
+                if (paretsBloquejades && (cells[cy][cx] == '#' || cells[cy][cx] == '+')) {
                     return false;
                 }
             }
@@ -343,8 +354,11 @@ public abstract class Enemic extends Entitat {
     private boolean pucMourem(int nx, int ny, char[][] cells, Jugador jugador) {
         if (cells == null) return true;
         if (ny < 0 || ny >= cells.length || nx < 0 || nx >= cells[ny].length) return false;
-        if (!travessaParets) {
+        if (travessaParets) {
+            if (cells[ny][nx] == '*') return false; // fantasmes no poden passar pel gel
+        } else {
             if (cells[ny][nx] == '#') return false;
+            if (cells[ny][nx] == '+') return false; // portes tancades
             if (cells[ny][nx] == 'i') return false; // no volem trepitjar els items
         }
         if (jugador != null && nx == jugador.getX() && ny == jugador.getY()) return false;
@@ -395,8 +409,10 @@ public abstract class Enemic extends Entitat {
     }
 
     private boolean esTravessable(char[][] cells, int nx, int ny) {
-        if (travessaParets) return true;
-        return cells[ny][nx] != '#' && cells[ny][nx] != 'i';
+        if (travessaParets) {
+            return cells[ny][nx] != '*';
+        }
+        return cells[ny][nx] != '#' && cells[ny][nx] != '+' && cells[ny][nx] != 'i';
     }
 
     public String[] getArtAscii() {

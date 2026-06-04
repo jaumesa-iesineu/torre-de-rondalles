@@ -17,6 +17,7 @@ import com.iessineu.rondalles.entitats.DimoniBoiet;
 import com.iessineu.rondalles.entitats.Enemic;
 import com.iessineu.rondalles.entitats.Entitat;
 import com.iessineu.rondalles.entitats.Jugador;
+import com.iessineu.rondalles.entitats.Porta;
 import com.iessineu.rondalles.inventari.Item;
 import com.iessineu.rondalles.inventari.ItemMapa;
 import com.iessineu.rondalles.inventari.Pocio;
@@ -48,6 +49,9 @@ public class Joc extends Motor {
     private static final String[] FITXERS_PISOS = {
         "pis1.game", "pis2.game", "pis3.game", "pis4.game", "pis5.game"
     };
+
+    // --- Portes ---
+    private List<Porta> portes = new ArrayList<>();
 
     // --- NPCs ---
     private List<NpcComerciants> npcs = new ArrayList<>();
@@ -133,6 +137,7 @@ public class Joc extends Motor {
         carregaEnemics();
         for (Enemic e : enemics) e.setTotsEnemics(enemics);
         carregaItemsMapa();
+        carregaPortes();
         carregaNpcs();
         carregaEquipamentInicial();
         carregaArtJugador();
@@ -417,6 +422,10 @@ public class Joc extends Motor {
                 estat = Estat.INVENTARI;
                 return;
             }
+            if (c == 'o' || c == 'O') {
+                interactuaPorta();
+                return;
+            }
             if (c >= '1' && c <= '9') {
                 jugador.usaItem(c - '1');
 
@@ -467,6 +476,11 @@ public class Joc extends Motor {
             afegeixLog("Combat amb " + enemic.getClass().getSimpleName().toUpperCase() + "!");
             estat = Estat.COMBAT;
             GestorMusica.reprodueix(esBoss(enemic) ? GestorMusica.Pista.BOSS : GestorMusica.Pista.COMBAT);
+            return;
+        }
+
+        Porta porta = trobaPortaA(nx, ny);
+        if (porta != null && porta.isTancada()) {
             return;
         }
 
@@ -563,9 +577,11 @@ public class Joc extends Motor {
             enemics.clear();
             itemsMapa.clear();
             npcs.clear();
+            portes.clear();
             carregaEnemics();
             for (Enemic e : enemics) e.setTotsEnemics(enemics);
             carregaItemsMapa();
+            carregaPortes();
             carregaNpcs();
 
             explorat = new boolean[mapa.getAlcada()][mapa.getAmplada()];
@@ -600,7 +616,7 @@ public class Joc extends Motor {
                 break;
             }
             if (cy >= 0 && cy < celles.length && cx >= 0 && cx < celles[cy].length) {
-                if (celles[cy][cx] == '#') {
+                if (celles[cy][cx] == '#' || celles[cy][cx] == '+') {
                     return false;
                 }
             }
@@ -634,10 +650,39 @@ public class Joc extends Motor {
         }
         for (Enemic e : enemics) {
             if (e.isActiu() && visible[e.getY()][e.getX()]) {
+                e.setDescobert(true);
                 mapaRecord[e.getY()][e.getX()] = e.getSimbol();
             }
         }
+        for (Porta p : portes) {
+            if (visible[p.getY()][p.getX()]) {
+                mapaRecord[p.getY()][p.getX()] = p.getSimbol();
+            }
+        }
         return visible;
+    }
+
+    private void carregaPortes() {
+        portes.clear();
+        if (config != null) {
+            List<PosicioPorta> posicions = config.getPosicionsPortaPerMapa(idMapaActual);
+            if (!posicions.isEmpty()) {
+                for (PosicioPorta p : posicions) {
+                    portes.add(new Porta(p.x, p.y));
+                    mapa.setCella(p.x, p.y, '+');
+                }
+                return;
+            }
+        }
+        char[][] celles = mapa.getCelles();
+        for (int y = 0; y < celles.length; y++) {
+            for (int x = 0; x < celles[y].length; x++) {
+                if (celles[y][x] == 'P') {
+                    portes.add(new Porta(x, y));
+                    celles[y][x] = '+';
+                }
+            }
+        }
     }
 
     private void carregaNpcs() {
@@ -691,6 +736,31 @@ public class Joc extends Motor {
         for (Enemic e : enemics) {
             if (e.isActiu() && e.getX() == x && e.getY() == y) {
                 return e;
+            }
+        }
+        return null;
+    }
+
+    private void interactuaPorta() {
+        int jx = jugador.getX();
+        int jy = jugador.getY();
+        int[][] dirs = {{-1,0},{1,0},{0,-1},{0,1}};
+        for (int[] d : dirs) {
+            int dx = jx + d[0], dy = jy + d[1];
+            Porta porta = trobaPortaA(dx, dy);
+            if (porta != null) {
+                porta.interactua(jugador);
+                mapa.setCella(dx, dy, porta.getSimbol());
+                tickTorn();
+                return;
+            }
+        }
+    }
+
+    private Porta trobaPortaA(int x, int y) {
+        for (Porta p : portes) {
+            if (p.getX() == x && p.getY() == y) {
+                return p;
             }
         }
         return null;
@@ -904,6 +974,7 @@ public class Joc extends Motor {
             }
 
             List<Entitat> totes = new ArrayList<>(enemics);
+            totes.addAll(portes);
 
             boolean[][] visible = actualitzaVisio();
             if (estat == Estat.COMBAT) {

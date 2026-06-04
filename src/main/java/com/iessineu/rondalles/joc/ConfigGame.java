@@ -12,6 +12,7 @@ public class ConfigGame {
     public MapesGroup mapes;
     public EnemicsGroup enemics;
     public ItemsGroup items;
+    public PortesGroup portes;
     public EquipamentInicial equipamentInicial;
     public JugadorConfig jugador;
 
@@ -36,6 +37,11 @@ public class ConfigGame {
     public static class ItemsGroup {
 
         public List<PosicioItem> posicions;
+    }
+
+    public static class PortesGroup {
+
+        public List<PosicioPorta> posicions;
     }
 
     public static class EquipamentInicial {
@@ -99,6 +105,19 @@ public class ConfigGame {
         }
         List<PosicioItem> resultat = new ArrayList<>();
         for (PosicioItem p : items.posicions) {
+            if (p.mapa.equals(mapaId)) {
+                resultat.add(p);
+            }
+        }
+        return resultat;
+    }
+
+    public List<PosicioPorta> getPosicionsPortaPerMapa(String mapaId) {
+        if (portes == null || portes.posicions == null) {
+            return new ArrayList<>();
+        }
+        List<PosicioPorta> resultat = new ArrayList<>();
+        for (PosicioPorta p : portes.posicions) {
             if (p.mapa.equals(mapaId)) {
                 resultat.add(p);
             }

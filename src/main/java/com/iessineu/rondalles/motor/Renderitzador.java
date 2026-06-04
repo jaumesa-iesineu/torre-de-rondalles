@@ -224,6 +224,10 @@ public class Renderitzador { // classe per gestionar la pantalla
                 new TextColor.RGB(180, 230, 255); // gel
             case '<' ->
                 new TextColor.RGB(200, 200, 50);  // escales
+            case '+' ->
+                new TextColor.RGB(180, 100, 40);  // porta tancada
+            case '/' ->
+                new TextColor.RGB(120, 80, 40);   // porta oberta
             default ->
                 new TextColor.RGB(90, 90, 90);
         };

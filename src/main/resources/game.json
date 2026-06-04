@@ -223,7 +223,7 @@
       {
         "simbols": ["B"],
         "nom": "Bubota",
-        "vida": 20, "atac": 5, "radi": 7,
+        "vida": 20, "atac": 5, "radi": 100,
         "colorR": 180, "colorG": 180, "colorB": 255,
         "estatica": false,
         "velocitat": 2,
@@ -300,6 +300,12 @@
       {"mapa": "planta1", "id": "pocio-veri", "x": 40,  "y": 22},
       {"mapa": "planta1", "id": "pocio-foc",  "x": 40,  "y": 23},
       {"mapa": "planta1", "id": "pocio-gel",  "x": 33,  "y": 24}
+    ]
+  },
+
+  "portes": {
+    "posicions": [
+      {"mapa": "planta1", "x": 2, "y": 1}
     ]
   },
 
