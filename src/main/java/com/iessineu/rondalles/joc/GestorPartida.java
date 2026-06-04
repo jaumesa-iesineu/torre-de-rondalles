@@ -40,9 +40,9 @@ public class GestorPartida {
             dos.writeByte(j.getTornsFoc());
             dos.writeByte(j.getTornsGel());
 
-            //inventari (sempre 4 slots)
-            dos.writeByte(Inventari.MAX_SLOTS);
-            for (int i = 0; i < Inventari.MAX_SLOTS; i++) {
+            //inventari
+            dos.writeByte(j.getInventari().getMaxSlots());
+            for (int i = 0; i < j.getInventari().getMaxSlots(); i++) {
                 Inventari.Slot slot = j.getInventari().getSlot(i);
                 if (slot == null) {
                     dos.writeByte(0); //built

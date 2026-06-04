@@ -36,9 +36,18 @@ public class Mapa { // classe per gestionar el mapa
         }
 
         char c = celles[y][x];
-        //les parets no es travessen, tot lo demés sí
+        //les parets i portes tancades no es travessen, tot lo demés sí
         //quan hi ha una entitat (enemic, npc...) s'hi pot entrar per interactuar
-        return c != '#';
+        return c != '#' && c != '+';
+    }
+
+    //comprova si una posició té una porta (oberta o tancada)
+    public boolean esPorta(int x, int y) {
+        if (x < 0 || y < 0 || x >= amplada || y >= alcada) {
+            return false;
+        }
+        char c = celles[y][x];
+        return c == '+' || c == '/';
     }
 
     // getters i setters

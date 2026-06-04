@@ -1,31 +1,39 @@
 package com.iessineu.rondalles.entitats;
 
 import com.googlecode.lanterna.TextColor;
+import com.iessineu.rondalles.joc.ConfigGame;
 
 public class NpcComerciants extends Entitat {
 
     private final int pis;
     private boolean enigmaResult = false;
+    private String pregunta;
+    private String resposta;
 
-    private static final String[][] ENIGMES = { //enigma, resposta
-        {"Tenc ales però no vol, tenc cua però no és animal. Què sóc?", "una fletxa"},
-        {"Com més gran em fas, menys pots veure. Què sóc?", "la foscor"},
-        {"Estic sempre davant teu però no es pot veure. Què sóc?", "el future"},
-        {"Parleu de mi però mai m'heu vist. Qui sóc?", "el silenci"},
-        {"Tenc boca però no puc parlar, tenc llit però no puc dormir. Què sóc?", "un riu"}
-    };
-
-    public NpcComerciants(int x, int y, int pis) { //pis entre 1 i 5
+    public NpcComerciants(int x, int y, int pis, ConfigGame config) {
         super(x, y, 'N');
-        this.pis = Math.max(1, Math.min(5, pis));
+        this.pis = pis;
+        //carregam l'enigme des del JSON si hi és
+        if (config != null) {
+            ConfigGame.EnigmeConfig enigme = config.getEnigmaPerPlanta(pis);
+            if (enigme != null) {
+                this.pregunta = enigme.pregunta;
+                this.resposta = enigme.resposta;
+            }
+        }
+        //fallback per si no hi ha enigmes al JSON
+        if (pregunta == null) {
+            this.pregunta = "Tenc ales però no vol, tenc cua però no és animal. Què sóc?";
+            this.resposta = "una fletxa";
+        }
     }
 
     public String getEnigma() {
-        return ENIGMES[pis - 1][0];
-    } //pis-1 perquè el pis va de 1 a 5 però els índexs van de 0 a 4
+        return pregunta;
+    }
 
     public boolean comprovaSolucio(String resposta) {
-        enigmaResult = resposta.trim().equalsIgnoreCase(ENIGMES[pis - 1][1]);
+        enigmaResult = resposta.trim().equalsIgnoreCase(this.resposta);
         return enigmaResult;
     }
 
@@ -43,7 +51,6 @@ public class NpcComerciants extends Entitat {
 
     @Override
     public TextColor getColor() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getColor'");
+        return new TextColor.RGB(80, 200, 220); //blau cel
     }
 }

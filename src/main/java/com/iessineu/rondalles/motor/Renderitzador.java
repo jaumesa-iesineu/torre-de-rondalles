@@ -7,6 +7,7 @@ package com.iessineu.rondalles.motor;
 import com.iessineu.rondalles.entitats.Enemic;
 import com.iessineu.rondalles.entitats.Entitat;
 import com.iessineu.rondalles.mapa.Mapa;
+import com.iessineu.rondalles.mapa.TipusTerra;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.TextCharacter;
@@ -36,12 +37,29 @@ public class Renderitzador { // classe per gestionar la pantalla
 
     //el radi de la llanterna en caselles
     //tot el que quedi fora d'aquest radi es veu negre
-    private static final int RADI_LLANTERNA = 10;
+    private int radiLlanterna = 10;
 
     //amplada del panell dret d'estadístiques (columnes)
-    private static final int AMPLE_HUD = 30;
+    private int ampleHud = 30;
 
     private String[] artJugador;
+
+    public void setRadiLlanterna(int r) { this.radiLlanterna = r; }
+    public void setAmpleHud(int a) { this.ampleHud = a; }
+
+    private String windowTitle = "RONDALLES";
+    private String headerTitle = " TORRE DE RONDALLES  ~  ";
+    private String subtitle = "~ Un joc de rondalles mallorquines ~";
+    private String pauseTitle = "  *** PAUSA ***  ";
+    private String pauseInstructions = "Fletxes + ENTER per seleccionar";
+    private String pauseResumeHint = "[ ESC ] Reanudar";
+
+    public void setWindowTitle(String t) { this.windowTitle = t; }
+    public void setHeaderTitle(String t) { this.headerTitle = t; }
+    public void setSubtitle(String t) { this.subtitle = t; }
+    public void setPauseTitle(String t) { this.pauseTitle = t; }
+    public void setPauseInstructions(String t) { this.pauseInstructions = t; }
+    public void setPauseResumeHint(String t) { this.pauseResumeHint = t; }
 
     public void setArtJugador(String[] art) {
         this.artJugador = art;
@@ -59,7 +77,7 @@ public class Renderitzador { // classe per gestionar la pantalla
                 .createSwingTerminal();
         terminal.setResizable(false);
         //maximitzam la finestra perquè ocupi tota la pantalla
-        terminal.setTitle("RONDALLES");
+        terminal.setTitle(windowTitle);
         try (InputStream is = getClass().getResourceAsStream("/logo.png")) {
             if (is != null) {
                 BufferedImage icon = ImageIO.read(is);
@@ -82,27 +100,27 @@ public class Renderitzador { // classe per gestionar la pantalla
 
         int cols = screen.getTerminalSize().getColumns();
         int files = screen.getTerminalSize().getRows();
-        int colSep = cols - AMPLE_HUD; //columna on comença el panell dret
+        int colSep = cols - ampleHud; //columna on comença el panell dret
 
         TextColor blanc = new TextColor.RGB(180, 180, 195);
         TextColor grisMarc = new TextColor.RGB(70, 70, 85);
         TextColor daurat = new TextColor.RGB(220, 180, 50);
 
         //marc: fila superior
-        pintaText(0, 0, "╔" + "═".repeat(colSep - 1) + "╦" + "═".repeat(AMPLE_HUD - 2) + "╗", blanc);
+        pintaText(0, 0, "╔" + "═".repeat(colSep - 1) + "╦" + "═".repeat(ampleHud - 2) + "╗", blanc);
         //fila del títol
         pintaText(0, 1, "║", grisMarc);
-        String titol = " TORRE DE RONDALLES  ~  " + mapa.getNom();
+        String titol = headerTitle + mapa.getNom();
         if (titol.length() > colSep - 2) {
             titol = titol.substring(0, colSep - 2);
         }
         pintaText(1, 1, titol, daurat);
         pintaText(colSep, 1, "║", grisMarc);
         String titolHud = "PERSONATGE";
-        pintaText(colSep + (AMPLE_HUD - 1 - titolHud.length()) / 2, 1, titolHud, new TextColor.RGB(80, 200, 120));
+        pintaText(colSep + (ampleHud - 1 - titolHud.length()) / 2, 1, titolHud, new TextColor.RGB(80, 200, 120));
         pintaText(cols - 1, 1, "║", grisMarc);
         //separador davall el títol
-        pintaText(0, 2, "╠" + "═".repeat(colSep - 1) + "╣" + " ".repeat(AMPLE_HUD - 2) + "║", blanc);
+        pintaText(0, 2, "╠" + "═".repeat(colSep - 1) + "╣" + " ".repeat(ampleHud - 2) + "║", blanc);
         //bordes laterals
         for (int i = 3; i < files - 1; i++) {
             pintaText(0, i, "║", grisMarc);
@@ -110,7 +128,7 @@ public class Renderitzador { // classe per gestionar la pantalla
             pintaText(cols - 1, i, "║", grisMarc);
         }
         //fila inferior
-        pintaText(0, files - 1, "╚" + "═".repeat(colSep - 1) + "╩" + "═".repeat(AMPLE_HUD - 2) + "╝", blanc);
+        pintaText(0, files - 1, "╚" + "═".repeat(colSep - 1) + "╩" + "═".repeat(ampleHud - 2) + "╝", blanc);
 
         //zona visible del mapa: files 3..files-2, cols 1..colSep-1
         int vpW = colSep - 2;
@@ -143,7 +161,7 @@ public class Renderitzador { // classe per gestionar la pantalla
                 boolean esExplorada = explorat != null && explorat[my][mx];
                 if (esVisible) {
                     double dist = Math.sqrt((mx - jx) * (mx - jx) + (my - jy) * (my - jy));
-                    double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.75;
+                    double factor = 1.0 - (dist / radiLlanterna) * 0.75;
                     screen.setCharacter(sc, sf, new TextCharacter(celles[my][mx], fosqueix(colorPerCasella(celles[my][mx]), factor), fosqueix(fonsCasella(celles[my][mx]), factor)));
                 } else if (esExplorada) {
                     screen.setCharacter(sc, sf, new TextCharacter(mapaRecord[my][mx], colorMemoria, TextColor.ANSI.BLACK));
@@ -168,7 +186,7 @@ public class Renderitzador { // classe per gestionar la pantalla
                 continue;
             }
             double dist = Math.sqrt((e.getX() - jx) * (e.getX() - jx) + (e.getY() - jy) * (e.getY() - jy));
-            double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.5;
+            double factor = 1.0 - (dist / radiLlanterna) * 0.5;
             screen.setCharacter(sc, sf, new TextCharacter(e.getSimbol(), fosqueix(e.getColor(), factor), TextColor.ANSI.BLACK));
         }
 
@@ -186,7 +204,7 @@ public class Renderitzador { // classe per gestionar la pantalla
                 continue;
             }
             double dist = Math.sqrt((im.getX() - jx) * (im.getX() - jx) + (im.getY() - jy) * (im.getY() - jy));
-            double factor = 1.0 - (dist / RADI_LLANTERNA) * 0.75;
+            double factor = 1.0 - (dist / radiLlanterna) * 0.75;
             screen.setCharacter(sc, sf, new TextCharacter(im.getItem().getSimbol(), fosqueix(im.getItem().getColor(), factor), TextColor.ANSI.BLACK));
         }
 
@@ -203,42 +221,41 @@ public class Renderitzador { // classe per gestionar la pantalla
 
     //cada tipus de casella té un color base diferent
     private TextColor colorPerCasella(char c) {
+        //si es un tipus de terra definit al JSON, agafam el seu color
+        TipusTerra t = TipusTerra.de(c);
+        if (t != null) {
+            return new TextColor.RGB(t.getColorR(), t.getColorG(), t.getColorB());
+        }
+        //simbols especials que no son terrenys
         return switch (c) {
             case '#' ->
                 new TextColor.RGB(130, 130, 140); //parets
-            case '.' ->
-                new TextColor.RGB(70, 50, 35); //terra
             case 'e' ->
                 new TextColor.RGB(200, 50, 50); //enemic
             case 'i' ->
                 new TextColor.RGB(220, 180, 50); //item
             case 'N' ->
                 new TextColor.RGB(80, 200, 220); //npc
-            case '~' ->
-                new TextColor.RGB(50, 100, 200);  // aigua
-            case ',' ->
-                new TextColor.RGB(60, 160, 60);   // gespa
-            case '=' ->
-                new TextColor.RGB(160, 160, 160); // metall
-            case '*' ->
-                new TextColor.RGB(180, 230, 255); // gel
             case '<' ->
                 new TextColor.RGB(200, 200, 50);  // escales
+            case '+' ->
+                new TextColor.RGB(180, 100, 40);  // porta tancada
+            case '/' ->
+                new TextColor.RGB(120, 80, 40);   // porta oberta
             default ->
                 new TextColor.RGB(90, 90, 90);
         };
     }
 
     private TextColor fonsCasella(char c) {
+        //si es un tipus de terra, agafam el fons des del JSON
+        TipusTerra t = TipusTerra.de(c);
+        if (t != null) {
+            return new TextColor.RGB(t.getFonsR(), t.getFonsG(), t.getFonsB());
+        }
         return switch (c) {
             case '#' ->
                 new TextColor.RGB(40, 40, 50);
-            case '.' ->
-                new TextColor.RGB(30, 20, 10);
-            case '~' ->
-                new TextColor.RGB(10, 30, 80);
-            case '*' ->
-                new TextColor.RGB(20, 60, 90);
             default ->
                 TextColor.ANSI.BLACK;
         };
@@ -256,7 +273,7 @@ public class Renderitzador { // classe per gestionar la pantalla
     }
 
     private void dibuixaHUD(com.iessineu.rondalles.entitats.Jugador jugador, int col, int fila, int filaMax) { //dibuixaHUD pinta les estadistiques al panell dret
-        int innerW = AMPLE_HUD - 2;
+        int innerW = ampleHud - 2;
 
         TextColor vermell = new TextColor.RGB(220, 60, 60);
         TextColor groc = new TextColor.RGB(180, 160, 80);
@@ -294,7 +311,7 @@ public class Renderitzador { // classe per gestionar la pantalla
 
         //inventari
         pintaText(col, fila++, "--- INVENTARI ---", gris);
-        for (int i = 0; i < com.iessineu.rondalles.inventari.Inventari.MAX_SLOTS; i++) {
+        for (int i = 0; i < jugador.getInventari().getMaxSlots(); i++) {
             if (fila >= filaMax - 2) {
                 break;
             }
@@ -661,7 +678,7 @@ public class Renderitzador { // classe per gestionar la pantalla
         pintaText(cHud, fHud, "[ A ]  Atacar", blanc);
         fHud++;
 
-        for (int i = 0; i < com.iessineu.rondalles.inventari.Inventari.MAX_SLOTS; i++) {
+        for (int i = 0; i < jugador.getInventari().getMaxSlots(); i++) {
             var slot = jugador.getInventari().getSlot(i);
             if (slot == null) {
                 continue;
@@ -767,7 +784,7 @@ public class Renderitzador { // classe per gestionar la pantalla
         //4 slots en una fila
         int filaSlots = filaIni + 4;
         int colSlots = colIni + 3;
-        for (int i = 0; i < com.iessineu.rondalles.inventari.Inventari.MAX_SLOTS; i++) {
+        for (int i = 0; i < jugador.getInventari().getMaxSlots(); i++) {
             int c = colSlots + i * 12;
             var slot = jugador.getInventari().getSlot(i);
             pintaTextFons(c, filaSlots - 1, " [" + (i + 1) + "] ", gris, fonsPanell);
@@ -844,7 +861,7 @@ public class Renderitzador { // classe per gestionar la pantalla
         }
 
         //subtítol
-        String subtitol = "~ Un joc de rondalles mallorquines ~";
+        String subtitol = subtitle;
         int sx = cx - subtitol.length() / 2;
         for (int j = 0; j < subtitol.length(); j++) {
             screen.setCharacter(sx + j, titolY + titol.length + 1,
@@ -882,7 +899,7 @@ public class Renderitzador { // classe per gestionar la pantalla
         int boxY = cy - altCaixa / 2;
 
         //títol pausa
-        String titolPausa = "  *** PAUSA ***  ";
+        String titolPausa = pauseTitle;
         int tx = cx - titolPausa.length() / 2;
         for (int j = 0; j < titolPausa.length(); j++) {
             screen.setCharacter(tx + j, boxY,
@@ -890,7 +907,7 @@ public class Renderitzador { // classe per gestionar la pantalla
         }
 
         //instruccions
-        String instruccions = "Fletxes + ENTER per seleccionar";
+        String instruccions = pauseInstructions;
         int ix = cx - instruccions.length() / 2;
         for (int j = 0; j < instruccions.length(); j++) {
             screen.setCharacter(ix + j, boxY + 1,
@@ -911,7 +928,7 @@ public class Renderitzador { // classe per gestionar la pantalla
         }
 
         //nota de tecla ràpida ESC
-        String escNota = "[ ESC ] Reanudar";
+        String escNota = pauseResumeHint;
         int en = cx - escNota.length() / 2;
         for (int j = 0; j < escNota.length(); j++) {
             screen.setCharacter(en + j, boxY + 3 + opcions.length + 1,

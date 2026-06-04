@@ -1,7 +1,51 @@
 {
     "configuracio": {
-        "mapaInicial": "planta1"
+        "mapaInicial": "planta1",
+        "radiLlanterna": 10,
+        "ampleHud": 30,
+        "radiVisio": 10,
+        "msPasGel": 140,
+        "maxLog": 3,
+        "maxSlotsInventari": 4
     },
+
+    "terrenys": [
+        {
+            "simbols": ["."],
+            "nom": "normal",
+            "colorR": 70, "colorG": 50, "colorB": 35,
+            "fonsR": 30, "fonsG": 20, "fonsB": 10,
+            "doblePas": false, "llisca": false, "modRadi": 1.0
+        },
+        {
+            "simbols": ["~"],
+            "nom": "aigua",
+            "colorR": 50, "colorG": 100, "colorB": 200,
+            "fonsR": 10, "fonsG": 30, "fonsB": 80,
+            "doblePas": true, "llisca": false, "modRadi": 1.0
+        },
+        {
+            "simbols": [","],
+            "nom": "gespa",
+            "colorR": 60, "colorG": 160, "colorB": 60,
+            "fonsR": 0, "fonsG": 0, "fonsB": 0,
+            "doblePas": false, "llisca": false, "modRadi": 0.5
+        },
+        {
+            "simbols": ["="],
+            "nom": "metal",
+            "colorR": 160, "colorG": 160, "colorB": 160,
+            "fonsR": 0, "fonsG": 0, "fonsB": 0,
+            "doblePas": false, "llisca": false, "modRadi": 2.0
+        },
+        {
+            "simbols": ["*"],
+            "nom": "gel",
+            "colorR": 180, "colorG": 230, "colorB": 255,
+            "fonsR": 20, "fonsG": 60, "fonsB": 90,
+            "doblePas": false, "llisca": true, "modRadi": 1.0
+        }
+    ],
 
     "catalogItems": {
         "armes": [
@@ -217,17 +261,20 @@
         "nom": "DimoniBoiet",
         "vida": 10, "atac": 5, "radi": 5,
         "colorR": 180, "colorG": 40, "colorB": 10,
-        "estatica": false,
+        "patroIA": "perseguir",
+        "esBoss": false,
         "artFitxer": "art/dimoni.txt"
       },
       {
         "simbols": ["B"],
         "nom": "Bubota",
-        "vida": 20, "atac": 5, "radi": 7,
+        "vida": 20, "atac": 5, "radi": 100,
         "colorR": 180, "colorG": 180, "colorB": 255,
-        "estatica": false,
         "velocitat": 2,
         "travessaParets": true,
+        "patroIA": "perseguir",
+        "requereixDescobriment": true,
+        "esBoss": false,
         "artFitxer": "art/bubota.txt"
       },
       {
@@ -235,8 +282,9 @@
         "nom": "Gegant",
         "vida": 40, "atac": 10, "radi": 4,
         "colorR": 200, "colorG": 120, "colorB": 50,
-        "estatica": false,
         "velocitat": 2,
+        "patroIA": "guardia",
+        "esBoss": true,
         "artFitxer": "art/gegant.txt"
       },
       {
@@ -244,8 +292,9 @@
         "nom": "Drac",
         "vida": 50, "atac": 20, "radi": 8,
         "colorR": 220, "colorG": 30, "colorB": 30,
-        "estatica": false,
         "velocitat": 2,
+        "patroIA": "guardia",
+        "esBoss": true,
         "artFitxer": "art/drac.txt"
       },
       {
@@ -253,7 +302,8 @@
         "nom": "NaMariaEnganxa",
         "vida": 30, "atac": 9999, "radi": 0,
         "colorR": 180, "colorG": 50, "colorB": 220,
-        "estatica": true,
+        "patroIA": "estatic",
+        "esBoss": true,
         "artFitxer": "art/maria.txt"
       }
     ],
@@ -303,6 +353,12 @@
     ]
   },
 
+  "portes": {
+    "posicions": [
+      {"mapa": "planta1", "x": 2, "y": 1}
+    ]
+  },
+
   "npcs": {
     "tipus": [
       {
@@ -346,8 +402,30 @@
     "pesMaxim": 50
   },
 
-  "equipamentInicial": {
-    "armadures": ["capell-pages", "camisa-lli", "calcons-llana", "espardenyes-canem"],
-    "arma": "falc-llaurador"
-  }
+  "enigmes": [
+    {"planta": 1, "pregunta": "Tenc ales però no vol, tenc cua però no és animal. Què sóc?", "resposta": "una fletxa"},
+    {"planta": 2, "pregunta": "Com més gran em fas, menys pots veure. Què sóc?", "resposta": "la foscor"},
+    {"planta": 3, "pregunta": "Estic sempre davant teu però no es pot veure. Què sóc?", "resposta": "el futur"},
+    {"planta": 4, "pregunta": "Parleu de mi però mai m'heu vist. Qui sóc?", "resposta": "el silenci"},
+    {"planta": 5, "pregunta": "Tenc boca però no puc parlar, tenc llit però no puc dormir. Què sóc?", "resposta": "un riu"}
+  ],
+
+    "equipamentInicial": {
+        "armadures": ["capell-pages", "camisa-lli", "calcons-llana", "espardenyes-canem"],
+        "arma": "falc-llaurador"
+    },
+
+    "texts": {
+        "windowTitle": "RONDALLES",
+        "headerTitle": " TORRE DE RONDALLES  ~  ",
+        "subtitle": "~ Un joc de rondalles mallorquines ~",
+        "menuIniciar": "Iniciar partida",
+        "menuSortir": "Sortir",
+        "menuReanudar": "Reanudar",
+        "menuGuardar": "Guardar",
+        "menuCarregar": "Carregar",
+        "pauseTitle": "  *** PAUSA ***  ",
+        "pauseInstructions": "Fletxes + ENTER per seleccionar",
+        "pauseResumeHint": "[ ESC ] Reanudar"
+    }
 }

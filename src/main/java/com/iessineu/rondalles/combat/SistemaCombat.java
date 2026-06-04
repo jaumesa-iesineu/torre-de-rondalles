@@ -26,7 +26,7 @@ public class SistemaCombat {
 
     public static String tickEnemics(Enemic enemic) {
         StringBuilder sb = new StringBuilder();
-        String nom = enemic.getClass().getSimpleName().toUpperCase();
+        String nom = enemic.getNom().toUpperCase();
         if (enemic.getTornsVeri() > 0) {
             enemic.tickVeri();
             sb.append(nom).append(" rep 3 de dany pel verí. ");

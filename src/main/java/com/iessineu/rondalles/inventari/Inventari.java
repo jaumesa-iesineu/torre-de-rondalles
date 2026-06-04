@@ -11,14 +11,25 @@ import java.util.Map;
 public class Inventari {
 
     private static final int PES_MAXIM = 50;
-    public static final int MAX_SLOTS = 4;
+    private final int maxSlots;
 
     public record Slot(Item item, int quantitat) {
 
     }
 
-    // 4 slots fixos — null = buit
-    private final Slot[] slots = new Slot[MAX_SLOTS];
+    // slots fixos — null = buit
+    private final Slot[] slots;
+
+    public Inventari() {
+        this(4);
+    }
+
+    public Inventari(int maxSlots) {
+        this.maxSlots = Math.max(1, maxSlots);
+        this.slots = new Slot[this.maxSlots];
+    }
+
+    public int getMaxSlots() { return maxSlots; }
 
     private Map<Armadura.Slot, Armadura> armaduresEquipades = new EnumMap<>(Armadura.Slot.class);
     private Arma armaEquipada;
@@ -29,14 +40,14 @@ public class Inventari {
         }
 
         // si ja hi ha un slot amb el mateix tipus, apila
-        for (int i = 0; i < MAX_SLOTS; i++) {
+        for (int i = 0; i < maxSlots; i++) {
             if (slots[i] != null && slots[i].item().getNom().equals(item.getNom())) {
                 slots[i] = new Slot(slots[i].item(), slots[i].quantitat() + 1);
                 return true;
             }
         }
         // si no, primer slot buit
-        for (int i = 0; i < MAX_SLOTS; i++) {
+        for (int i = 0; i < maxSlots; i++) {
             if (slots[i] == null) {
                 slots[i] = new Slot(item, 1);
                 return true;
@@ -47,7 +58,7 @@ public class Inventari {
 
     // usa 1 unitat del slot (0-based). si arriba a 0 el buida
     public void elimina(int index) {
-        if (index < 0 || index >= MAX_SLOTS || slots[index] == null) {
+        if (index < 0 || index >= maxSlots || slots[index] == null) {
             return;
         }
         if (slots[index].quantitat() <= 1) {
@@ -58,7 +69,7 @@ public class Inventari {
     }
 
     public Item get(int index) {
-        if (index < 0 || index >= MAX_SLOTS || slots[index] == null) {
+        if (index < 0 || index >= maxSlots || slots[index] == null) {
             return null;
         }
         return slots[index].item();
@@ -84,7 +95,7 @@ public class Inventari {
             afegeix(anterior);
         }
         // treure armadura dels slots si hi és
-        for (int i = 0; i < MAX_SLOTS; i++) {
+        for (int i = 0; i < maxSlots; i++) {
             if (slots[i] != null && slots[i].item() == armadura) {
                 elimina(i);
                 break;
@@ -98,7 +109,7 @@ public class Inventari {
             afegeix(armaEquipada);
         }
         armaEquipada = arma;
-        for (int i = 0; i < MAX_SLOTS; i++) {
+        for (int i = 0; i < maxSlots; i++) {
             if (slots[i] != null && slots[i].item() == arma) {
                 elimina(i);
                 break;
@@ -145,7 +156,7 @@ public class Inventari {
 
     //buida tots els slots i equip (s'usa en carregar partida)
     public void buidaSlots() {
-        for (int i = 0; i < MAX_SLOTS; i++) {
+        for (int i = 0; i < maxSlots; i++) {
             slots[i] = null;
         }
         armaduresEquipades.clear();

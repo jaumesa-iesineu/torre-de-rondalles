@@ -104,6 +104,18 @@ public class CarregadorGame {
                 base.items.posicions.addAll(mod.items.posicions);
             }
         }
+
+        if (mod.portes != null) {
+            if (base.portes == null) {
+                base.portes = new ConfigGame.PortesGroup();
+            }
+            if (mod.portes.posicions != null) {
+                if (base.portes.posicions == null) {
+                    base.portes.posicions = new ArrayList<>();
+                }
+                base.portes.posicions.addAll(mod.portes.posicions);
+            }
+        }
     }
 
     private static void resolgArt(ConfigGame config) {
