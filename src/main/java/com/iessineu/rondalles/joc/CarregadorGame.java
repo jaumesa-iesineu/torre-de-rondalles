@@ -74,6 +74,14 @@ public class CarregadorGame {
                 base.enemics.posicions.addAll(mod.enemics.posicions);
             }
         }
+
+        if (mod.items != null) {
+            if (base.items == null) base.items = new ConfigGame.ItemsGroup();
+            if (mod.items.posicions != null) {
+                if (base.items.posicions == null) base.items.posicions = new ArrayList<>();
+                base.items.posicions.addAll(mod.items.posicions);
+            }
+        }
     }
 
     private static void resolgArt(ConfigGame config) {

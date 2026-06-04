@@ -18,13 +18,13 @@ import java.util.List;
  */
 public class Main {
 
-    // arguments acceptats:
-    // (res)               -> carrega la config des de la BD SQLite (joc empaquetado)
-    // -game/-g <fitxer>   -> carrega la config des d'un JSON extern (màxim 1)
-    // -mod/-m <fitxer>    -> aplica un mod JSON sobre la config base (es pot repetir, ordre important)
-    // -mute               -> arranca sense música
-    // mapes               -> obre l'editor de mapes buit
-    // mapes <fitxer>      -> obre l'editor de mapes amb un fitxer existent
+    //arguments acceptats:
+    //(res)  -> carrega la config des de la BD SQLite (joc empaquetado)
+    //-game/-g <fitxer> -> carrega la config des d'un JSON extern (màxim 1)
+    //-mod/-m <fitxer> -> aplica un mod JSON sobre la config base (es pot repetir, ordre important)
+    //-mute -> arranca sense música
+    //mapes -> obre l'editor de mapes buit
+    //mapes <fitxer> -> obre l'editor de mapes amb un fitxer existent
     public static void main(String[] args) throws Exception {
 
         if (args.length > 0 && args[0].equals("mapes")) {
@@ -52,7 +52,7 @@ public class Main {
             }
         }
 
-        // carregam la config base: JSON extern si han passat -game, BD SQLite si no
+        //carregam la config base: JSON extern si han passat -game, BD SQLite si no
         ConfigGame config;
         if (fitxerGame != null) {
             config = CarregadorGame.carregaFitxerExtern(fitxerGame);
@@ -61,7 +61,7 @@ public class Main {
             config = PartidaRepository.carregaConfig();
         }
 
-        // aplicam els mods en ordre (last wins per conflictes)
+        //aplicam els mods en ordre (last wins per conflictes)
         for (String fitxerMod : fitxersMod) {
             try {
                 ConfigGame mod = CarregadorGame.carregaFitxerExtern(fitxerMod);

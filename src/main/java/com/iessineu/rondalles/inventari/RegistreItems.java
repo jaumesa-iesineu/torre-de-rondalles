@@ -125,6 +125,14 @@ public class RegistreItems {
     public Map<String, Armadura> todesLesArmadures() { return armadures; }
     public Map<String, Pocio> totesLesPocions() { return pocions; }
 
+    //cerca un item per id (pocio-vida, falc-llaurador, capell-pages...); retorna null si no el troba
+    public Item itemPerId(String id) {
+        if (pocions.containsKey(id)) return pocio(id);
+        if (armes.containsKey(id)) return arma(id);
+        if (armadures.containsKey(id)) return armadura(id);
+        return null;
+    }
+
     //cerca un item pel nom en totes les categories; retorna null si no el troba
     public Item itemPerNom(String nom) {
         for (Map.Entry<String, Pocio> e : pocions.entrySet())

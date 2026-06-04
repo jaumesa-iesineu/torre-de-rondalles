@@ -580,6 +580,21 @@ return;
     }
 
     private void carregaItemsMapa() {
+        //si el game.json té posicions per aquest mapa, les usam (no escanejam el mapa)
+        if (config != null) {
+            List<PosicioItem> posicions = config.getPosicionsItemPerMapa(idMapaActual);
+            if (!posicions.isEmpty()) {
+                for (PosicioItem p : posicions) {
+                    Item item = RegistreItems.get().itemPerId(p.id);
+                    if (item != null) {
+                        itemsMapa.add(new ItemMapa(p.x, p.y, item));
+                        mapa.setCella(p.x, p.y, 'i'); //marca d'item per a la IA dels enemics
+                    }
+                }
+                return;
+            }
+        }
+        //fallback: escanejam el mapa per simbol 'i' (p. ex. mapes sense posicions al json)
         char[][] celles = mapa.getCelles();
         int comptador = 0;
         for (int y = 0; y < celles.length; y++) {

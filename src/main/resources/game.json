@@ -88,6 +88,30 @@
       {"mapa": "planta1", "simbol": "D", "x": 77, "y": 35}
      ]
   },
+  "items": {
+    "posicions": [
+      {"mapa": "planta1", "id": "pocio-vida", "x": 105, "y": 1},
+      {"mapa": "planta1", "id": "pocio-veri", "x": 107, "y": 1},
+      {"mapa": "planta1", "id": "pocio-foc",  "x": 109, "y": 1},
+      {"mapa": "planta1", "id": "pocio-gel",  "x": 111, "y": 1},
+      {"mapa": "planta1", "id": "pocio-vida", "x": 113, "y": 1},
+      {"mapa": "planta1", "id": "pocio-veri", "x": 105, "y": 2},
+      {"mapa": "planta1", "id": "pocio-foc",  "x": 85,  "y": 3},
+      {"mapa": "planta1", "id": "pocio-gel",  "x": 4,   "y": 5},
+      {"mapa": "planta1", "id": "pocio-vida", "x": 8,   "y": 5},
+      {"mapa": "planta1", "id": "pocio-veri", "x": 10,  "y": 7},
+      {"mapa": "planta1", "id": "pocio-foc",  "x": 14,  "y": 7},
+      {"mapa": "planta1", "id": "pocio-gel",  "x": 3,   "y": 8},
+      {"mapa": "planta1", "id": "pocio-vida", "x": 8,   "y": 8},
+      {"mapa": "planta1", "id": "pocio-veri", "x": 14,  "y": 8},
+      {"mapa": "planta1", "id": "pocio-foc",  "x": 8,   "y": 9},
+      {"mapa": "planta1", "id": "pocio-gel",  "x": 24,  "y": 14},
+      {"mapa": "planta1", "id": "pocio-vida", "x": 25,  "y": 17},
+      {"mapa": "planta1", "id": "pocio-veri", "x": 40,  "y": 22},
+      {"mapa": "planta1", "id": "pocio-foc",  "x": 40,  "y": 23},
+      {"mapa": "planta1", "id": "pocio-gel",  "x": 33,  "y": 24}
+    ]
+  },
   "npcs": {
     "tipus": [
       {

@@ -11,6 +11,7 @@ public class ConfigGame {
     public Map<String, int[]> colorsPresets; //ex: {"vermellCremat": [180,40,10], ...}
     public MapesGroup mapes;
     public EnemicsGroup enemics;
+    public ItemsGroup items;
 
     //grups niats que reflecteixen l'estructura del JSON
     public static class Configuracio {
@@ -25,6 +26,10 @@ public class ConfigGame {
     public static class EnemicsGroup {
         public List<TipusEnemic> tipus;
         public List<PosicioEnemic> posicions;
+    }
+
+    public static class ItemsGroup {
+        public List<PosicioItem> posicions;
     }
 
     //cerca el tipus que conté el simbol donat dins la seva llista de simbols
@@ -46,6 +51,14 @@ public class ConfigGame {
         if (enemics == null || enemics.posicions == null) return new ArrayList<>();
         List<PosicioEnemic> resultat = new ArrayList<>();
         for (PosicioEnemic p : enemics.posicions)
+            if (p.mapa.equals(mapaId)) resultat.add(p);
+        return resultat;
+    }
+
+    public List<PosicioItem> getPosicionsItemPerMapa(String mapaId) {
+        if (items == null || items.posicions == null) return new ArrayList<>();
+        List<PosicioItem> resultat = new ArrayList<>();
+        for (PosicioItem p : items.posicions)
             if (p.mapa.equals(mapaId)) resultat.add(p);
         return resultat;
     }
