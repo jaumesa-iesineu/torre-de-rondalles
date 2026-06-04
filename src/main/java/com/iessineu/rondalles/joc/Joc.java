@@ -64,6 +64,8 @@ public class Joc extends Motor {
     private int aiguaNx = 0, aiguaNy = 0;
     private boolean lliscantGel = false;
     private int gelDx = 0, gelDy = 0;
+    private long ultimPasGel = 0;
+    private static final long MS_PAS_GEL = 140;
 
     private static final int MAX_LOG = 3;
 
@@ -147,7 +149,40 @@ public class Joc extends Motor {
     }
 
     @Override
+    protected boolean estaAnimant() {
+        return lliscantGel;
+    }
+
+    @Override
     protected void actualitza(KeyStroke tecla) {
+        if (lliscantGel) {
+            long ara = System.currentTimeMillis();
+            if (ara - ultimPasGel >= MS_PAS_GEL) {
+                ultimPasGel = ara;
+                int gx = jugador.getX() + gelDx;
+                int gy = jugador.getY() + gelDy;
+                char terraDesti = mapa.getCelles()[Math.max(0, Math.min(mapa.getAlcada() - 1, gy))][Math.max(0, Math.min(mapa.getAmplada() - 1, gx))];
+                if (mapa.esPasable(gx, gy) && TipusTerra.de(terraDesti) == TipusTerra.GEL) {
+                    jugador.setX(gx);
+                    jugador.setY(gy);
+                    tickTorn();
+                } else {
+                    lliscantGel = false;
+                    if (mapa.esPasable(gx, gy)) {
+                        jugador.setX(gx);
+                        jugador.setY(gy);
+                        tickTorn();
+                    }
+                }
+                if (jugador.esMort()) {
+                    corrent = false;
+                }
+            }
+            return;
+        }
+
+        if (tecla == null) return;
+
         if (estat == Estat.MENU_INICIAL) {
             gestionaMenuInicial(tecla);
             return;
@@ -390,28 +425,6 @@ public class Joc extends Motor {
 
                 return;
             }
-        }
-
-        if (lliscantGel) {
-            int gx = jugador.getX() + gelDx;
-            int gy = jugador.getY() + gelDy;
-            char terraDesti = mapa.getCelles()[Math.max(0, Math.min(mapa.getAlcada() - 1, gy))][Math.max(0, Math.min(mapa.getAmplada() - 1, gx))];
-            if (mapa.esPasable(gx, gy) && TipusTerra.de(terraDesti) == TipusTerra.GEL) {
-                jugador.setX(gx);
-                jugador.setY(gy);
-                tickTorn();
-            } else {
-                lliscantGel = false;
-                if (mapa.esPasable(gx, gy)) {
-                    jugador.setX(gx);
-                    jugador.setY(gy);
-                    tickTorn();
-                }
-            }
-            if (jugador.esMort()) {
-                corrent = false;
-            }
-            return;
         }
 
         int nx = jugador.getX();

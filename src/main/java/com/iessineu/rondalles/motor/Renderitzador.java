@@ -807,8 +807,12 @@ public class Renderitzador { // classe per gestionar la pantalla
 
     //espera que l'usuari premi una tecla (bloquejant)
     //és bloquejant perquè el joc és per torns, no fa falta bucle actiu
-    public KeyStroke llegeixInput() throws IOException { // llegeixInput es perque llegeix la tecla que l'usuari ha premut
+    public KeyStroke llegeixInput() throws IOException {
         return screen.readInput();
+    }
+
+    public KeyStroke pollInput() throws IOException {
+        return screen.pollInput();
     }
 
     //dibuixa el menú inicial amb opcions navegables amb fletxes

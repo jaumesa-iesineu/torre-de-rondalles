@@ -32,6 +32,9 @@ public abstract class Motor {
     // cada joc sap com reaccionar a les tecles
     protected abstract void actualitza(KeyStroke tecla);
 
+    // override per indicar si el joc està en mig d'una animació (no esperar tecla)
+    protected boolean estaAnimant() { return false; }
+
     // cada joc sap com pintar la seva pantalla
     protected abstract void renderitza();
 
@@ -90,9 +93,17 @@ public abstract class Motor {
                 ex.printStackTrace(System.err);
             }
 
-            KeyStroke tecla = renderer.llegeixInput();
+            KeyStroke tecla;
+            if (estaAnimant()) {
+                tecla = renderer.pollInput();
+                if (tecla == null) {
+                    try { Thread.sleep(16); } catch (InterruptedException ignored) {}
+                }
+            } else {
+                tecla = renderer.llegeixInput();
+            }
 
-            if (tecla != null) {
+            if (tecla != null || estaAnimant()) {
                 try {
                     actualitza(tecla);
                 } catch (Exception ex) {
