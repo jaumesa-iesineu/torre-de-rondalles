@@ -2,6 +2,7 @@ package com.iessineu.rondalles.entitats;
 
 import com.googlecode.lanterna.TextColor;
 import com.iessineu.rondalles.joc.TipusEnemic;
+import com.iessineu.rondalles.joc.Simbols;
 import java.util.List;
 
 public class Enemic extends Entitat {
@@ -252,7 +253,7 @@ public class Enemic extends Entitat {
             if (cy >= 0 && cy < cells.length
                     && cx >= 0 && cx < cells[cy].length) {
 
-                if (paretsBloquejades && (cells[cy][cx] == '#' || cells[cy][cx] == '+' || cells[cy][cx] == '&')) {
+                if (paretsBloquejades && Simbols.bloquejaVisio(cells[cy][cx])) {
                     return false;
                 }
             }
@@ -417,13 +418,11 @@ public class Enemic extends Entitat {
     private boolean pucMourem(int nx, int ny, char[][] cells, Jugador jugador) {
         if (cells == null) return true;
         if (ny < 0 || ny >= cells.length || nx < 0 || nx >= cells[ny].length) return false;
+        char c = cells[ny][nx];
         if (travessaParets) {
-            if (cells[ny][nx] == '*') return false; // fantasmes no poden passar pel gel
+            if (c == '*') return false; // fantasmes no poden passar pel gel
         } else {
-            if (cells[ny][nx] == '#') return false;
-            if (cells[ny][nx] == '+') return false; // portes tancades
-            if (cells[ny][nx] == '&') return false; // portes bloquejades
-            if (cells[ny][nx] == 'i') return false; // no volem trepitjar els items
+            if (Simbols.bloquejaMoviment(c)) return false;
         }
         if (jugador != null && nx == jugador.getX() && ny == jugador.getY()) return false;
         //que no es posin uns damunt dels altres
@@ -476,7 +475,7 @@ public class Enemic extends Entitat {
         if (travessaParets) {
             return cells[ny][nx] != '*';
         }
-        return cells[ny][nx] != '#' && cells[ny][nx] != '+' && cells[ny][nx] != '&' && cells[ny][nx] != 'i';
+        return !Simbols.bloquejaMoviment(cells[ny][nx]);
     }
 
     public String[] getArtAscii() {

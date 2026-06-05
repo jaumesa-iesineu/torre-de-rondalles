@@ -9,6 +9,26 @@
         "maxSlotsInventari": 4
     },
 
+    "controls": {
+        "atacar": "a",
+        "fugir": "f",
+        "inventari": "i",
+        "interactuar": "e"
+    },
+
+    "musica": {
+        "menu": "menu.wav",
+        "pis_1": "pis1.wav",
+        "pis_2": "pis2.wav",
+        "pis_3": "pis3.wav",
+        "pis_4": "pis4.wav",
+        "pis_5": "pis5.wav",
+        "combat": "combat.wav",
+        "boss": "boss.wav",
+        "victoria": "victoria.wav",
+        "gameOver": "gameover.wav"
+    },
+
     "terrenys": [
         {
             "simbols": ["."],
@@ -289,6 +309,18 @@
                 "tier": 1
             }
         ]
+    },
+
+    "simbols": {
+        "mur": ["#"],
+        "portaTancada": ["+"],
+        "portaOberta": ["/"],
+        "portaBloquejada": ["&"],
+        "spawnJugador": ["@"],
+        "escalaBaix": ["<"],
+        "marcadorItem": ["i"],
+        "marcadorPorta": ["P"],
+        "marcadorNpc": ["N"]
     },
 
     "colorsPresets": {

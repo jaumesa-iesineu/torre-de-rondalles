@@ -140,6 +140,15 @@ public class Joc extends Motor {
             }
         }
 
+        //carregam els símbols especials del mapa des del JSON
+        Simbols.inicialitza(config != null ? config.simbols : null);
+
+        //carregam els controls des del JSON
+        Controls.inicialitza(config != null ? config.controls : null);
+
+        //carregam les pistes de música des del JSON
+        GestorMusica.inicialitza(config != null ? config.musica : null);
+
         //carregam les constants des del JSON
         if (config != null && config.configuracio != null) {
             ConfigGame.Configuracio cfg = config.configuracio;
@@ -180,7 +189,7 @@ public class Joc extends Motor {
             java.util.Arrays.fill(fila, ' ');
         }
 
-        GestorMusica.reprodueix(GestorMusica.Pista.MENU);
+        GestorMusica.reprodueix("MENU");
     }
 
     @Override
@@ -264,7 +273,7 @@ public class Joc extends Motor {
         }
         if (tecla.getKeyType() == KeyType.Character) {
             char c = tecla.getCharacter();
-            if (c == 'i' || c == 'I') {
+            if (Controls.esInventari(c)) {
                 estat = Estat.MON;
                 return;
             }
@@ -289,7 +298,7 @@ public class Joc extends Motor {
         if (tecla.getKeyType() == KeyType.Enter) {
             if (opcioMenuInicial == 0) {
                 estat = Estat.MON;
-                GestorMusica.reprodueix(GestorMusica.Pista.PIS_1);
+                GestorMusica.reprodueix("PIS_1");
             } else {
                 corrent = false;
             }
@@ -372,24 +381,22 @@ public class Joc extends Motor {
                     afegeixLog(nom + " aprofita! Has rebut " + danyRebut + " de dany.");
                 }
                 if (jugador.esMort()) {
-                    GestorMusica.reprodueix(GestorMusica.Pista.GAME_OVER);
+                    GestorMusica.reprodueix("GAME_OVER");
                     corrent = false;
                 }
             }
             return;
         }
-        if (c == 'f' || c == 'F') {
+        if (Controls.esFugir(c)) {
             enemicCombat = null;
 
-            GestorMusica.reprodueix(
-                    GestorMusica.Pista.valueOf("PIS_" + Math.min(pisActual, 5))
-            );
+            GestorMusica.reprodueix("PIS_" + Math.min(pisActual, 5));
 
             estat = Estat.MON;
             return;
         }
 
-        if (c == 'a' || c == 'A') {
+        if (Controls.esAtacar(c)) {
             String nom = enemicCombat.getNom().toUpperCase();
             int danyFet = SistemaCombat.atacaEnemic(jugador, enemicCombat);
             afegeixLog("Has atacat! " + nom + " ha rebut " + danyFet + " de dany.");
@@ -418,7 +425,7 @@ public class Joc extends Motor {
                 }
 
                 GestorMusica.reprodueix(
-                        GestorMusica.Pista.valueOf("PIS_" + Math.min(pisActual, 5))
+                        "PIS_" + Math.min(pisActual, 5)
                 );
 
                 estat = Estat.MON;
@@ -436,7 +443,7 @@ public class Joc extends Motor {
             }
 
             if (jugador.esMort()) {
-                GestorMusica.reprodueix(GestorMusica.Pista.GAME_OVER);
+                GestorMusica.reprodueix("GAME_OVER");
                 corrent = false;
             }
 
@@ -453,7 +460,7 @@ public class Joc extends Motor {
     private void gestionaMoviment(KeyStroke tecla) {
         if (tecla.getKeyType() == KeyType.Character) {
             char c = tecla.getCharacter();
-            if (c == 'i' || c == 'I') {
+            if (Controls.esInventari(c)) {
                 for (Enemic e : enemics) {
                     if (e.isActiu()) {
                         e.actualitzaIA(jugador, mapa.getCelles());
@@ -462,7 +469,7 @@ public class Joc extends Motor {
                 estat = Estat.INVENTARI;
                 return;
             }
-            if (c == 'e' || c == 'E') {
+            if (Controls.esInteractuar(c)) {
                 interactuaPorta();
                 return;
             }
@@ -519,7 +526,7 @@ public class Joc extends Motor {
             logCombat.clear();
             afegeixLog("Combat amb " + enemic.getNom().toUpperCase() + "!");
             estat = Estat.COMBAT;
-            GestorMusica.reprodueix(esBoss(enemic) ? GestorMusica.Pista.BOSS : GestorMusica.Pista.COMBAT);
+            GestorMusica.reprodueix(esBoss(enemic) ? "BOSS" : "COMBAT");
             return;
         }
 
@@ -547,7 +554,7 @@ public class Joc extends Motor {
             esperantSegonaAigua = false;
         }
 
-        if (simbolDesti == '<') {
+        if (Simbols.esEscalaBaix(simbolDesti)) {
             passaSeguantPis();
             return;
         }
@@ -605,7 +612,7 @@ public class Joc extends Motor {
     private void passaSeguantPis() {
         pisActual++;
         if (pisActual > config.mapes.ordre.size()) {
-            GestorMusica.reprodueix(GestorMusica.Pista.VICTORIA);
+            GestorMusica.reprodueix("VICTORIA");
             estat = Estat.VICTORIA;
             return;
         }
@@ -638,7 +645,7 @@ public class Joc extends Motor {
                 java.util.Arrays.fill(fila, ' ');
             }
 
-            GestorMusica.reprodueix(GestorMusica.Pista.valueOf("PIS_" + pisActual));
+            GestorMusica.reprodueix("PIS_" + pisActual);
         } catch (Exception ex) {
             corrent = false;
         }
@@ -674,7 +681,7 @@ public class Joc extends Motor {
                 break;
             }
             if (cy >= 0 && cy < celles.length && cx >= 0 && cx < celles[cy].length) {
-                if (celles[cy][cx] == '#' || celles[cy][cx] == '+' || celles[cy][cx] == '&') {
+                if (Simbols.bloquejaVisio(celles[cy][cx])) {
                     return false;
                 }
             }
@@ -737,7 +744,7 @@ public class Joc extends Motor {
         char[][] celles = mapa.getCelles();
         for (int y = 0; y < celles.length; y++) {
             for (int x = 0; x < celles[y].length; x++) {
-                if (celles[y][x] == 'P') {
+                if (Simbols.esMarcadorPorta(celles[y][x])) {
                     portes.add(new Porta(x, y));
                     celles[y][x] = '+';
                 }
@@ -749,7 +756,7 @@ public class Joc extends Motor {
         char[][] celles = mapa.getCelles();
         for (int y = 0; y < celles.length; y++) {
             for (int x = 0; x < celles[y].length; x++) {
-                if (celles[y][x] == 'N') {
+                if (Simbols.esMarcadorNpc(celles[y][x])) {
                     npcs.add(new NpcComerciants(x, y, pisActual, config));
                 }
             }
@@ -945,12 +952,12 @@ public class Joc extends Motor {
                 return;
             }
         }
-        //fallback: escanejam el mapa per simbol 'i' (p. ex. mapes sense posicions al json)
+        //fallback: escanejam el mapa per marcador d'item (p. ex. mapes sense posicions al json)
         char[][] celles = mapa.getCelles();
         int comptador = 0;
         for (int y = 0; y < celles.length; y++) {
             for (int x = 0; x < celles[y].length; x++) {
-                if (celles[y][x] == 'i') {
+                if (Simbols.esMarcadorItem(celles[y][x])) {
                     String id = switch (comptador % 4) {
                         case 0 ->
                             "pocio-vida";
@@ -1048,7 +1055,7 @@ public class Joc extends Motor {
         char[][] celles = mapa.getCelles();
         for (int y = 0; y < celles.length; y++) {
             for (int x = 0; x < celles[y].length; x++) {
-                if (celles[y][x] == '@') {
+                if (Simbols.esSpawnJugador(celles[y][x])) {
                     mapa.setCella(x, y, '.');
                     return x;
                 }
@@ -1068,7 +1075,7 @@ public class Joc extends Motor {
         char[][] celles = mapa.getCelles();
         for (int y = 0; y < celles.length; y++) {
             for (int x = 0; x < celles[y].length; x++) {
-                if (celles[y][x] == '@') {
+                if (Simbols.esSpawnJugador(celles[y][x])) {
                     return y;
                 }
             }

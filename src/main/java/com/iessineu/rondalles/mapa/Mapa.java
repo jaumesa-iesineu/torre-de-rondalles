@@ -4,6 +4,8 @@
  */
 package com.iessineu.rondalles.mapa;
 
+import com.iessineu.rondalles.joc.Simbols;
+
 /**
  *
  * @author jaume, dani, sergi, kanhai i pere
@@ -11,7 +13,6 @@ package com.iessineu.rondalles.mapa;
 public class Mapa { // classe per gestionar el mapa
 
     //la graella de caràcters que representa el mapa
-    //'#' = paret, '.' = terra, 'e' = enemic, 'i' = item, 'N' = npc
     private char[][] celles;
 
     //el nom del mapa, ve del fitxer .game
@@ -38,7 +39,7 @@ public class Mapa { // classe per gestionar el mapa
         char c = celles[y][x];
         //les parets i portes tancades no es travessen, tot lo demés sí
         //quan hi ha una entitat (enemic, npc...) s'hi pot entrar per interactuar
-        return c != '#' && c != '+' && c != '&';
+        return !Simbols.bloquejaMoviment(c);
     }
 
     //comprova si una posició té una porta (oberta o tancada)
@@ -47,7 +48,7 @@ public class Mapa { // classe per gestionar el mapa
             return false;
         }
         char c = celles[y][x];
-        return c == '+' || c == '/' || c == '&';
+        return Simbols.esPorta(c);
     }
 
     // getters i setters

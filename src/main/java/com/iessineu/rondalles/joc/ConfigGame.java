@@ -3,13 +3,18 @@ package com.iessineu.rondalles.joc;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
+import java.util.HashMap;
 
 //POJO arrel que Gson omple amb tot el game.json
 public class ConfigGame {
 
     public Configuracio configuracio;
-    public Map<String, int[]> colorsPresets; //ex: {"vermellCremat": [180,40,10], ...}
+    public Map<String, int[]> colorsPresets;
     public List<TerrenyConfig> terrenys;
+    public SimbolsConfig simbols;
+    public ControlsConfig controls;
+    public MusicaConfig musica;
     public MapesGroup mapes;
     public EnemicsGroup enemics;
     public ItemsGroup items;
@@ -41,6 +46,42 @@ public class ConfigGame {
         public boolean doblePas;
         public boolean llisca;
         public double modRadi = 1.0;
+    }
+
+    //definició de les tecles d'acció (controls)
+    public static class ControlsConfig {
+        public char atacar = 'a';
+        public char fugir = 'f';
+        public char inventari = 'i';
+        public char interactuar = 'e';
+    }
+
+    //definició dels fitxers de música per a cada situació
+    public static class MusicaConfig {
+        public String menu = "menu.wav";
+        public String pis_1 = "pis1.wav";
+        public String pis_2 = "pis2.wav";
+        public String pis_3 = "pis3.wav";
+        public String pis_4 = "pis4.wav";
+        public String pis_5 = "pis5.wav";
+        public String combat = "combat.wav";
+        public String boss = "boss.wav";
+        public String victoria = "victoria.wav";
+        public String gameOver = "gameover.wav";
+    }
+
+    //definició dels símbols especials del mapa (parets, portes, escales...)
+    public static class SimbolsConfig {
+
+        public List<Character> mur = Arrays.asList('#');
+        public List<Character> portaTancada = Arrays.asList('+');
+        public List<Character> portaOberta = Arrays.asList('/');
+        public List<Character> portaBloquejada = Arrays.asList('&');
+        public List<Character> spawnJugador = Arrays.asList('@');
+        public List<Character> escalaBaix = Arrays.asList('<');
+        public List<Character> marcadorItem = Arrays.asList('i');
+        public List<Character> marcadorPorta = Arrays.asList('P');
+        public List<Character> marcadorNpc = Arrays.asList('N');
     }
 
     public static class MapesGroup {

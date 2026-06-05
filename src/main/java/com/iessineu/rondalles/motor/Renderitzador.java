@@ -6,6 +6,7 @@ package com.iessineu.rondalles.motor;
 
 import com.iessineu.rondalles.entitats.Enemic;
 import com.iessineu.rondalles.entitats.Entitat;
+import com.iessineu.rondalles.joc.Simbols;
 import com.iessineu.rondalles.mapa.Mapa;
 import com.iessineu.rondalles.mapa.TipusTerra;
 import com.googlecode.lanterna.TerminalSize;
@@ -227,26 +228,14 @@ public class Renderitzador { // classe per gestionar la pantalla
             return new TextColor.RGB(t.getColorR(), t.getColorG(), t.getColorB());
         }
         //simbols especials que no son terrenys
-        return switch (c) {
-            case '#' ->
-                new TextColor.RGB(130, 130, 140); //parets
-            case 'e' ->
-                new TextColor.RGB(200, 50, 50); //enemic
-            case 'i' ->
-                new TextColor.RGB(220, 180, 50); //item
-            case 'N' ->
-                new TextColor.RGB(80, 200, 220); //npc
-            case '<' ->
-                new TextColor.RGB(200, 200, 50);  // escales
-            case '+' ->
-                new TextColor.RGB(180, 100, 40);  // porta tancada
-            case '/' ->
-                new TextColor.RGB(120, 80, 40);   // porta oberta
-            case '&' ->
-                new TextColor.RGB(200, 40, 40);   // porta bloquejada
-            default ->
-                new TextColor.RGB(90, 90, 90);
-        };
+        if (Simbols.esMur(c)) return new TextColor.RGB(130, 130, 140);
+        if (Simbols.esPortaTancada(c)) return new TextColor.RGB(180, 100, 40);
+        if (Simbols.esPortaOberta(c)) return new TextColor.RGB(120, 80, 40);
+        if (Simbols.esPortaBloquejada(c)) return new TextColor.RGB(200, 40, 40);
+        if (Simbols.esEscalaBaix(c)) return new TextColor.RGB(200, 200, 50);
+        if (Simbols.esMarcadorItem(c)) return new TextColor.RGB(220, 180, 50);
+        if (Simbols.esMarcadorNpc(c)) return new TextColor.RGB(80, 200, 220);
+        return new TextColor.RGB(90, 90, 90);
     }
 
     private TextColor fonsCasella(char c) {
@@ -255,12 +244,8 @@ public class Renderitzador { // classe per gestionar la pantalla
         if (t != null) {
             return new TextColor.RGB(t.getFonsR(), t.getFonsG(), t.getFonsB());
         }
-        return switch (c) {
-            case '#' ->
-                new TextColor.RGB(40, 40, 50);
-            default ->
-                TextColor.ANSI.BLACK;
-        };
+        if (Simbols.esMur(c)) return new TextColor.RGB(40, 40, 50);
+        return TextColor.ANSI.BLACK;
     }
 
     //aplica un factor d'oscuritat als components rgb del color
