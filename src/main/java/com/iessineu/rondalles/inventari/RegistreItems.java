@@ -17,6 +17,7 @@ public class RegistreItems {
     private final Map<String, Arma> armes = new LinkedHashMap<>();
     private final Map<String, Armadura> armadures = new LinkedHashMap<>();
     private final Map<String, Pocio> pocions = new LinkedHashMap<>();
+    private final Map<String, Clau> claus = new LinkedHashMap<>();
 
     private RegistreItems() {
         carregaDeJson();
@@ -83,6 +84,21 @@ public class RegistreItems {
                 ));
             }
         }
+
+        JsonArray jClaus = catalog.getAsJsonArray("claus");
+        if (jClaus != null) {
+            for (JsonElement e : jClaus) {
+                JsonObject o = e.getAsJsonObject();
+                String id = o.get("id").getAsString();
+                claus.put(id, new Clau(
+                    id,
+                    o.get("nom").getAsString(),
+                    o.get("pes").getAsInt(),
+                    o.get("simbol").getAsString().charAt(0),
+                    o.get("planta").getAsInt()
+                ));
+            }
+        }
     }
 
     public Arma arma(String id) {
@@ -103,6 +119,12 @@ public class RegistreItems {
         return new Pocio(src.getNom(), src.getPes(), src.getSimbol(), src.getTipus(), src.getValor());
     }
 
+    public Clau clau(String id) {
+        Clau src = claus.get(id);
+        if (src == null) throw new IllegalArgumentException("Clau desconeguda: " + id);
+        return new Clau(src.getId(), src.getNom(), src.getPes(), src.getSimbol(), src.getPlanta());
+    }
+
     public Map<String, Arma> todesLesArmes() { return armes; }
     public Map<String, Armadura> todesLesArmadures() { return armadures; }
     public Map<String, Pocio> totesLesPocions() { return pocions; }
@@ -111,6 +133,7 @@ public class RegistreItems {
         if (pocions.containsKey(id)) return pocio(id);
         if (armes.containsKey(id)) return arma(id);
         if (armadures.containsKey(id)) return armadura(id);
+        if (claus.containsKey(id)) return clau(id);
         return null;
     }
 
@@ -121,6 +144,8 @@ public class RegistreItems {
             if (e.getValue().getNom().equals(nom)) return arma(e.getKey());
         for (Map.Entry<String, Armadura> e : armadures.entrySet())
             if (e.getValue().getNom().equals(nom)) return armadura(e.getKey());
+        for (Map.Entry<String, Clau> e : claus.entrySet())
+            if (e.getValue().getNom().equals(nom)) return clau(e.getKey());
         return null;
     }
 }
