@@ -46,6 +46,7 @@ public class ConfigGame {
         public boolean doblePas;
         public boolean llisca;
         public double modRadi = 1.0;
+        public int mal;
     }
 
     //definició de les tecles d'acció (controls)

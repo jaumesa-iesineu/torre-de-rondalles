@@ -15,11 +15,13 @@ public class TipusTerra {
     private final boolean doblePas;
     private final boolean llisca;
     private final double modRadi;
+    private final int mal;
+
 
     private TipusTerra(List<Character> simbols, String nom,
                        int colorR, int colorG, int colorB,
                        int fonsR, int fonsG, int fonsB,
-                       boolean doblePas, boolean llisca, double modRadi) {
+                       boolean doblePas, boolean llisca, double modRadi, int mal) {
         this.simbols = simbols;
         this.nom = nom;
         this.colorR = colorR;
@@ -31,6 +33,7 @@ public class TipusTerra {
         this.doblePas = doblePas;
         this.llisca = llisca;
         this.modRadi = modRadi;
+        this.mal = mal;
     }
 
     //cache de simbol -> TipusTerra
@@ -44,7 +47,7 @@ public class TipusTerra {
             TipusTerra t = new TipusTerra(tc.simbols, tc.nom,
                     tc.colorR, tc.colorG, tc.colorB,
                     tc.fonsR, tc.fonsG, tc.fonsB,
-                    tc.doblePas, tc.llisca, tc.modRadi);
+                    tc.doblePas, tc.llisca, tc.modRadi, tc.mal);
             for (Character s : tc.simbols) {
                 cache.put(s, t);
             }
@@ -67,4 +70,5 @@ public class TipusTerra {
     public boolean isDoblePas() { return doblePas; }
     public boolean isLlisca() { return llisca; }
     public double getModRadi() { return modRadi; }
+    public int getMal() { return mal; }
 }

@@ -64,6 +64,22 @@
             "colorR": 180, "colorG": 230, "colorB": 255,
             "fonsR": 20, "fonsG": 60, "fonsB": 90,
             "doblePas": false, "llisca": true, "modRadi": 1.0
+        },
+        {
+            "simbols": ["♦"],
+            "nom": "puntxa",
+            "colorR": 180, "colorG": 230, "colorB": 255,
+            "fonsR": 20, "fonsG": 60, "fonsB": 90,
+            "doblePas": false, "llisca": true, "modRadi": 1.0,
+            "mal": 10
+        },
+        {
+            "simbols": ["Ø"],
+            "nom": "buit",
+            "colorR": 180, "colorG": 230, "colorB": 255,
+            "fonsR": 20, "fonsG": 60, "fonsB": 90,
+            "doblePas": false, "llisca": true, "modRadi": 1.0,
+            "mal": 1000
         }
     ],
 

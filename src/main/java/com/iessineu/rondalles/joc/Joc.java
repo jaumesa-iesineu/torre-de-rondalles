@@ -564,6 +564,11 @@ public class Joc extends Motor {
         jugador.setEstatJugador(Jugador.EstatJugador.MOVIMENT);
 
         TipusTerra terraPeu = TipusTerra.de(mapa.getCelles()[ny][nx]);
+        
+        if(terraPeu !=null && terraPeu.getMal()>0){
+               jugador.rebreDany(terraPeu.getMal());
+        }
+        
         if (terraPeu != null && terraPeu.isLlisca()) {
             lliscantGel = true;
             gelDx = dx;
