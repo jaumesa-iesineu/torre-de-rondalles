@@ -368,7 +368,7 @@
         "nom": "DimoniBoiet",
         "vida": 10, "atac": 5, "radi": 5,
         "colorR": 180, "colorG": 40, "colorB": 10,
-        "patroIA": "perseguir",
+        "patroIA": "pacman",
         "esBoss": false,
         "artFitxer": "art/dimoni.txt"
       },

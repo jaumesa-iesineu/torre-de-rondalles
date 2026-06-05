@@ -17,8 +17,10 @@ public class TipusEnemic {
     public boolean travessaParets; //pot passar a traves de parets (#)
     public boolean estatica; //per compatibilitat amb la BD (millor usar patroIA)
 
-    //patrons d'IA: "perseguir", "guardia", "estatic"
+    //patrons d'IA: "perseguir", "guardia", "estatic", "pacman"
     public String patroIA = "perseguir";
+    public int pacmanPrevisions = 4;  // passes de previsió per Pinky i Clyde
+    public int pacmanFlancPasses = 4; // distància de flanqueig lateral per Clyde
     public boolean requereixDescobriment; //Bubota nomes persegueix si l'han vist
     public boolean esBoss; //quan el maten, apareix una clau a l'inventari
 

@@ -63,6 +63,8 @@ public class Enemic extends Entitat {
 
     //patrons d'IA definits al JSON
     private String patroIA = "perseguir";
+    private int pacmanPrevisions = 4;
+    private int pacmanFlancPasses = 4;
     private boolean requereixDescobriment;
     private boolean esBoss;
     private String clauDropejada;
@@ -165,6 +167,7 @@ public class Enemic extends Entitat {
         switch (patroIA) {
             case "guardia" -> actualitzaIAGuardia(jugador, cells);
             case "estatic" -> {} //trampa estatica, no fa res de res
+            case "pacman" -> actualitzaIAPacman(jugador, cells);
             default -> actualitzaIAPerseguir(jugador, cells);
         }
     }
@@ -402,9 +405,64 @@ public class Enemic extends Entitat {
         setVelocitat(def.velocitat);
         setTravessaParets(def.travessaParets);
         this.patroIA = def.patroIA != null ? def.patroIA : "perseguir";
+        this.pacmanPrevisions = def.pacmanPrevisions;
+        this.pacmanFlancPasses = def.pacmanFlancPasses;
         this.requereixDescobriment = def.requereixDescobriment;
         this.esBoss = def.esBoss;
         this.clauDropejada = def.clauDropejada;
+    }
+
+    private void actualitzaIAPacman(Jugador jugador, char[][] cells) {
+        if (!potPerseguir(jugador, cells)) {
+            canviaEstat(EstatEnemic.PATRULLANT);
+            return;
+        }
+        canviaEstat(EstatEnemic.PERSEGUINT);
+
+        // recull tots els enemics del mateix tipus que estan perseguint, ordenats per distancia al jugador
+        List<Enemic> mateixTipus = new java.util.ArrayList<>();
+        if (totsEnemics != null) {
+            for (Enemic e : totsEnemics) {
+                if (e.isActiu() && e.lletra == this.lletra && e.estatEnemic == EstatEnemic.PERSEGUINT) {
+                    mateixTipus.add(e);
+                }
+            }
+        }
+        mateixTipus.sort((a, b) -> Double.compare(a.distanciaAl(jugador), b.distanciaAl(jugador)));
+
+        int rol = mateixTipus.indexOf(this);
+        int tx, ty;
+
+        if (rol <= 0) {
+            // Blinky: va directe al jugador
+            tx = jugador.getX();
+            ty = jugador.getY();
+        } else if (rol == 1) {
+            // Pinky: preveu on estarà el jugador en N passes
+            tx = jugador.getX() + jugador.getDirX() * pacmanPrevisions;
+            ty = jugador.getY() + jugador.getDirY() * pacmanPrevisions;
+        } else {
+            // Clyde: flanqueja per la perpendicular al moviment del jugador
+            int perpX = jugador.getDirY();
+            int perpY = -jugador.getDirX();
+            int signe = (rol % 2 == 0) ? 1 : -1;
+            tx = jugador.getX() + perpX * signe * pacmanFlancPasses;
+            ty = jugador.getY() + perpY * signe * pacmanFlancPasses;
+        }
+
+        // limita als bounds del mapa
+        if (cells != null) {
+            ty = Math.max(0, Math.min(cells.length - 1, ty));
+            tx = Math.max(0, Math.min(cells[0].length - 1, tx));
+        }
+
+        int[] pas = primerPasBFS(tx, ty, cells);
+        if (pas[0] != -1) {
+            mouCapA(pas[0], pas[1], cells, jugador);
+        } else {
+            // si no arriba al punt objectiu, persegueix directe
+            mouCapA(jugador.getX(), jugador.getY(), cells, jugador);
+        }
     }
 
     protected void mouCapA(int tx, int ty, char[][] cells, Jugador jugador) {
