@@ -38,7 +38,7 @@ public class Mapa { // classe per gestionar el mapa
         char c = celles[y][x];
         //les parets i portes tancades no es travessen, tot lo demés sí
         //quan hi ha una entitat (enemic, npc...) s'hi pot entrar per interactuar
-        return c != '#' && c != '+';
+        return c != '#' && c != '+' && c != '&';
     }
 
     //comprova si una posició té una porta (oberta o tancada)
@@ -47,7 +47,7 @@ public class Mapa { // classe per gestionar el mapa
             return false;
         }
         char c = celles[y][x];
-        return c == '+' || c == '/';
+        return c == '+' || c == '/' || c == '&';
     }
 
     // getters i setters

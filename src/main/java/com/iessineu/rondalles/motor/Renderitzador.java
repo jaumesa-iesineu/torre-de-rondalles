@@ -242,6 +242,8 @@ public class Renderitzador { // classe per gestionar la pantalla
                 new TextColor.RGB(180, 100, 40);  // porta tancada
             case '/' ->
                 new TextColor.RGB(120, 80, 40);   // porta oberta
+            case '&' ->
+                new TextColor.RGB(200, 40, 40);   // porta bloquejada
             default ->
                 new TextColor.RGB(90, 90, 90);
         };
@@ -817,7 +819,7 @@ public class Renderitzador { // classe per gestionar la pantalla
         pintaTextFons(colArm + 4 * 14, filaArm, txtArma, armaEq != null ? armaEq.getColor() : gris, fonsPanell);
 
         //instruccions
-        pintaTextFons(colIni + 2, filaIni + alcadaPanel - 2, "1-4 equipar  |  ESC/E tancar", gris, fonsPanell);
+        pintaTextFons(colIni + 2, filaIni + alcadaPanel - 2, "1-4 equipar  |  ESC/I tancar", gris, fonsPanell);
 
         screen.refresh();
     }

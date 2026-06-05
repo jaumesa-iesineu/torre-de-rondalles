@@ -247,7 +247,7 @@ public class Enemic extends Entitat {
             if (cy >= 0 && cy < cells.length
                     && cx >= 0 && cx < cells[cy].length) {
 
-                if (paretsBloquejades && (cells[cy][cx] == '#' || cells[cy][cx] == '+')) {
+                if (paretsBloquejades && (cells[cy][cx] == '#' || cells[cy][cx] == '+' || cells[cy][cx] == '&')) {
                     return false;
                 }
             }
@@ -416,6 +416,7 @@ public class Enemic extends Entitat {
         } else {
             if (cells[ny][nx] == '#') return false;
             if (cells[ny][nx] == '+') return false; // portes tancades
+            if (cells[ny][nx] == '&') return false; // portes bloquejades
             if (cells[ny][nx] == 'i') return false; // no volem trepitjar els items
         }
         if (jugador != null && nx == jugador.getX() && ny == jugador.getY()) return false;
@@ -469,7 +470,7 @@ public class Enemic extends Entitat {
         if (travessaParets) {
             return cells[ny][nx] != '*';
         }
-        return cells[ny][nx] != '#' && cells[ny][nx] != '+' && cells[ny][nx] != 'i';
+        return cells[ny][nx] != '#' && cells[ny][nx] != '+' && cells[ny][nx] != '&' && cells[ny][nx] != 'i';
     }
 
     public String[] getArtAscii() {
