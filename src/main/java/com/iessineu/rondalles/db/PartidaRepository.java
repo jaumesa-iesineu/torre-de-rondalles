@@ -16,8 +16,8 @@ public class PartidaRepository {
 
     private static final String URL = "jdbc:sqlite:rondalles.db";
 
-    // inicialitza la BD des del game.json empaquetado (sense -game)
-    // si les taules ja existeixen i no estan buides, no fa res
+    //inicialitza sa BD des del game.json (sense -game)
+    //si ses taules ja existeixen i no estan buides, no fa res
     public static void inicialitzaDefecte() {
         try {
             com.iessineu.rondalles.joc.ConfigGame config =
@@ -33,7 +33,7 @@ public class PartidaRepository {
         inicialitza(config, false);
     }
 
-    //amb forcar=true, esborra les dades existents i les torna a posar des del config
+    //amb forcar=true, esborra ses dades existents i les torna a posar des del config
     public static void inicialitza(ConfigGame config, boolean forcar) {
         try (Connection conn = DriverManager.getConnection(URL);
              Statement st = conn.createStatement()) {
@@ -154,7 +154,7 @@ public class PartidaRepository {
         }
     }
 
-    // reconstrueix un ConfigGame llegint les taules de la BD (s'usa quan no es passa -game)
+    //reconstrueix un ConfigGame llegint ses taules de la BD (quant no es passa -game)
     public static ConfigGame carregaConfig() {
         ConfigGame config = new ConfigGame();
         try (Connection conn = DriverManager.getConnection(URL);

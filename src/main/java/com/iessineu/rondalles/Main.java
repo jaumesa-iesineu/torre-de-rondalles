@@ -18,10 +18,10 @@ import java.util.List;
 public class Main {
 
     //arguments acceptats:
-    //(res)     -> carrega la config des de la BD SQLite (joc empaquetado)
-    //--game <fitxer> -> carrega el JSON extern i el sincronitza a SQLite (màxim 1)
+    //(res)     -> carrega sa config des del game.json de dins
+    //--game <fitxer> -> carrega un JSON extern i el sincronitza (maxim 1)
     //-mod/-m <fitxer> -> aplica un mod JSON sobre la config base (es pot repetir, ordre important)
-    //-mute     -> arranca sense música
+    //-mute     -> arranca sense musica
     //mapes     -> obre l'editor de mapes buit
     //mapes <fitxer> -> obre l'editor de mapes amb un fitxer existent
     public static void main(String[] args) throws Exception {

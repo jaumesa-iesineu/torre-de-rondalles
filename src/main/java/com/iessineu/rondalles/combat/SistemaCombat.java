@@ -5,7 +5,7 @@ import com.iessineu.rondalles.entitats.Jugador;
 
 public class SistemaCombat {
 
-    public static int calculaDany(int atac, int defensa) { //dany mínim 1 sempre
+    public static int calculaDany(int atac, int defensa) { //dany minim 1 sempre
         return Math.max(1, atac - defensa);
     }
 
@@ -16,6 +16,7 @@ public class SistemaCombat {
     }
 
     public static int atacaJugador(Enemic enemic, Jugador jugador) {
+        //l'enemic ataca es jugador i pot esquivar
         if (jugador.esquiva()) {
             return -1; // -1 = esquivat
         }

@@ -13,7 +13,7 @@ public class GestorMusica {
     private static String pistaActual = null;
     private static final Map<String, String> pistes = new HashMap<>();
 
-    // carrega les pistes des del JSON
+    //carrega ses pistes des del JSON
     public static void inicialitza(ConfigGame.MusicaConfig cfg) {
         pistes.clear();
         if (cfg == null) return;
