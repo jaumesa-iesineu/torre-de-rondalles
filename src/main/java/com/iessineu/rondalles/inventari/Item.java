@@ -7,12 +7,12 @@ import com.iessineu.rondalles.entitats.Jugador;
  *
  * @author kanhai, jaume, dani, sergi, pere
  */
-public abstract class Item { // classe base per a tots els items del joc
+public abstract class Item { //classe base per a tots els items del joc
 
     protected String nom;
     protected int pes;
     protected char simbol;
-    protected int tier; // 0=comú 1=inusual 2=rar 3=èpic
+    protected int tier; //0=comu 1=inusual 2=rar 3=epic
 
     public Item(String nom, int pes, char simbol) {
         this.nom = nom;
@@ -26,10 +26,10 @@ public abstract class Item { // classe base per a tots els items del joc
         this.tier = tier;
     }
 
-    // cada item sap com afectar el jugador quan s'equipa
+    //cada item sap com afectar es jugador quant s'equipa o s'usa
     public abstract void aplicaEfecte(Jugador jugador);
 
-    // cada item defineix el seu color per al renderitzador
+    //cada item defineix el seu color per al renderitzador
     public abstract TextColor getColor();
 
     public String getNom() {

@@ -56,7 +56,7 @@ public class Pocio extends Item {
             case GEL ->
                 enemic.setTornsGel(valor);
             case VIDA -> {
-            } // VIDA no té efecte sobre enemics
+            } //VIDA no te efecte sobre enemics
         }
     }
 

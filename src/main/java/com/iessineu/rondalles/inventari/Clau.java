@@ -28,6 +28,6 @@ public class Clau extends Item {
 
     @Override
     public TextColor getColor() {
-        return new TextColor.RGB(255, 215, 0);
+        return new TextColor.RGB(255, 215, 0); //daurat, com ha de ser
     }
 }

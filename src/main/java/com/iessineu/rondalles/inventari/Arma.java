@@ -7,10 +7,10 @@ import com.iessineu.rondalles.entitats.Jugador;
  *
  * @author kanhai, jaume, dani, sergi, pere
  */
-public class Arma extends Item { // arma equipable pel jugador
+public class Arma extends Item { //arma equipable pel jugador
 
     private int atac;
-    private int rang; // 1 = cuerp a cuerp, 2 = distància
+    private int rang; //1 = cos a cos, 2 = distancia
 
     public Arma(String nom, int pes, char simbol, int atac, int rang) {
         super(nom, pes, simbol);
@@ -19,7 +19,7 @@ public class Arma extends Item { // arma equipable pel jugador
     }
 
     @Override
-    public void aplicaEfecte(Jugador jugador) { // suma l'atac de l'arma a les stats del jugador
+    public void aplicaEfecte(Jugador jugador) { //suma l'atac de l'arma a les stats del jugador
         jugador.setAtacExtra(atac);
     }
 
@@ -32,13 +32,13 @@ public class Arma extends Item { // arma equipable pel jugador
     }
 
     @Override
-    public TextColor getColor() { // daurat — intensitat creix amb l'atac (nivell 1-3)
+    public TextColor getColor() { //daurat — intensitat creix amb l'atac (nivell 1-3)
         if (atac <= 3) {
-            return new TextColor.RGB(180, 140, 40);  // daurat apagat
+            return new TextColor.RGB(180, 140, 40);  //daurat apagat
         }
         if (atac <= 9) {
-            return new TextColor.RGB(220, 180, 50);  // daurat mitjà
+            return new TextColor.RGB(220, 180, 50);  //daurat mitja
         }
-        return new TextColor.RGB(255, 215, 0);          // daurat brillant
+        return new TextColor.RGB(255, 215, 0);       //daurat brillant
     }
 }

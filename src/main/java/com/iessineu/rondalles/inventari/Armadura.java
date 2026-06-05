@@ -7,7 +7,7 @@ import com.iessineu.rondalles.entitats.Jugador;
  *
  * @author kanhai, jaume, dani, sergi, pere
  */
-public class Armadura extends Item { // armadura equipable per slot
+public class Armadura extends Item { //armadura equipable per slot
 
     public enum Slot {
         CASC,
@@ -17,7 +17,7 @@ public class Armadura extends Item { // armadura equipable per slot
     }
 
     private int defensa;
-    private Slot slot; // on s'equipa aquesta peça
+    private Slot slot; //on s'equipa aquesta peça
 
     public Armadura(String nom, int pes, char simbol, int defensa, Slot slot) {
         super(nom, pes, simbol);
@@ -26,7 +26,7 @@ public class Armadura extends Item { // armadura equipable per slot
     }
 
     @Override
-    public void aplicaEfecte(Jugador jugador) { // Inventari crida aquest mètode després de recalcular tota la defensa equipada
+    public void aplicaEfecte(Jugador jugador) { //Inventari crida aquest metode despres de recalcular tota la defensa equipada
         jugador.setDefensaExtra(defensa);
     }
 
@@ -40,24 +40,24 @@ public class Armadura extends Item { // armadura equipable per slot
 
     @Override
     public TextColor getColor() {
-        // cada slot té un color base; la intensitat puja amb la defensa (nivells 1/2/3)
+        //cada slot te un color base; la intensitat puja amb la defensa (nivells 1/2/3)
         return switch (slot) {
             case CASC ->
-                defensa <= 1 ? new TextColor.RGB(100, 160, 100) // verd apagat
-                : defensa <= 3 ? new TextColor.RGB(60, 200, 60) // verd mitjà
-                : new TextColor.RGB(0, 255, 80);   // verd brillant
+                defensa <= 1 ? new TextColor.RGB(100, 160, 100) //verd apagat
+                : defensa <= 3 ? new TextColor.RGB(60, 200, 60) //verd mitja
+                : new TextColor.RGB(0, 255, 80);   //verd brillant
             case COS ->
-                defensa <= 2 ? new TextColor.RGB(100, 100, 180) // blau apagat
-                : defensa <= 5 ? new TextColor.RGB(60, 60, 220) // blau mitjà
-                : new TextColor.RGB(80, 120, 255);  // blau brillant
+                defensa <= 2 ? new TextColor.RGB(100, 100, 180) //blau apagat
+                : defensa <= 5 ? new TextColor.RGB(60, 60, 220) //blau mitja
+                : new TextColor.RGB(80, 120, 255);  //blau brillant
             case CAMES ->
-                defensa <= 1 ? new TextColor.RGB(160, 100, 60) // marró apagat
-                : defensa <= 3 ? new TextColor.RGB(200, 130, 60) // marró mitjà
-                : new TextColor.RGB(240, 160, 60);   // marró brillant
+                defensa <= 1 ? new TextColor.RGB(160, 100, 60) //marro apagat
+                : defensa <= 3 ? new TextColor.RGB(200, 130, 60) //marro mitja
+                : new TextColor.RGB(240, 160, 60);   //marro brillant
             case PEUS ->
-                defensa <= 1 ? new TextColor.RGB(120, 80, 120) // porpra apagat
-                : defensa <= 2 ? new TextColor.RGB(170, 80, 170) // porpra mitjà
-                : new TextColor.RGB(220, 80, 220);  // porpra brillant
+                defensa <= 1 ? new TextColor.RGB(120, 80, 120) //porpra apagat
+                : defensa <= 2 ? new TextColor.RGB(170, 80, 170) //porpra mitja
+                : new TextColor.RGB(220, 80, 220);  //porpra brillant
         };
     }
 }

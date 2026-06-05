@@ -31,6 +31,7 @@ public class RegistreItems {
     }
 
     private void carregaDeJson() {
+        //carregam tots els items del game.json d'una vegada
         InputStream in = getClass().getResourceAsStream("/game.json");
         if (in == null) throw new RuntimeException("No s'ha trobat game.json");
 

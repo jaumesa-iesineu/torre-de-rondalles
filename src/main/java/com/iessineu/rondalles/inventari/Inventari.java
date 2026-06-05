@@ -17,7 +17,7 @@ public class Inventari {
 
     }
 
-    // slots fixos — null = buit
+    //slots fixos — null = buit
     private final Slot[] slots;
 
     public Inventari() {
@@ -39,24 +39,24 @@ public class Inventari {
             return false;
         }
 
-        // si ja hi ha un slot amb el mateix tipus, apila
+        //si ja hi ha un slot amb el mateix tipus, apila
         for (int i = 0; i < maxSlots; i++) {
             if (slots[i] != null && slots[i].item().getNom().equals(item.getNom())) {
                 slots[i] = new Slot(slots[i].item(), slots[i].quantitat() + 1);
                 return true;
             }
         }
-        // si no, primer slot buit
+        //si no, primer slot buit
         for (int i = 0; i < maxSlots; i++) {
             if (slots[i] == null) {
                 slots[i] = new Slot(item, 1);
                 return true;
             }
         }
-        return false; // inventari ple
+        return false; //inventari ple
     }
 
-    // usa 1 unitat del slot (0-based). si arriba a 0 el buida
+    //usa 1 unitat del slot (0-based). si arriba a 0 el buida
     public void elimina(int index) {
         if (index < 0 || index >= maxSlots || slots[index] == null) {
             return;
@@ -94,7 +94,7 @@ public class Inventari {
         if (anterior != null) {
             afegeix(anterior);
         }
-        // treure armadura dels slots si hi és
+        //treure armadura dels slots si hi es
         for (int i = 0; i < maxSlots; i++) {
             if (slots[i] != null && slots[i].item() == armadura) {
                 elimina(i);
