@@ -64,6 +64,7 @@ public class Enemic extends Entitat {
     private String patroIA = "perseguir";
     private boolean requereixDescobriment;
     private boolean esBoss;
+    private String clauDropejada;
 
     public void setTotsEnemics(List<Enemic> l) {
         this.totsEnemics = l;
@@ -111,6 +112,10 @@ public class Enemic extends Entitat {
 
     public boolean isBoss() {
         return esBoss;
+    }
+
+    public String getClauDropejada() {
+        return clauDropejada;
     }
 
     public String getNom() {
@@ -395,6 +400,7 @@ public class Enemic extends Entitat {
         this.patroIA = def.patroIA != null ? def.patroIA : "perseguir";
         this.requereixDescobriment = def.requereixDescobriment;
         this.esBoss = def.esBoss;
+        this.clauDropejada = def.clauDropejada;
     }
 
     protected void mouCapA(int tx, int ty, char[][] cells, Jugador jugador) {

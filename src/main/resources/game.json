@@ -322,6 +322,7 @@
         "velocitat": 2,
         "patroIA": "guardia",
         "esBoss": true,
+        "clauDropejada": "clau-planta1",
         "artFitxer": "art/gegant.txt"
       },
       {
@@ -332,6 +333,7 @@
         "velocitat": 2,
         "patroIA": "guardia",
         "esBoss": true,
+        "clauDropejada": "clau-planta1",
         "artFitxer": "art/drac.txt"
       },
       {
@@ -341,6 +343,7 @@
         "colorR": 180, "colorG": 50, "colorB": 220,
         "patroIA": "estatic",
         "esBoss": true,
+        "clauDropejada": "clau-planta1",
         "artFitxer": "art/maria.txt"
       }
     ],

@@ -21,11 +21,6 @@ public class NpcComerciants extends Entitat {
                 this.resposta = enigme.resposta;
             }
         }
-        //fallback per si no hi ha enigmes al JSON
-        if (pregunta == null) {
-            this.pregunta = "Tenc ales però no vol, tenc cua però no és animal. Què sóc?";
-            this.resposta = "una fletxa";
-        }
     }
 
     public String getEnigma() {

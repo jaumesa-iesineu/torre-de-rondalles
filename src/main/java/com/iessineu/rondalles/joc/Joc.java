@@ -43,9 +43,6 @@ public class Joc extends Motor {
 
     // --- Pisos ---
     private int pisActual = 1;
-    private static final String[] FITXERS_PISOS = {
-        "planta1", "planta2", "planta3", "planta4", "planta5"
-    };
 
     // --- Portes ---
     private List<Porta> portes = new ArrayList<>();
@@ -403,19 +400,21 @@ public class Joc extends Motor {
                 boolean eraBoss = esBoss(enemicCombat);
                 int bossX = enemicCombat.getX();
                 int bossY = enemicCombat.getY();
+                String clauDropejada = enemicCombat.getClauDropejada();
 
                 enemics.remove(enemicCombat);
                 enemicCombat = null;
 
-                if (eraBoss) {
-                    String clauId = "clau-planta" + pisActual;
+                if (eraBoss && clauDropejada != null && !clauDropejada.isBlank()) {
                     try {
-                        Clau clau = RegistreItems.get().clau(clauId);
+                        Clau clau = RegistreItems.get().clau(clauDropejada);
                         jugador.afegeixItem(clau);
                         afegeixLog("Has derrotat es boss! Has obtingut la " + clau.getNom() + ".");
                     } catch (Exception ex) {
                         afegeixLog("Has derrotat es boss!");
                     }
+                } else if (eraBoss) {
+                    afegeixLog("Has derrotat es boss!");
                 }
 
                 GestorMusica.reprodueix(
@@ -506,7 +505,11 @@ public class Joc extends Motor {
         if (npc != null) {
             npcActual = npc;
             enigmaInput = "";
-            estat = npc.isEnigmaResult() ? Estat.COMERCIANT : Estat.ENIGMA;
+            if (npc.getEnigma() == null || npc.isEnigmaResult()) {
+                estat = Estat.COMERCIANT;
+            } else {
+                estat = Estat.ENIGMA;
+            }
             return;
         }
 
@@ -601,13 +604,13 @@ public class Joc extends Motor {
 
     private void passaSeguantPis() {
         pisActual++;
-        if (pisActual > FITXERS_PISOS.length) {
+        if (pisActual > config.mapes.ordre.size()) {
             GestorMusica.reprodueix(GestorMusica.Pista.VICTORIA);
             estat = Estat.VICTORIA;
             return;
         }
         try {
-            String idMapa = FITXERS_PISOS[pisActual - 1];
+            String idMapa = config.mapes.ordre.get(pisActual - 1);
             idMapaActual = idMapa;
             fitxerMapa = idMapa;
             MapaConfig mc = config.getMapaConfig(idMapa);
@@ -642,13 +645,11 @@ public class Joc extends Motor {
     }
 
     private void exploraClausPisAnterior() {
-        String clauAnterior = "clau-planta" + (pisActual - 1);
         Inventari inv = jugador.getInventari();
-        for (int i = 0; i < inv.getMaxSlots(); i++) {
+        for (int i = inv.getMaxSlots() - 1; i >= 0; i--) {
             var slot = inv.getSlot(i);
-            if (slot != null && slot.item() instanceof Clau clau && clau.getId().equals(clauAnterior)) {
+            if (slot != null && slot.item() instanceof Clau) {
                 inv.elimina(i);
-                break;
             }
         }
     }
