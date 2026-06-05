@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Enemic extends Entitat {
 
-    // color i art carregats des del game.json
+    //color i art carregats des del game.json
     protected TextColor colorDef = null;
     protected String[] artAscii = null;
 
@@ -37,25 +37,25 @@ public class Enemic extends Entitat {
 
     protected EstatEnemic estatEnemic;
 
-    //camps per area-boss
+    //camps per area-boss (no surten de la seva zona)
     private int spawnX;
     private int spawnY;
     private int area;
 
-    //velocitat de l'enemic (cada quants torns pot actuar)
+    //velocitat de l'enemic (cada quants torns actua)
     private int velocitat = 1;
     private int contadorMoviment = 0;
 
-    //pot passar a través de parets (configurable des del JSON)
+    //pot passar a traves de parets (configurable des del JSON)
     protected boolean travessaParets;
 
-    //primer contacte: fins que no veu el jugador sense parets pel mig, no activa visió fantasma
+    //primer contacte: fins que no veu el jugador sense parets, no activa visio fantasma
     private boolean haVistJugador;
 
-    //l'enemic només comença a perseguir quan el jugador l'ha vist
+    //l'enemic nomes comenca a perseguir quant el jugador l'ha vist
     private boolean descobert;
 
-    //per evitar que es posin uns damunt dels altres
+    //per evitar que es posin uns damunt dels altres (serveix molt)
     private List<Enemic> totsEnemics;
 
     //nom per als logs de combat (ex: "Bubota", "Drac")
@@ -123,7 +123,7 @@ public class Enemic extends Entitat {
         return nom;
     }
 
-    //retorna true si l'enemic pot actuar aquest torn (segons la seva velocitat)
+    //retorna true si l'enemic pot actuar aquest torn (segons sa velocitat)
     public boolean haDActuar() {
         contadorMoviment++;
         boolean actua = contadorMoviment >= velocitat;
@@ -133,7 +133,7 @@ public class Enemic extends Entitat {
 
     protected boolean dinsArea(int px, int py) {
         if (area <= 0) return true; //si no hi ha area, sempre es dins
-        //quadrat simple al voltant del spawn (±area en X i Y)
+        //quadrat simple al voltant del spawn (+-area en X i Y)
         return Math.abs(spawnX - px) <= area && Math.abs(spawnY - py) <= area;
     }
 
@@ -150,7 +150,7 @@ public class Enemic extends Entitat {
         }
     }
 
-    //constructor simple: les stats es carreguen despres amb aplicaDefinicio
+    //constructor simple: ses stats es carreguen despres amb aplicaDefinicio
     public Enemic(int x, int y, char simbol) {
         super(x, y, simbol);
         this.estatEnemic = EstatEnemic.PATRULLANT;
@@ -159,17 +159,18 @@ public class Enemic extends Entitat {
     }
 
     // --- IA generica segons el patro definit al JSON ---
+    //cada enemic te el seu comportament: perseguir, guardia, estatic...
 
     public void actualitzaIA(Jugador jugador, char[][] cells) {
         switch (patroIA) {
             case "guardia" -> actualitzaIAGuardia(jugador, cells);
-            case "estatic" -> {} //trampa estatica, no fa res
+            case "estatic" -> {} //trampa estatica, no fa res de res
             default -> actualitzaIAPerseguir(jugador, cells);
         }
     }
 
     public void actualitzaIAambRadi(Jugador jugador, int radEfectiu) {
-        if ("estatic".equals(patroIA)) return; //trampa, no reacciona
+        if ("estatic".equals(patroIA)) return; //es trampa, no reacciona a res
         boolean pot = true;
         if (requereixDescobriment && !isDescobert()) pot = false;
         if (pot && distanciaAl(jugador) < radEfectiu) {
@@ -200,6 +201,7 @@ public class Enemic extends Entitat {
             if (pas[0] != -1) mouCapA(pas[0], pas[1], cells, jugador);
         } else if (!dinsArea(jugador.getX(), jugador.getY()) && distanciaAlSpawn() > 1.0) {
             //el jugador ha sortit de l'area, tornam al spawn
+            //aixi no s'allunyen massa de la zona de guardia
             canviaEstat(EstatEnemic.PATRULLANT);
             tornaAlSpawn(cells);
         } else {
@@ -230,6 +232,7 @@ public class Enemic extends Entitat {
         int cx = x0;
         int cy = y0;
 
+        //si ja ha vist es jugador, es fantasma pot atravesar parets
         boolean paretsBloquejades = !(travessaParets && haVistJugador);
 
         while (cx != x1 || cy != y1) {
@@ -387,7 +390,7 @@ public class Enemic extends Entitat {
         return vidaMaxima;
     }
 
-    //carrega totes les propietats desde la definicio del JSON
+    //carrega totes ses propietats des de la definicio del JSON
     public void aplicaDefinicio(TipusEnemic def) {
         this.nom = def.nom;
         this.vida = def.vida;
@@ -425,7 +428,7 @@ public class Enemic extends Entitat {
             if (Simbols.bloquejaMoviment(c)) return false;
         }
         if (jugador != null && nx == jugador.getX() && ny == jugador.getY()) return false;
-        //que no es posin uns damunt dels altres
+        //que no es posin uns damunt dels altres, seria molt lleig
         if (totsEnemics != null) {
             for (Enemic altre : totsEnemics) {
                 if (altre != this && altre.isActiu() && altre.getX() == nx && altre.getY() == ny) return false;

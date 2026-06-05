@@ -13,7 +13,7 @@ public class NpcComerciants extends Entitat {
     public NpcComerciants(int x, int y, int pis, ConfigGame config) {
         super(x, y, 'N');
         this.pis = pis;
-        //carregam l'enigme des del JSON si hi és
+        //carregam l'endevinalla des del JSON si hi es
         if (config != null) {
             ConfigGame.EnigmeConfig enigme = config.getEnigmaPerPlanta(pis);
             if (enigme != null) {
@@ -46,6 +46,6 @@ public class NpcComerciants extends Entitat {
 
     @Override
     public TextColor getColor() {
-        return new TextColor.RGB(80, 200, 220); //blau cel
+        return new TextColor.RGB(80, 200, 220); //blau cel, com es cel
     }
 }

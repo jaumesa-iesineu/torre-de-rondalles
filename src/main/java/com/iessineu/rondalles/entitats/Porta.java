@@ -5,6 +5,7 @@ import com.iessineu.rondalles.inventari.Clau;
 import com.iessineu.rondalles.inventari.Inventari;
 
 public class Porta extends Entitat {
+    //portes normals (+), obertes (/), bloquejades (&)
 
     private boolean oberta;
     private boolean bloquejada;

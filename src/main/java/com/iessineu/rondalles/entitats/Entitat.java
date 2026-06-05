@@ -10,16 +10,16 @@ import com.googlecode.lanterna.TextColor;
  *
  * @author jaume, dani, sergi, kanhai i pere
  */
-public abstract class Entitat { // classe base per totes les entitats (enemics, jugadors, etc.)
+public abstract class Entitat { //classe base per ses entitats (enemics, jugadors, npcs...)
 
-    //posició de s'entitat a nes mapa
+    //posicio de l'entitat al mapa
     protected int x;
     protected int y;
 
-    //es simbol que es pinta
+    //el simbol que es pinta per pantalla
     protected char simbol;
 
-    //per gestionar el sistema per torns rogue
+    //per gestionar el sistema per torns (roguelike)
     protected boolean actiu;
 
     public Entitat(int x, int y, char simbol) {
@@ -29,15 +29,15 @@ public abstract class Entitat { // classe base per totes les entitats (enemics, 
         this.actiu = true;
     }
 
-    //funció per si l'entitat per exemple té un efecte de verí
+    //per si te un efecte de veri o algo cada torn
     public abstract void actualitza();
 
-    //interacció
+    //interactuar amb portes, cofres...
     public abstract void interactua(Jugador jugador);
 
     public abstract TextColor getColor();
 
-    // getters i setters
+    //getters i setters, aixi funciona java
     //getters
     public int getX() {
         return x;

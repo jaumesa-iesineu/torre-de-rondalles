@@ -12,9 +12,9 @@ import com.iessineu.rondalles.inventari.Item;
  *
  * @author jaume, dani, sergi, kanhai i pere
  */
-public class Jugador extends Entitat { // extends Entitat es perque extends la classe Entitat
+public class Jugador extends Entitat { //el jugador tambe es una entitat
 
-    //màquina d'estats del jugador
+    //maquina d'estats del jugador
     public enum EstatJugador {
         IDLE,
         MOVIMENT,
@@ -22,26 +22,26 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
         MORT
     }
 
-    private int vida; // vida actual del jugador
-    private int vidaMaxima; // vida maxima del jugador
+    private int vida; //vida actual del jugador
+    private int vidaMaxima; //vida maxima del jugador
 
-    private int atac; // atac base del jugador
-    private int atacExtra; // atac afegit per l'arma equipada
+    private int atac; //atac base del jugador
+    private int atacExtra; //atac afegit per l'arma equipada
 
-    private int defensa; // defensa actual del jugador
-    private int defensaExtra; // defensa afegida per l'armadura equipada
+    private int defensa; //defensa actual del jugador
+    private int defensaExtra; //defensa afegida per l'armadura equipada
 
-    private int pes; // pes actual del jugador
-    private int pesMaxim; // pes maxim del jugador
+    private int pes; //pes actual del jugador
+    private int pesMaxim; //pes maxim del jugador
 
     private int velocitat;
-    private int evasio; // % de probabilitat d'esquivar un atac (0-100)
+    private int evasio; //% de probabilitat d'esquivar un atac (0-100)
 
     private int visio;
 
     private EstatJugador estatJugador; //estat actual del jugador
-    private int dirX = 0; // darrera direcció horitzontal (per Pinky)
-    private int dirY = 1; // darrera direcció vertical (per Pinky)
+    private int dirX = 0; //darrera direccio horitzontal (per Pinky)
+    private int dirY = 1; //darrera direccio vertical (per Pinky)
 
     private Inventari inventari;
     private int tornsVeri = 0;
@@ -73,12 +73,12 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
 
     @Override
     public void actualitza() {
-        //per actualitzar l'estat del jugador per exemple si té regeneració
+        //per si algun dia afegim regeneracio o algo
     }
 
     @Override
     public void interactua(Jugador jugador) {
-        //per interactuar amb cofres etc
+        //per interactuar amb cofres i truges
     }
 
     public enum Carrega {
@@ -96,7 +96,7 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
         return Carrega.PESAT;
     }
 
-    //funció que calcula sa velocitat depenent de es pes / pesMaxim
+    //funcio que calcula sa velocitat segons es pes que du(s)
     public int velocitatEfectiva() {
         return switch (categoriaCarrega()) {
             case LLEUGER ->
@@ -138,11 +138,11 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
         }
     }
 
-    public void curar(int quantitat) { //recupera vida sense passar del màxim
+    public void curar(int quantitat) { //recupera vida sense passar del maxim
         vida = Math.min(vidaMaxima, vida + quantitat);
     }
 
-    public void afegeixItem(Item item) { //recull un item del terra
+    public void afegeixItem(Item item) { //recull un item de sa terra
         inventari.afegeix(item);
         pes += item.getPes();
     }
@@ -193,7 +193,7 @@ public class Jugador extends Entitat { // extends Entitat es perque extends la c
         return Math.max(0, defensa + defensaExtra - penalitzacio);
     }
 
-    // getters i setters
+    //getters i setters
     public int getVida() {
         return vida;
     }
