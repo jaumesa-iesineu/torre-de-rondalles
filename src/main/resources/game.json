@@ -196,6 +196,43 @@
                 "slot": "PEUS"
             }
         ],
+        "claus": [
+            {
+                "id": "clau-planta1",
+                "nom": "Clau de la Planta 1",
+                "pes": 0,
+                "simbol": "k",
+                "planta": 1
+            },
+            {
+                "id": "clau-planta2",
+                "nom": "Clau de la Planta 2",
+                "pes": 0,
+                "simbol": "k",
+                "planta": 2
+            },
+            {
+                "id": "clau-planta3",
+                "nom": "Clau de la Planta 3",
+                "pes": 0,
+                "simbol": "k",
+                "planta": 3
+            },
+            {
+                "id": "clau-planta4",
+                "nom": "Clau de la Planta 4",
+                "pes": 0,
+                "simbol": "k",
+                "planta": 4
+            },
+            {
+                "id": "clau-planta5",
+                "nom": "Clau de la Planta 5",
+                "pes": 0,
+                "simbol": "k",
+                "planta": 5
+            }
+        ],
         "pocions": [
             {
                 "id": "pocio-vida",
@@ -355,7 +392,8 @@
 
   "portes": {
     "posicions": [
-      {"mapa": "planta1", "x": 2, "y": 1}
+      {"mapa": "planta1", "x": 2, "y": 1, "esPortaCanviPlanta": true},
+      {"mapa": "planta1", "x": 2, "y": 3}
     ]
   },
 
