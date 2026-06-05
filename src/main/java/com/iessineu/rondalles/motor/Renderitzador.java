@@ -135,7 +135,8 @@ public class Renderitzador { // classe per gestionar la pantalla
         int vpW = colSep - 2;
         int vpH = files - 4;
 
-        //càmera: si el mapa cap, el centram; si no, seguim el jugador
+        //camara: si el mapa cap, el centram; si no, seguim el jugador
+        //es com una llanterna que segueix es jugador
         int camX, camY;
         if (mapa.getAmplada() <= vpW) {
             camX = -((vpW - mapa.getAmplada()) / 2);
@@ -652,9 +653,9 @@ public class Renderitzador { // classe per gestionar la pantalla
             pintaTextFons(c, filaSlots, " [" + (i + 1) + "] ", gris, fonsPanell);
             if (slot != null) {
                 var item = slot.item();
-                // tier a dalt a la dreta del slot
+                //tier a dalt a sa dreta del slot
                 pintaTextFons(c + 5, filaSlots, item.getTierSimbol(), item.getTierColor(), fonsPanell);
-                // sprite o símbol
+                //sprite o simbol
                 if (item instanceof com.iessineu.rondalles.inventari.Pocio pocioItem) {
                     String[] sprite = spritePocio(pocioItem);
                     for (int l = 0; l < sprite.length; l++) {
@@ -663,7 +664,7 @@ public class Renderitzador { // classe per gestionar la pantalla
                 } else {
                     pintaTextFons(c + 2, filaSlots + 1, String.valueOf(item.getSimbol()), item.getColor(), fonsPanell);
                 }
-                // quantitat + nom
+                //quantitat + nom
                 String quant = slot.quantitat() > 1 ? "x" + slot.quantitat() : "";
                 String nom = item.getNom().length() > 11 ? item.getNom().substring(0, 11) : item.getNom();
                 pintaTextFons(c, filaSlots + 3, quant.isEmpty() ? nom : quant + " " + nom, gris, fonsPanell);

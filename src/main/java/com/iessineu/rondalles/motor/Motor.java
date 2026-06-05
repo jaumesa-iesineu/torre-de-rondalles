@@ -11,31 +11,31 @@ import javax.sound.midi.Sequencer;
  */
 public abstract class Motor {
 
-    // el renderitzador gestiona tot el que surt per pantalla
+    //el renderitzador pinta tot el que surt per pantalla
     protected Renderitzador renderer;
 
-    // mentre corrent sigui true el bucle no s'atura
+    //mentre sigui vertader es joc continua
     protected boolean corrent;
 
-    // en quin estat es troba el joc ara mateix
+    //l'estat actual del joc (menu, combat, etc)
     protected Estat estat;
 
-    // reproductor de música de fons
+    //reproductor de musica de fons
     private Sequencer sequencer;
 
-    // si true no es reprodueix música
+    //si esta a true no sona musica
     protected boolean mut = false;
 
-    // cada joc sap com inicialitzar-se
+    //cada joc te la seva propia manera d'iniciar
     protected abstract void init() throws Exception;
 
-    // cada joc sap com reaccionar a les tecles
+    //cada joc reacciona a les tecles de forma diferent
     protected abstract void actualitza(KeyStroke tecla);
 
-    // override per indicar si el joc està en mig d'una animació (no esperar tecla)
+    //per si una animacio esta en marxa, no esperam entrada
     protected boolean estaAnimant() { return false; }
 
-    // cada joc sap com pintar la seva pantalla
+    //cada joc es pinta a la seva manera
     protected abstract void renderitza();
 
     private void iniciaMusica() {
@@ -59,7 +59,7 @@ public abstract class Motor {
             sequencer.start();
 
         } catch (Exception e) {
-            // si no hi ha àudio disponible el joc continua igual
+            //si no hi ha audio no passa res, es joc segueix
         }
     }
 
@@ -76,33 +76,37 @@ public abstract class Motor {
     }
 
     public void start() throws Exception {
+        //bucle principal del joc: pintar, input, actualitzar
 
         init();
-
         iniciaMusica();
 
         corrent = true;
         estat = Estat.MENU_INICIAL;
 
         while (corrent) {
-
+            //pintam primer, que es mes rapid
             try {
                 renderitza();
             } catch (Exception ex) {
+                //no volem que peti per un error de render
                 System.err.println("[RENDER ERROR] " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
             }
 
+            //despres esperam que premi una tecla
             KeyStroke tecla;
             if (estaAnimant()) {
+                //si esta animant no esperam, llegim sense bloquejar
                 tecla = renderer.pollInput();
                 if (tecla == null) {
-                    try { Thread.sleep(16); } catch (InterruptedException ignored) {}
+                    try { Thread.sleep(16); } catch (InterruptedException ignored) {} //60fps aprox
                 }
             } else {
                 tecla = renderer.llegeixInput();
             }
 
+            //actualitzam es estat del joc
             if (tecla != null || estaAnimant()) {
                 try {
                     actualitza(tecla);
@@ -114,7 +118,6 @@ public abstract class Motor {
         }
 
         aturaMusica();
-
         renderer.tanca();
     }
 }

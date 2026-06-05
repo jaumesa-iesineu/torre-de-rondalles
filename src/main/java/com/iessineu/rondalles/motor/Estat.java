@@ -10,13 +10,13 @@ package com.iessineu.rondalles.motor;
  */
 public enum Estat {
     MENU, //pantalla inicial, menú principal
-    MENU_INICIAL, //pantalla de benvinguda abans de començar a jugar
-    PAUSA, //menú de pausa (reanudar, guardar, sortir)
-    MON, //bucle principal: jugador explora el mapa per torns
-    COMBAT, //pantalla de combat per torns, mapa congelat
-    GAME_OVER, //permadeath: jugador mort, s'esborra la partida de SQLite
-    INVENTARI, //overlay d'inventari, mapa de fons, costa 1 torn
-    VICTORIA, //jugador ha derrotat Es Drac a la planta 5
-    COMERCIANT, // overlay de comerç amb el NPC
-    ENIGMA // pantalla d'enigma del NPC
+    MENU_INICIAL, //benvinguda abans de començar a jugar
+    PAUSA, //menú de pausa, botons de sempre
+    MON, //el jugador es mou pel mapa per torns
+    COMBAT, //combat per torns, es mapa es queda congelat
+    GAME_OVER, //el jugador ha mort, s'esborra sa partida
+    INVENTARI, //inventari superposat damunt es mapa, perds un torn
+    VICTORIA, //has guanyat! es drac ha caigut
+    COMERCIANT, //pantalla de comerç amb es NPC
+    ENIGMA //pantalla de l'endevinalla del NPC
 }
