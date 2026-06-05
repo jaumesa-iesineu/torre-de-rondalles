@@ -13,6 +13,8 @@ import com.iessineu.rondalles.entitats.Enemic;
 import com.iessineu.rondalles.entitats.Entitat;
 import com.iessineu.rondalles.entitats.Jugador;
 import com.iessineu.rondalles.entitats.Porta;
+import com.iessineu.rondalles.inventari.Clau;
+import com.iessineu.rondalles.inventari.Inventari;
 import com.iessineu.rondalles.inventari.Item;
 import com.iessineu.rondalles.inventari.ItemMapa;
 import com.iessineu.rondalles.inventari.Pocio;
@@ -42,7 +44,7 @@ public class Joc extends Motor {
     // --- Pisos ---
     private int pisActual = 1;
     private static final String[] FITXERS_PISOS = {
-        "pis1.game", "pis2.game", "pis3.game", "pis4.game", "pis5.game"
+        "planta1", "planta2", "planta3", "planta4", "planta5"
     };
 
     // --- Portes ---
@@ -265,7 +267,7 @@ public class Joc extends Motor {
         }
         if (tecla.getKeyType() == KeyType.Character) {
             char c = tecla.getCharacter();
-            if (c == 'e' || c == 'E') {
+            if (c == 'i' || c == 'I') {
                 estat = Estat.MON;
                 return;
             }
@@ -406,8 +408,14 @@ public class Joc extends Motor {
                 enemicCombat = null;
 
                 if (eraBoss) {
-                    mapa.setCella(bossX, bossY, '<');
-                    afegeixLog("Has derrotat es boss! Han aparegut unes escales (<).");
+                    String clauId = "clau-planta" + pisActual;
+                    try {
+                        Clau clau = RegistreItems.get().clau(clauId);
+                        jugador.afegeixItem(clau);
+                        afegeixLog("Has derrotat es boss! Has obtingut la " + clau.getNom() + ".");
+                    } catch (Exception ex) {
+                        afegeixLog("Has derrotat es boss!");
+                    }
                 }
 
                 GestorMusica.reprodueix(
@@ -446,7 +454,7 @@ public class Joc extends Motor {
     private void gestionaMoviment(KeyStroke tecla) {
         if (tecla.getKeyType() == KeyType.Character) {
             char c = tecla.getCharacter();
-            if (c == 'e' || c == 'E') {
+            if (c == 'i' || c == 'I') {
                 for (Enemic e : enemics) {
                     if (e.isActiu()) {
                         e.actualitzaIA(jugador, mapa.getCelles());
@@ -455,7 +463,7 @@ public class Joc extends Motor {
                 estat = Estat.INVENTARI;
                 return;
             }
-            if (c == 'o' || c == 'O') {
+            if (c == 'e' || c == 'E') {
                 interactuaPorta();
                 return;
             }
@@ -599,7 +607,13 @@ public class Joc extends Motor {
             return;
         }
         try {
-            fitxerMapa = FITXERS_PISOS[pisActual - 1];
+            String idMapa = FITXERS_PISOS[pisActual - 1];
+            idMapaActual = idMapa;
+            fitxerMapa = idMapa;
+            MapaConfig mc = config.getMapaConfig(idMapa);
+            if (mc != null) {
+                fitxerMapa = mc.fitxer;
+            }
             mapa = CarregadorMapa.carrega(fitxerMapa);
             jugador.setX(trobaInicialX());
             jugador.setY(trobaInicialY());
@@ -613,6 +627,8 @@ public class Joc extends Motor {
             carregaPortes();
             carregaNpcs();
 
+            exploraClausPisAnterior();
+
             explorat = new boolean[mapa.getAlcada()][mapa.getAmplada()];
             mapaRecord = new char[mapa.getAlcada()][mapa.getAmplada()];
             for (char[] fila : mapaRecord) {
@@ -622,6 +638,18 @@ public class Joc extends Motor {
             GestorMusica.reprodueix(GestorMusica.Pista.valueOf("PIS_" + pisActual));
         } catch (Exception ex) {
             corrent = false;
+        }
+    }
+
+    private void exploraClausPisAnterior() {
+        String clauAnterior = "clau-planta" + (pisActual - 1);
+        Inventari inv = jugador.getInventari();
+        for (int i = 0; i < inv.getMaxSlots(); i++) {
+            var slot = inv.getSlot(i);
+            if (slot != null && slot.item() instanceof Clau clau && clau.getId().equals(clauAnterior)) {
+                inv.elimina(i);
+                break;
+            }
         }
     }
 
@@ -645,7 +673,7 @@ public class Joc extends Motor {
                 break;
             }
             if (cy >= 0 && cy < celles.length && cx >= 0 && cx < celles[cy].length) {
-                if (celles[cy][cx] == '#' || celles[cy][cx] == '+') {
+                if (celles[cy][cx] == '#' || celles[cy][cx] == '+' || celles[cy][cx] == '&') {
                     return false;
                 }
             }
@@ -697,8 +725,10 @@ public class Joc extends Motor {
             List<PosicioPorta> posicions = config.getPosicionsPortaPerMapa(idMapaActual);
             if (!posicions.isEmpty()) {
                 for (PosicioPorta p : posicions) {
-                    portes.add(new Porta(p.x, p.y));
-                    mapa.setCella(p.x, p.y, '+');
+                    boolean bloquejada = p.esPortaCanviPlanta;
+                    Porta porta = new Porta(p.x, p.y, bloquejada, p.esPortaCanviPlanta, p.clauId);
+                    portes.add(porta);
+                    mapa.setCella(p.x, p.y, porta.getSimbol());
                 }
                 return;
             }
@@ -778,6 +808,17 @@ public class Joc extends Motor {
             int dx = jx + d[0], dy = jy + d[1];
             Porta porta = trobaPortaA(dx, dy);
             if (porta != null) {
+                if (porta.isBloquejada()) {
+                    if (porta.teClau(jugador.getInventari(), pisActual)) {
+                        porta.desbloqueja();
+                        mapa.setCella(dx, dy, porta.getSimbol());
+                        afegeixLog("Has obert la porta amb la clau!");
+                        tickTorn();
+                    } else {
+                        afegeixLog("La porta està tancada amb un cadenat! Necessites una clau.");
+                    }
+                    return;
+                }
                 porta.interactua(jugador);
                 mapa.setCella(dx, dy, porta.getSimbol());
                 tickTorn();
