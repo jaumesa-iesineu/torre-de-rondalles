@@ -20,7 +20,7 @@ public class TipusEnemic {
     //patrons d'IA: "perseguir", "guardia", "estatic"
     public String patroIA = "perseguir";
     public boolean requereixDescobriment; //Bubota només persegueix si l'han vist
-    public boolean esBoss; //quan el maten, apareixen escales (<)
+    public boolean esBoss; //quan el maten, apareix una clau a l'inventari
 
     public String artFitxer;  //ruta a resources/art/xxx.txt (prioritat sobre artAscii)
     public String[] artAscii; //fallback inline si no hi ha artFitxer
