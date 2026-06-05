@@ -45,13 +45,15 @@ public class RegistreItems {
             for (JsonElement e : jArmes) {
                 JsonObject o = e.getAsJsonObject();
                 String id = o.get("id").getAsString();
-                armes.put(id, new Arma(
+                Arma arma = new Arma(
                     o.get("nom").getAsString(),
                     o.get("pes").getAsInt(),
                     o.get("simbol").getAsString().charAt(0),
                     o.get("atac").getAsInt(),
                     o.get("rang").getAsInt()
-                ));
+                );
+                if (o.has("tier")) arma.tier = o.get("tier").getAsInt();
+                armes.put(id, arma);
             }
         }
 
@@ -60,13 +62,15 @@ public class RegistreItems {
             for (JsonElement e : jArmadures) {
                 JsonObject o = e.getAsJsonObject();
                 String id = o.get("id").getAsString();
-                armadures.put(id, new Armadura(
+                Armadura arm = new Armadura(
                     o.get("nom").getAsString(),
                     o.get("pes").getAsInt(),
                     o.get("simbol").getAsString().charAt(0),
                     o.get("defensa").getAsInt(),
                     Armadura.Slot.valueOf(o.get("slot").getAsString())
-                ));
+                );
+                if (o.has("tier")) arm.tier = o.get("tier").getAsInt();
+                armadures.put(id, arm);
             }
         }
 
@@ -75,13 +79,15 @@ public class RegistreItems {
             for (JsonElement e : jPocions) {
                 JsonObject o = e.getAsJsonObject();
                 String id = o.get("id").getAsString();
-                pocions.put(id, new Pocio(
+                Pocio pocio = new Pocio(
                     o.get("nom").getAsString(),
                     o.get("pes").getAsInt(),
                     o.get("simbol").getAsString().charAt(0),
                     Pocio.Tipus.valueOf(o.get("tipus").getAsString()),
                     o.get("valor").getAsInt()
-                ));
+                );
+                if (o.has("tier")) pocio.tier = o.get("tier").getAsInt();
+                pocions.put(id, pocio);
             }
         }
 
@@ -104,19 +110,25 @@ public class RegistreItems {
     public Arma arma(String id) {
         Arma src = armes.get(id);
         if (src == null) throw new IllegalArgumentException("Arma desconeguda: " + id);
-        return new Arma(src.getNom(), src.getPes(), src.getSimbol(), src.getAtac(), src.getRang());
+        Arma copia = new Arma(src.getNom(), src.getPes(), src.getSimbol(), src.getAtac(), src.getRang());
+        copia.tier = src.tier;
+        return copia;
     }
 
     public Armadura armadura(String id) {
         Armadura src = armadures.get(id);
         if (src == null) throw new IllegalArgumentException("Armadura desconeguda: " + id);
-        return new Armadura(src.getNom(), src.getPes(), src.getSimbol(), src.getDefensa(), src.getSlot());
+        Armadura copia = new Armadura(src.getNom(), src.getPes(), src.getSimbol(), src.getDefensa(), src.getSlot());
+        copia.tier = src.tier;
+        return copia;
     }
 
     public Pocio pocio(String id) {
         Pocio src = pocions.get(id);
         if (src == null) throw new IllegalArgumentException("Poció desconeguda: " + id);
-        return new Pocio(src.getNom(), src.getPes(), src.getSimbol(), src.getTipus(), src.getValor());
+        Pocio copia = new Pocio(src.getNom(), src.getPes(), src.getSimbol(), src.getTipus(), src.getValor());
+        copia.tier = src.tier;
+        return copia;
     }
 
     public Clau clau(String id) {
