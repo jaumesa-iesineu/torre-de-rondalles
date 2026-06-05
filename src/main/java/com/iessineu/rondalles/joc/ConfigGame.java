@@ -32,6 +32,7 @@ public class ConfigGame {
         public int ampleHud = 30;
         public int radiVisio = 10;
         public int msPasGel = 140;
+        public int tornsDesorientacioGel = 1;
         public int maxLog = 3;
         public int maxSlotsInventari = 4;
     }

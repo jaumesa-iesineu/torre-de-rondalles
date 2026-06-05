@@ -60,6 +60,8 @@ public class Joc extends Motor {
     private boolean esperantSegonaAigua = false;
     private int aiguaNx = 0, aiguaNy = 0;
     private boolean lliscantGel = false;
+    private int tornsDesorientat = 0;
+    private int tornsDesorientacioGel = 1;
     private int gelDx = 0, gelDy = 0;
     private long ultimPasGel = 0;
     private long msPasGel = 140;
@@ -154,6 +156,7 @@ public class Joc extends Motor {
             ConfigGame.Configuracio cfg = config.configuracio;
             radiVisio = cfg.radiVisio;
             msPasGel = cfg.msPasGel;
+            tornsDesorientacioGel = cfg.tornsDesorientacioGel;
             maxLog = cfg.maxLog;
             renderer.setRadiLlanterna(cfg.radiLlanterna);
             renderer.setAmpleHud(cfg.ampleHud);
@@ -206,17 +209,29 @@ public class Joc extends Motor {
                 int gx = jugador.getX() + gelDx;
                 int gy = jugador.getY() + gelDy;
                 char terraDesti = mapa.getCelles()[Math.max(0, Math.min(mapa.getAlcada() - 1, gy))][Math.max(0, Math.min(mapa.getAmplada() - 1, gx))];
-                TipusTerra tt = TipusTerra.de(terraDesti);
-                if (mapa.esPasable(gx, gy) && tt != null && tt.isLlisca()) {
-                    jugador.setX(gx);
-                    jugador.setY(gy);
-                    tickTorn();
-                } else {
+                Enemic enmig = trobaEnemicA(gx, gy);
+                if (enmig != null) {
                     lliscantGel = false;
-                    if (mapa.esPasable(gx, gy)) {
+                    tornsDesorientat = 0;
+                    enemicCombat = enmig;
+                    logCombat.clear();
+                    afegeixLog("Combat amb " + enmig.getNom().toUpperCase() + "!");
+                    estat = Estat.COMBAT;
+                    GestorMusica.reprodueix(esBoss(enmig) ? "BOSS" : "COMBAT");
+                } else {
+                    TipusTerra tt = TipusTerra.de(terraDesti);
+                    if (mapa.esPasable(gx, gy) && tt != null && tt.isLlisca()) {
                         jugador.setX(gx);
                         jugador.setY(gy);
                         tickTorn();
+                    } else {
+                        lliscantGel = false;
+                        tornsDesorientat = tornsDesorientacioGel;
+                        if (mapa.esPasable(gx, gy)) {
+                            jugador.setX(gx);
+                            jugador.setY(gy);
+                            tickTorn();
+                        }
                     }
                 }
                 if (jugador.esMort()) {
@@ -227,6 +242,13 @@ public class Joc extends Motor {
         }
 
         if (tecla == null) return;
+
+        if (tornsDesorientat > 0) {
+            tornsDesorientat--;
+            tickTorn();
+            return;
+        }
+
 
         if (estat == Estat.MENU_INICIAL) {
             gestionaMenuInicial(tecla);
