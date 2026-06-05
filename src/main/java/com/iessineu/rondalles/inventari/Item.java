@@ -12,11 +12,18 @@ public abstract class Item { // classe base per a tots els items del joc
     protected String nom;
     protected int pes;
     protected char simbol;
+    protected int tier; // 0=comú 1=inusual 2=rar 3=èpic
 
     public Item(String nom, int pes, char simbol) {
         this.nom = nom;
         this.pes = pes;
         this.simbol = simbol;
+        this.tier = 0;
+    }
+
+    public Item(String nom, int pes, char simbol, int tier) {
+        this(nom, pes, simbol);
+        this.tier = tier;
     }
 
     // cada item sap com afectar el jugador quan s'equipa
@@ -35,5 +42,27 @@ public abstract class Item { // classe base per a tots els items del joc
 
     public char getSimbol() {
         return simbol;
+    }
+
+    public int getTier() {
+        return tier;
+    }
+
+    public String getTierSimbol() {
+        return switch (tier) {
+            case 1 -> "◆";
+            case 2 -> "★";
+            case 3 -> "✦";
+            default -> "·";
+        };
+    }
+
+    public TextColor getTierColor() {
+        return switch (tier) {
+            case 1 -> new TextColor.RGB(80, 200, 80);
+            case 2 -> new TextColor.RGB(80, 140, 255);
+            case 3 -> new TextColor.RGB(180, 80, 255);
+            default -> new TextColor.RGB(160, 160, 160);
+        };
     }
 }

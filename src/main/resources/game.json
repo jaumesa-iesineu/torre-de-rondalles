@@ -55,7 +55,8 @@
                 "pes": 0,
                 "simbol": "p",
                 "atac": 1,
-                "rang": 1
+                "rang": 1,
+                "tier": 0
             },
             {
                 "id": "falc-llaurador",
@@ -63,7 +64,8 @@
                 "pes": 1,
                 "simbol": "f",
                 "atac": 3,
-                "rang": 1
+                "rang": 1,
+                "tier": 0
             },
             {
                 "id": "garrot-olivera",
@@ -71,7 +73,8 @@
                 "pes": 2,
                 "simbol": "g",
                 "atac": 5,
-                "rang": 1
+                "rang": 1,
+                "tier": 1
             },
             {
                 "id": "llanca-pescador",
@@ -79,7 +82,8 @@
                 "pes": 3,
                 "simbol": "l",
                 "atac": 7,
-                "rang": 2
+                "rang": 2,
+                "tier": 1
             },
             {
                 "id": "espasa-cavaller",
@@ -87,7 +91,8 @@
                 "pes": 3,
                 "simbol": "E",
                 "atac": 9,
-                "rang": 1
+                "rang": 1,
+                "tier": 2
             },
             {
                 "id": "destral-gegant",
@@ -95,7 +100,8 @@
                 "pes": 5,
                 "simbol": "X",
                 "atac": 15,
-                "rang": 1
+                "rang": 1,
+                "tier": 3
             }
         ],
         "armadures": [
@@ -105,7 +111,8 @@
                 "pes": 2,
                 "simbol": "q",
                 "defensa": 1,
-                "slot": "CASC"
+                "slot": "CASC",
+                "tier": 0
             },
             {
                 "id": "elm-ferro-oxidat",
@@ -113,7 +120,8 @@
                 "pes": 5,
                 "simbol": "h",
                 "defensa": 3,
-                "slot": "CASC"
+                "slot": "CASC",
+                "tier": 1
             },
             {
                 "id": "casc-cavaller",
@@ -121,7 +129,8 @@
                 "pes": 9,
                 "simbol": "C",
                 "defensa": 6,
-                "slot": "CASC"
+                "slot": "CASC",
+                "tier": 2
             },
             {
                 "id": "camisa-lli",
@@ -129,7 +138,8 @@
                 "pes": 5,
                 "simbol": "c",
                 "defensa": 2,
-                "slot": "COS"
+                "slot": "COS",
+                "tier": 0
             },
             {
                 "id": "cota-malla",
@@ -137,7 +147,8 @@
                 "pes": 12,
                 "simbol": "m",
                 "defensa": 5,
-                "slot": "COS"
+                "slot": "COS",
+                "tier": 1
             },
             {
                 "id": "armadura-cuir-drac",
@@ -145,7 +156,8 @@
                 "pes": 20,
                 "simbol": "A",
                 "defensa": 9,
-                "slot": "COS"
+                "slot": "COS",
+                "tier": 3
             },
             {
                 "id": "calcons-llana",
@@ -153,7 +165,8 @@
                 "pes": 3,
                 "simbol": "k",
                 "defensa": 1,
-                "slot": "CAMES"
+                "slot": "CAMES",
+                "tier": 0
             },
             {
                 "id": "greves-ferro",
@@ -161,7 +174,8 @@
                 "pes": 7,
                 "simbol": "v",
                 "defensa": 3,
-                "slot": "CAMES"
+                "slot": "CAMES",
+                "tier": 1
             },
             {
                 "id": "polaines-encantades",
@@ -169,7 +183,8 @@
                 "pes": 12,
                 "simbol": "P",
                 "defensa": 6,
-                "slot": "CAMES"
+                "slot": "CAMES",
+                "tier": 3
             },
             {
                 "id": "espardenyes-canem",
@@ -177,7 +192,8 @@
                 "pes": 2,
                 "simbol": "s",
                 "defensa": 1,
-                "slot": "PEUS"
+                "slot": "PEUS",
+                "tier": 0
             },
             {
                 "id": "botes-cuir",
@@ -185,7 +201,8 @@
                 "pes": 4,
                 "simbol": "b",
                 "defensa": 2,
-                "slot": "PEUS"
+                "slot": "PEUS",
+                "tier": 1
             },
             {
                 "id": "botes-ferro",
@@ -193,7 +210,8 @@
                 "pes": 8,
                 "simbol": "F",
                 "defensa": 4,
-                "slot": "PEUS"
+                "slot": "PEUS",
+                "tier": 2
             }
         ],
         "claus": [
@@ -240,7 +258,8 @@
                 "pes": 1,
                 "simbol": "!",
                 "tipus": "VIDA",
-                "valor": 30
+                "valor": 30,
+                "tier": 0
             },
             {
                 "id": "pocio-veri",
@@ -248,7 +267,8 @@
                 "pes": 1,
                 "simbol": "~",
                 "tipus": "VERI",
-                "valor": 5
+                "valor": 5,
+                "tier": 1
             },
             {
                 "id": "pocio-foc",
@@ -256,7 +276,8 @@
                 "pes": 1,
                 "simbol": "%",
                 "tipus": "FOC",
-                "valor": 4
+                "valor": 4,
+                "tier": 1
             },
             {
                 "id": "pocio-gel",
@@ -264,7 +285,8 @@
                 "pes": 1,
                 "simbol": "*",
                 "tipus": "GEL",
-                "valor": 4
+                "valor": 4,
+                "tier": 1
             }
         ]
     },

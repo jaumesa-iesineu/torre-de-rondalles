@@ -283,16 +283,15 @@ public class Renderitzador { // classe per gestionar la pantalla
         TextColor blau = new TextColor.RGB(100, 160, 220);
         TextColor gris = new TextColor.RGB(100, 100, 115);
 
-        //barra de vida
-        int barW = 12;
+        //barra de vida + número a la mateixa línia
+        String vidaStr = jugador.getVida() + "/" + jugador.getVidaMaxima();
+        int barW = innerW - 6 - vidaStr.length(); // "HP [" + bar + "] " + vidaStr = innerW
+        barW = Math.max(4, barW);
         int plens = jugador.getVidaMaxima() > 0
                 ? Math.max(0, Math.min(barW, (int) ((double) jugador.getVida() / jugador.getVidaMaxima() * barW)))
                 : 0;
-        pintaText(col, fila, "HP [" + "█".repeat(plens) + "░".repeat(barW - plens) + "]", colorVida(jugador.getVida(), jugador.getVidaMaxima()));
+        pintaText(col, fila++, "HP [" + "█".repeat(plens) + "░".repeat(barW - plens) + "] " + vidaStr, colorVida(jugador.getVida(), jugador.getVidaMaxima()));
         fila++;
-        String vidaStr = jugador.getVida() + " / " + jugador.getVidaMaxima();
-        pintaText(col + innerW - vidaStr.length() - 1, fila, vidaStr, vermell);
-        fila += 2;
 
         //estadistiques bàsiques
         pintaText(col, fila++, "ATK  " + jugador.getAtacTotal(), taronja);
@@ -308,7 +307,7 @@ public class Renderitzador { // classe per gestionar la pantalla
             case PESAT ->
                 new TextColor.RGB(220, 60, 60);
         };
-        pintaText(col, fila++, "CAR  " + jugador.categoriaCarrega().name(), colorCarrega);
+        pintaText(col, fila++, "PAQ  " + jugador.categoriaCarrega().name(), colorCarrega);
         fila++;
 
         //inventari
@@ -337,21 +336,17 @@ public class Renderitzador { // classe per gestionar la pantalla
             pintaText(col, fila++, "--- EQUIP ---", gris);
             var armaEq = jugador.getInventari().getArmaEquipada();
             if (fila < filaMax - 1) {
-                String txtA = "ARM " + (armaEq != null ? armaEq.getSimbol() + " " + armaEq.getNom() : "---");
-                if (txtA.length() > innerW) {
-                    txtA = txtA.substring(0, innerW);
-                }
+                String txtA = "Arma : " + (armaEq != null ? armaEq.getNom() : "---");
+                if (txtA.length() > innerW) txtA = txtA.substring(0, innerW);
                 pintaText(col, fila++, txtA, armaEq != null ? armaEq.getColor() : gris);
             }
-            String[] slotNoms = {"CAP", "PIT", "CAM", "PEU"};
+            String[] slotNoms = {"Casc ", "Cos  ", "Cames", "Peus "};
             var armadures = jugador.getInventari().getArmaduresEquipades();
             for (int i = 0; i < 4 && fila < filaMax - 1; i++) {
                 com.iessineu.rondalles.inventari.Armadura.Slot s = com.iessineu.rondalles.inventari.Armadura.Slot.values()[i];
                 com.iessineu.rondalles.inventari.Armadura arm = armadures.get(s);
-                String txt = slotNoms[i] + " " + (arm != null ? arm.getSimbol() + " " + arm.getNom() : "---");
-                if (txt.length() > innerW) {
-                    txt = txt.substring(0, innerW);
-                }
+                String txt = slotNoms[i] + ": " + (arm != null ? arm.getNom() : "---");
+                if (txt.length() > innerW) txt = txt.substring(0, innerW);
                 pintaText(col, fila++, txt, arm != null ? arm.getColor() : gris);
             }
         }
@@ -759,8 +754,8 @@ public class Renderitzador { // classe per gestionar la pantalla
         TextColor daurat = new TextColor.RGB(220, 180, 50);
         TextColor fonsPanell = new TextColor.RGB(20, 20, 35);
 
-        int amplePanel = 60;
-        int alcadaPanel = 12;
+        int amplePanel = 64;
+        int alcadaPanel = 16;
         int colIni = (cols - amplePanel) / 2;
         int filaIni = (rows - alcadaPanel) / 2;
 
@@ -784,44 +779,73 @@ public class Renderitzador { // classe per gestionar la pantalla
         pintaTextFons(colIni + (amplePanel - titol.length()) / 2, filaIni + 1, titol, daurat, fonsPanell);
 
         //4 slots en una fila
-        int filaSlots = filaIni + 4;
+        int filaSlots = filaIni + 3;
         int colSlots = colIni + 3;
         for (int i = 0; i < jugador.getInventari().getMaxSlots(); i++) {
-            int c = colSlots + i * 12;
+            int c = colSlots + i * 14;
             var slot = jugador.getInventari().getSlot(i);
-            pintaTextFons(c, filaSlots - 1, " [" + (i + 1) + "] ", gris, fonsPanell);
+            pintaTextFons(c, filaSlots, " [" + (i + 1) + "] ", gris, fonsPanell);
             if (slot != null) {
-                String quant = slot.quantitat() > 1 ? "x" + slot.quantitat() : " ";
-                pintaTextFons(c + 1, filaSlots, String.valueOf(slot.item().getSimbol()), slot.item().getColor(), fonsPanell);
-                pintaTextFons(c + 3, filaSlots, quant, blanc, fonsPanell);
-                String nom = slot.item().getNom().length() > 9 ? slot.item().getNom().substring(0, 9) : slot.item().getNom();
-                pintaTextFons(c, filaSlots + 1, nom, gris, fonsPanell);
+                var item = slot.item();
+                // tier a dalt a la dreta del slot
+                pintaTextFons(c + 5, filaSlots, item.getTierSimbol(), item.getTierColor(), fonsPanell);
+                // sprite o símbol
+                if (item instanceof com.iessineu.rondalles.inventari.Pocio pocioItem) {
+                    String[] sprite = spritePocio(pocioItem);
+                    for (int l = 0; l < sprite.length; l++) {
+                        pintaTextFons(c + 1, filaSlots + 1 + l, sprite[l], item.getColor(), fonsPanell);
+                    }
+                } else {
+                    pintaTextFons(c + 2, filaSlots + 1, String.valueOf(item.getSimbol()), item.getColor(), fonsPanell);
+                }
+                // quantitat + nom
+                String quant = slot.quantitat() > 1 ? "x" + slot.quantitat() : "";
+                String nom = item.getNom().length() > 11 ? item.getNom().substring(0, 11) : item.getNom();
+                pintaTextFons(c, filaSlots + 3, quant.isEmpty() ? nom : quant + " " + nom, gris, fonsPanell);
             } else {
-                pintaTextFons(c + 1, filaSlots, "·", gris, fonsPanell);
+                pintaTextFons(c + 2, filaSlots + 1, "·", gris, fonsPanell);
             }
         }
 
-        //slots d'armadura
+        //separador
+        pintaTextFons(colIni, filaIni + 7, "╠" + "═".repeat(amplePanel - 2) + "╣", blanc, fonsPanell);
+        pintaTextFons(colIni + 3, filaIni + 7, " EQUIPAMENT ", gris, fonsPanell);
+
+        //equip: arma + 4 armadures en llista vertical
         int colArm = colIni + 3;
         int filaArm = filaIni + 8;
-        String[] slots = {"CAP", "PIT", "CAM", "PEU"};
+        int maxNomEq = amplePanel - 14;
+        String[] slotsNoms = {"Casc ", "Cos  ", "Cames", "Peus "};
         var armadures = jugador.getInventari().getArmaduresEquipades();
+        var armaEq = jugador.getInventari().getArmaEquipada();
+
+        String nomArma = armaEq != null ? armaEq.getNom() : "---";
+        if (nomArma.length() > maxNomEq) nomArma = nomArma.substring(0, maxNomEq);
+        pintaTextFons(colArm, filaArm, "Arma : " + nomArma, armaEq != null ? armaEq.getColor() : gris, fonsPanell);
+        if (armaEq != null) pintaTextFons(colArm + maxNomEq + 9, filaArm, armaEq.getTierSimbol(), armaEq.getTierColor(), fonsPanell);
+
         for (int i = 0; i < 4; i++) {
             com.iessineu.rondalles.inventari.Armadura.Slot slot = com.iessineu.rondalles.inventari.Armadura.Slot.values()[i];
             com.iessineu.rondalles.inventari.Armadura arm = armadures.get(slot);
-            String txt = slots[i] + ": " + (arm != null ? arm.getSimbol() + " " + arm.getNom() : "---");
-            pintaTextFons(colArm + i * 14, filaArm, txt, arm != null ? arm.getColor() : gris, fonsPanell);
+            String nom = arm != null ? arm.getNom() : "---";
+            if (nom.length() > maxNomEq) nom = nom.substring(0, maxNomEq);
+            pintaTextFons(colArm, filaArm + 1 + i, slotsNoms[i] + ": " + nom, arm != null ? arm.getColor() : gris, fonsPanell);
+            if (arm != null) pintaTextFons(colArm + maxNomEq + 8, filaArm + 1 + i, arm.getTierSimbol(), arm.getTierColor(), fonsPanell);
         }
-
-        //arma equipada
-        var armaEq = jugador.getInventari().getArmaEquipada();
-        String txtArma = "ARM: " + (armaEq != null ? armaEq.getSimbol() + " " + armaEq.getNom() : "---");
-        pintaTextFons(colArm + 4 * 14, filaArm, txtArma, armaEq != null ? armaEq.getColor() : gris, fonsPanell);
 
         //instruccions
         pintaTextFons(colIni + 2, filaIni + alcadaPanel - 2, "1-4 equipar  |  ESC/I tancar", gris, fonsPanell);
 
         screen.refresh();
+    }
+
+    private String[] spritePocio(com.iessineu.rondalles.inventari.Pocio p) {
+        return switch (p.getTipus()) {
+            case VIDA  -> new String[]{" ╭╮ ", "▓██▓", " ╰╯ "};
+            case VERI  -> new String[]{" ╭╮ ", "░██░", " ╰╯ "};
+            case FOC   -> new String[]{" ╭╮ ", "▒██▒", " ╰╯ "};
+            case GEL   -> new String[]{" ╭╮ ", "·██·", " ╰╯ "};
+        };
     }
 
     //espera que l'usuari premi una tecla (bloquejant)
