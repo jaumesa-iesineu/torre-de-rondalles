@@ -10,9 +10,9 @@ import com.iessineu.rondalles.joc.Simbols;
  *
  * @author jaume, dani, sergi, kanhai i pere
  */
-public class Mapa { // classe per gestionar el mapa
+public class Mapa { //classe per gestionar el mapa
 
-    //la graella de caràcters que representa el mapa
+    //la graella de caracters que representa el mapa
     private char[][] celles;
 
     //el nom del mapa, ve del fitxer .game
@@ -22,27 +22,27 @@ public class Mapa { // classe per gestionar el mapa
     private int amplada;
     private int alcada;
 
-    public Mapa(char[][] celles, String nom) { // constructor de la classe Mapa
+    public Mapa(char[][] celles, String nom) { //constructor de la classe Mapa
         this.celles = celles;
         this.nom = nom;
         this.alcada = celles.length;
         this.amplada = celles.length > 0 ? celles[0].length : 0;
     }
 
-    //comprova si el jugador pot trepitjar aquella posició
+    //comprova si el jugador pot trepitjar aquella posicio
     public boolean esPasable(int x, int y) {
-        //si surt dels límits del mapa no pot passar
+        //si surt dels limits del mapa no pot passar
         if (x < 0 || y < 0 || x >= amplada || y >= alcada) {
             return false;
         }
 
         char c = celles[y][x];
-        //les parets i portes tancades no es travessen, tot lo demés sí
+        //les parets i portes tancades no es travessen, tot lo demes si
         //quan hi ha una entitat (enemic, npc...) s'hi pot entrar per interactuar
         return !Simbols.bloquejaMoviment(c);
     }
 
-    //comprova si una posició té una porta (oberta o tancada)
+    //comprova si una posicio te una porta (oberta o tancada)
     public boolean esPorta(int x, int y) {
         if (x < 0 || y < 0 || x >= amplada || y >= alcada) {
             return false;
@@ -51,7 +51,7 @@ public class Mapa { // classe per gestionar el mapa
         return Simbols.esPorta(c);
     }
 
-    // getters i setters
+    //getters i setters
     public char[][] getCelles() {
         return celles;
     }

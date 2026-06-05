@@ -25,9 +25,9 @@ import org.w3c.dom.NodeList;
  */
 public class CarregadorMapa {
 
-    // Carrega un mapa detectant automàticament el format:
-    // - si el fitxer acaba en .map → text pla
-    // - si no → XML (format antic .game)
+    //Carrega un mapa detectant automaticament el format:
+    //- si es fitxer acaba en .map → text pla
+    //- si no → XML (format antic .game)
     public static Mapa carrega(String rutaFitxer) throws Exception {
         if (rutaFitxer.endsWith(".map")) {
             return carregaPlà(rutaFitxer);
@@ -35,7 +35,7 @@ public class CarregadorMapa {
         return parsejaDocument(parsejaFitxer(rutaFitxer));
     }
 
-    // Carrega un mapa des d'un fitxer .map de text pla.
+    //Carrega un mapa des d'un fitxer .map de text pla.
     public static Mapa carregaPlà(String rutaFitxer) throws Exception {
         List<String> files = new ArrayList<>();
         String nom = "sense nom";

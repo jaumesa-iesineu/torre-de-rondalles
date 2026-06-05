@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// cada tipus de terra es carrega des del game.json
+//cada tipus de terra es carrega des del game.json
 public class TipusTerra {
 
     private final List<Character> simbols;
@@ -33,10 +33,10 @@ public class TipusTerra {
         this.modRadi = modRadi;
     }
 
-    // cache de simbol -> TipusTerra
+    //cache de simbol -> TipusTerra
     private static final Map<Character, TipusTerra> cache = new HashMap<>();
 
-    // borra i omple la cache amb els terrenys del JSON (es crida desde Joc.init)
+    //buida i omple la cache amb els terrenys del JSON (es crida des de Joc.init)
     public static void inicialitza(List<ConfigGame.TerrenyConfig> configs) {
         cache.clear();
         if (configs == null) return;
@@ -51,12 +51,12 @@ public class TipusTerra {
         }
     }
 
-    // retorna el TipusTerra per un simbol concret, o null si no es terra
+    //retorna el TipusTerra per un simbol concret, o null si no es terra
     public static TipusTerra de(char c) {
         return cache.get(c);
     }
 
-    // mètodes per accedir a les propietats
+    //metodes per accedir a ses propietats
     public String getNom() { return nom; }
     public int getColorR() { return colorR; }
     public int getColorG() { return colorG; }
