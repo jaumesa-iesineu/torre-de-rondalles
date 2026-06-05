@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Arrays;
 import java.util.HashMap;
 
-//POJO arrel que Gson omple amb tot el game.json
+//POJO arrel que Gson omple amb tot es game.json
 public class ConfigGame {
 
     public Configuracio configuracio;
@@ -123,7 +123,7 @@ public class ConfigGame {
         public int pesMaxim = 50;
     }
 
-    //un enigme per planta
+    //una endevinalla per planta
     public static class EnigmeConfig {
 
         public int planta;
@@ -199,7 +199,7 @@ public class ConfigGame {
         return configuracio != null ? configuracio.mapaInicial : "planta1";
     }
 
-    //retorna l'enigme per un numero de planta (o el primer si no troba)
+    //retorna l'endevinalla per un numero de planta (o la primera si no troba)
     public EnigmeConfig getEnigmaPerPlanta(int planta) {
         if (enigmes == null) return null;
         for (EnigmeConfig e : enigmes) {

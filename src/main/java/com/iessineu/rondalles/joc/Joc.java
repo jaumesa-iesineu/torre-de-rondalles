@@ -92,11 +92,11 @@ public class Joc extends Motor {
         this.mut = mut;
     }
 
-    // constructor principal: rep la config ja construïda i fusionada (amb -game i tots els -mod aplicats)
+    //constructor principal: rep sa config ja construida i fusionada (amb -game i tots els -mod aplicats)
     public Joc(ConfigGame configExterna, boolean mut) {
         this.config = configExterna;
         this.mut = mut;
-        // el mapa inicial ve de la config; s'acabarà de resoldre a init()
+        //es mapa inicial ve de la config; s'acabara de resoldre a init()
         this.fitxerMapa = configExterna.getMapaInicial();
     }
 
@@ -104,7 +104,7 @@ public class Joc extends Motor {
     protected void init() throws Exception {
         renderer = new Renderitzador();
 
-        // si la config no ve de fora (constructor amb -game/-mod), la carregam des del game.json empaquetado
+        //si sa config no ve de fora (constructor amb -game/-mod), la carregam des del game.json de dins
         try {
             if (config == null) {
                 config = CarregadorGame.carrega("game.json");
@@ -403,7 +403,7 @@ public class Joc extends Motor {
             if (enemicCombat.esMort()) {
                 afegeixLog(nom + " ha caigut!");
 
-                // Comprova boss ABANS de treure de la llista
+                //guardam ses dades del boss abans de treure'l de la llista
                 boolean eraBoss = esBoss(enemicCombat);
                 int bossX = enemicCombat.getX();
                 int bossY = enemicCombat.getY();
@@ -587,7 +587,7 @@ public class Joc extends Motor {
         TipusTerra terra = TipusTerra.de(
                 mapa.getCelles()[jugador.getY()][jugador.getX()]);
         double modRadi = (terra != null) ? terra.getModRadi() : 1.0;
-        // torns extra per penalització de pes (velocitat 5=normal, 4=-1, 3=-2)
+        //torns extra per penalitzacio de pes (velocitat 5=normal, 4=-1, 3=-2)
         int tornsEnemics = 1 + (5 - jugador.velocitatEfectiva());
         for (int torn = 0; torn < tornsEnemics; torn++) {
             for (Enemic e : enemics) {
@@ -661,7 +661,8 @@ public class Joc extends Motor {
         }
     }
 
-    //Bresenham des del jugador fins a (x1,y1); retorna false si una paret talla la línia
+    //Bresenham des del jugador fins a (x1,y1); retorna false si una paret talla sa linia
+    //ho feim per sa boira de guerra, aixi no veus a traves de ses parets
     private boolean teLiniaDVista(int x0, int y0, int x1, int y1, char[][] celles) {
         int dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0);
         int sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
@@ -880,8 +881,8 @@ public class Joc extends Motor {
     }
 
     private void carregaEquipamentInicial() {
-        // config.equipamentInicial pot ser null si la config ve de la BD (PartidaRepository)
-        // en aquest cas llegim l'equipamentInicial directament del game.json del classpath
+        //config.equipamentInicial pot ser null si sa config ve de la BD (PartidaRepository)
+        //en aquest cas llegim l'equipamentInicial directament del game.json de dins
         ConfigGame.EquipamentInicial eq = null;
         if (config != null && config.equipamentInicial != null) {
             eq = config.equipamentInicial;

@@ -46,17 +46,17 @@ public class Simbols {
     public static boolean esMarcadorPorta(char c) { return te(marcadorPorta, c); }
     public static boolean esMarcadorNpc(char c) { return te(marcadorNpc, c); }
 
-    // qualsevol tipus de porta
+    //qualsevol tipus de porta
     public static boolean esPorta(char c) {
         return esPortaTancada(c) || esPortaOberta(c) || esPortaBloquejada(c);
     }
 
-    // símbols que bloquegen el moviment (parets, portes tancades i bloquejades)
+    //simbols que bloquegen es moviment (parets, portes tancades i bloquejades)
     public static boolean bloquejaMoviment(char c) {
         return esMur(c) || esPortaTancada(c) || esPortaBloquejada(c) || esMarcadorItem(c);
     }
 
-    // símbols que bloquegen la línia de visió
+    //simbols que bloquegen sa linia de visio
     public static boolean bloquejaVisio(char c) {
         return esMur(c) || esPortaTancada(c) || esPortaBloquejada(c);
     }

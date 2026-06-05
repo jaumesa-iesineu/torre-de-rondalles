@@ -12,7 +12,7 @@ import java.util.List;
 
 public class CarregadorGame {
 
-    // carrega el game.json empaquetado als resources (ús intern per defecte)
+    //carrega es game.json des de dins del jar (us intern per defecte)
     public static ConfigGame carrega(String rutaRecurs) throws Exception {
         InputStream is = CarregadorGame.class.getClassLoader().getResourceAsStream(rutaRecurs);
         if (is == null) {
@@ -26,7 +26,7 @@ public class CarregadorGame {
         return config;
     }
 
-    // carrega un JSON extern del sistema de fitxers (argument -game o -mod)
+    //carrega un JSON extern del sistema de fitxers (argument -game o -mod)
     public static ConfigGame carregaFitxerExtern(String ruta) throws Exception {
         try (Reader reader = new InputStreamReader(new FileInputStream(ruta), StandardCharsets.UTF_8)) {
             ConfigGame config = new Gson().fromJson(reader, ConfigGame.class);
@@ -35,8 +35,8 @@ public class CarregadorGame {
         }
     }
 
-    // aplica un mod sobre una config base: els camps del mod sobreescriuen els de la base (last wins)
-    // s'ha de cridar en ordre, del primer mod al darrer
+    //aplica un mod sobre una config base: els camps del mod sobreescriuen els de la base (last wins)
+    //s'ha de cridar en ordre, del primer mod al darrer
     public static void aplicaMod(ConfigGame base, ConfigGame mod) {
         if (mod == null) {
             return;
@@ -76,7 +76,7 @@ public class CarregadorGame {
                     base.enemics.tipus = new ArrayList<>();
                 }
                 for (TipusEnemic te : mod.enemics.tipus) {
-                    // un tipus s'identifica pel primer símbol; si coincideix, el mod el sobreescriu
+                    //un tipus s'identifica pel primer simbol; si coincideix, el mod el sobreescriu
                     String primerSimbol = (te.simbols != null && !te.simbols.isEmpty()) ? te.simbols.get(0) : null;
                     if (primerSimbol != null) {
                         final String ps = primerSimbol;

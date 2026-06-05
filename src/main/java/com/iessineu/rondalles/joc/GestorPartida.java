@@ -11,7 +11,7 @@ import java.io.FileOutputStream;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 
-//gestiona el guardat i la càrrega de partides en format binari (.save)
+//gestiona es guardat i sa carrega de partides en format binari (.save)
 public class GestorPartida {
 
     private static final String FITXER = "partida.save";
@@ -92,7 +92,7 @@ public class GestorPartida {
             return;
         }
         try (DataInputStream dis = new DataInputStream(new FileInputStream(FITXER))) {
-            //validar magic bytes
+            //validar es magic bytes
             for (byte b : MAGIC) {
                 if (dis.readByte() != b) {
                     throw new RuntimeException("Fitxer de partida invàlid");

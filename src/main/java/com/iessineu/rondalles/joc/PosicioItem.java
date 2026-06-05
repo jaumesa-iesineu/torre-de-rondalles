@@ -4,7 +4,7 @@ package com.iessineu.rondalles.joc;
 public class PosicioItem {
 
     public String mapa;
-    public String id;   // ex: "pocio-vida", "falc-llaurador", "capell-pages"
+    public String id;   //ex: "pocio-vida", "falc-llaurador", "capell-pages"
     public int x;
     public int y;
 }
