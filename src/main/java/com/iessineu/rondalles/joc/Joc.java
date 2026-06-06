@@ -70,6 +70,7 @@ public class Joc extends Motor {
     private long msPasGel = 140;
 
     private int maxLog = 3;
+    private boolean jugadorIniciaCombat = false;
 
     private String fitxerMapa;
     private char[][] mapaRecord;
@@ -234,10 +235,12 @@ public class Joc extends Motor {
                     lliscantGel = false;
                     tornsDesorientat = 0;
                     enemicCombat = enmig;
+                    jugadorIniciaCombat = true;
                     logCombat.clear();
                     afegeixLog("Combat amb " + enmig.getNom().toUpperCase() + "!");
                     estat = Estat.COMBAT;
                     GestorMusica.reprodueix(esBoss(enmig) ? "BOSS" : "COMBAT");
+                    aplicaAtacSorpresa();
                 } else {
                     TipusTerra tt = TipusTerra.de(terraDesti);
                     // si el terreny destí té un real amagat, usam el tipus real per decidir si llisca
@@ -600,10 +603,12 @@ public class Joc extends Motor {
         Enemic enemic = trobaEnemicA(nx, ny);
         if (enemic != null) {
             enemicCombat = enemic;
+            jugadorIniciaCombat = true;
             logCombat.clear();
             afegeixLog("Combat amb " + enemic.getNom().toUpperCase() + "!");
             estat = Estat.COMBAT;
             GestorMusica.reprodueix(esBoss(enemic) ? "BOSS" : "COMBAT");
+            aplicaAtacSorpresa();
             return;
         }
 
@@ -711,6 +716,24 @@ public class Joc extends Motor {
                 }
             }
         }
+        // enemic adjacent i perseguint → inicia combat amb atac sorpresa
+        if (estat == Estat.MON) {
+            for (Enemic e : enemics) {
+                if (!e.isActiu()) continue;
+                if (e.getEstatEnemic() != Enemic.EstatEnemic.PERSEGUINT) continue;
+                int dist = Math.abs(e.getX() - jugador.getX()) + Math.abs(e.getY() - jugador.getY());
+                if (dist == 1) {
+                    enemicCombat = e;
+                    jugadorIniciaCombat = false;
+                    logCombat.clear();
+                    afegeixLog(e.getNom().toUpperCase() + " t'ataca!");
+                    estat = Estat.COMBAT;
+                    GestorMusica.reprodueix(esBoss(e) ? "BOSS" : "COMBAT");
+                    aplicaAtacSorpresa();
+                    break;
+                }
+            }
+        }
     }
 
     private boolean esBoss(Enemic e) {
@@ -720,6 +743,41 @@ public class Joc extends Motor {
     private int atacaJugadorAmbGod(Enemic enemic) {
         if (godMode) return -1;
         return SistemaCombat.atacaJugador(enemic, jugador);
+    }
+
+    private void aplicaAtacSorpresa() {
+        String nom = enemicCombat.getNom().toUpperCase();
+        if (jugadorIniciaCombat) {
+            int dany = SistemaCombat.atacaEnemic(jugador, enemicCombat);
+            afegeixLog("Atac sorpresa! " + nom + " ha rebut " + dany + " de dany.");
+            if (enemicCombat.esMort()) {
+                afegeixLog(nom + " ha caigut!");
+                boolean eraBoss = esBoss(enemicCombat);
+                String clauDropejada = enemicCombat.getClauDropejada();
+                enemics.remove(enemicCombat);
+                if (eraBoss && clauDropejada != null && !clauDropejada.isBlank()) {
+                    try {
+                        Clau clau = RegistreItems.get().clau(clauDropejada);
+                        jugador.afegeixItem(clau);
+                        afegeixLog("Has obtingut la " + clau.getNom() + ".");
+                    } catch (Exception ex) {}
+                }
+                enemicCombat = null;
+                GestorMusica.reprodueix("PIS_" + Math.min(pisActual, 5));
+                estat = Estat.MON;
+            }
+        } else {
+            int dany = atacaJugadorAmbGod(enemicCombat);
+            if (dany == -1) {
+                afegeixLog(nom + " t'ataca per sorpresa! Has esquivat!");
+            } else {
+                afegeixLog(nom + " t'ataca per sorpresa! Has rebut " + dany + " de dany.");
+            }
+            if (jugador.esMort()) {
+                GestorMusica.reprodueix("GAME_OVER");
+                corrent = false;
+            }
+        }
     }
 
     private String teclaANom(KeyStroke tecla) {
