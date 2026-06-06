@@ -10,6 +10,7 @@ public class TipusTerra {
 
     private final List<Character> simbols;
     private final String nom;
+    private final char amagat;
     private final int colorR, colorG, colorB;
     private final int fonsR, fonsG, fonsB;
     private final boolean doblePas;
@@ -18,12 +19,13 @@ public class TipusTerra {
     private final int mal;
 
 
-    private TipusTerra(List<Character> simbols, String nom,
+    private TipusTerra(List<Character> simbols, String nom, char amagat,
                        int colorR, int colorG, int colorB,
                        int fonsR, int fonsG, int fonsB,
                        boolean doblePas, boolean llisca, double modRadi, int mal) {
         this.simbols = simbols;
         this.nom = nom;
+        this.amagat = amagat;
         this.colorR = colorR;
         this.colorG = colorG;
         this.colorB = colorB;
@@ -44,7 +46,7 @@ public class TipusTerra {
         cache.clear();
         if (configs == null) return;
         for (ConfigGame.TerrenyConfig tc : configs) {
-            TipusTerra t = new TipusTerra(tc.simbols, tc.nom,
+            TipusTerra t = new TipusTerra(tc.simbols, tc.nom, tc.amagat,
                     tc.colorR, tc.colorG, tc.colorB,
                     tc.fonsR, tc.fonsG, tc.fonsB,
                     tc.doblePas, tc.llisca, tc.modRadi, tc.mal);
@@ -61,6 +63,7 @@ public class TipusTerra {
 
     //metodes per accedir a ses propietats
     public String getNom() { return nom; }
+    public char getAmagat(){return amagat;}
     public int getColorR() { return colorR; }
     public int getColorG() { return colorG; }
     public int getColorB() { return colorB; }

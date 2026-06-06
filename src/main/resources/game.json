@@ -69,6 +69,7 @@
         {
             "simbols": ["♦"],
             "nom": "puntxa",
+            "amagat": ".",
             "colorR": 180, "colorG": 230, "colorB": 255,
             "fonsR": 20, "fonsG": 60, "fonsB": 90,
             "doblePas": false, "llisca": true, "modRadi": 1.0,

@@ -42,6 +42,7 @@ public class ConfigGame {
 
         public List<Character> simbols;
         public String nom;
+        public char amagat;
         public int colorR, colorG, colorB;
         public int fonsR, fonsG, fonsB;
         public boolean doblePas;

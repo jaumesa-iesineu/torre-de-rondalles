@@ -4,14 +4,18 @@
  */
 package com.iessineu.rondalles.joc;
 
-import com.iessineu.rondalles.audio.GestorMusica;
-import com.iessineu.rondalles.mapa.TipusTerra;
-import com.iessineu.rondalles.entitats.NpcComerciants;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
+import com.iessineu.rondalles.audio.GestorMusica;
 import com.iessineu.rondalles.combat.SistemaCombat;
 import com.iessineu.rondalles.entitats.Enemic;
 import com.iessineu.rondalles.entitats.Entitat;
 import com.iessineu.rondalles.entitats.Jugador;
+import com.iessineu.rondalles.entitats.NpcComerciants;
 import com.iessineu.rondalles.entitats.Porta;
 import com.iessineu.rondalles.inventari.Clau;
 import com.iessineu.rondalles.inventari.Inventari;
@@ -21,14 +25,10 @@ import com.iessineu.rondalles.inventari.Pocio;
 import com.iessineu.rondalles.inventari.RegistreItems;
 import com.iessineu.rondalles.mapa.CarregadorMapa;
 import com.iessineu.rondalles.mapa.Mapa;
+import com.iessineu.rondalles.mapa.TipusTerra;
 import com.iessineu.rondalles.motor.Estat;
 import com.iessineu.rondalles.motor.Motor;
 import com.iessineu.rondalles.motor.Renderitzador;
-import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Joc extends Motor {
 
@@ -70,6 +70,7 @@ public class Joc extends Motor {
 
     private String fitxerMapa;
     private char[][] mapaRecord;
+    private char[][] terraAmagat; // guarda els simbols reals dels terrenys ocults
 
     //configuració carregada del game.json
     private ConfigGame config;
@@ -132,6 +133,7 @@ public class Joc extends Motor {
         //carregam els tipus de terra des del JSON
         if (config != null && config.terrenys != null) {
             TipusTerra.inicialitza(config.terrenys);
+            //amagaTerrenyEspecial();
         } else {
             //fallback per si no hi ha terrenys al JSON (no hauria de passar)
             try {
@@ -191,7 +193,8 @@ public class Joc extends Motor {
         for (char[] fila : mapaRecord) {
             java.util.Arrays.fill(fila, ' ');
         }
-
+        amagaTerrenyEspecial();
+        
         GestorMusica.reprodueix("MENU");
     }
 
@@ -199,10 +202,24 @@ public class Joc extends Motor {
     protected boolean estaAnimant() {
         return lliscantGel;
     }
-
+    
+    private void amagaTerrenyEspecial() {
+        terraAmagat = new char[mapa.getAlcada()][mapa.getAmplada()];
+        char[][] celles = mapa.getCelles();
+        for (int y = 0; y < celles.length; y++) {
+            for (int x = 0; x < celles[y].length; x++) {
+                TipusTerra t = TipusTerra.de(celles[y][x]);
+                if (t != null && t.getAmagat() != '\0') {
+                    terraAmagat[y][x] = celles[y][x]; // guardam el real
+                    mapa.setCella(x, y, t.getAmagat()); // mostram l'amagat
+                }
+            }
+        }
+    }
+    
     @Override
     protected void actualitza(KeyStroke tecla) {
-        if (lliscantGel) {
+        if (lliscantGel) {//Lògica de patinar.
             long ara = System.currentTimeMillis();
             if (ara - ultimPasGel >= msPasGel) {
                 ultimPasGel = ara;
@@ -220,9 +237,30 @@ public class Joc extends Motor {
                     GestorMusica.reprodueix(esBoss(enmig) ? "BOSS" : "COMBAT");
                 } else {
                     TipusTerra tt = TipusTerra.de(terraDesti);
+                    // si el terreny destí té un real amagat, usam el tipus real per decidir si llisca
+                    if (terraAmagat != null && gy >= 0 && gy < terraAmagat.length 
+                        && gx >= 0 && gx < terraAmagat[gy].length 
+                        && terraAmagat[gy][gx] != '\0') {
+                        tt = TipusTerra.de(terraAmagat[gy][gx]);
+                    }
+
                     if (mapa.esPasable(gx, gy) && tt != null && tt.isLlisca()) {
                         jugador.setX(gx);
                         jugador.setY(gy);
+                    
+                        // revelam i aplicam mal
+                        if (terraAmagat[gy][gx] != '\0') {
+                            char simbolReal = terraAmagat[gy][gx];
+                            terraAmagat[gy][gx] = '\0';
+                            mapa.setCella(gx, gy, simbolReal);
+                        }
+
+                        // aplicam mal del terreny actual (ja sigui revelat o no)
+                        TipusTerra terraActual = TipusTerra.de(mapa.getCelles()[gy][gx]);
+                        if (terraActual != null && terraActual.getMal() > 0) {
+                            jugador.rebreDany(terraActual.getMal());
+                        }
+                    
                         tickTorn();
                     } else {
                         lliscantGel = false;
@@ -230,6 +268,18 @@ public class Joc extends Motor {
                         if (mapa.esPasable(gx, gy)) {
                             jugador.setX(gx);
                             jugador.setY(gy);
+                        
+                             // revelam i aplicam mal
+                            if (terraAmagat != null && terraAmagat[gy][gx] != '\0') {
+                                char simbolReal = terraAmagat[gy][gx];
+                                terraAmagat[gy][gx] = '\0';
+                                mapa.setCella(gx, gy, simbolReal);
+                                TipusTerra tReal = TipusTerra.de(simbolReal);
+                                if (tReal != null && tReal.getMal() > 0) {
+                                    jugador.rebreDany(tReal.getMal());
+                                }
+                            }
+                        
                             tickTorn();
                         }
                     }
@@ -584,7 +634,33 @@ public class Joc extends Motor {
         jugador.setX(nx);
         jugador.setY(ny);
         jugador.setEstatJugador(Jugador.EstatJugador.MOVIMENT);
+        
+        // revelam terreny amagat si n'hi ha
+        if (terraAmagat != null && terraAmagat[ny][nx] != '\0') {//Aqui es gestionen els terrenys amagats.
+            char simbolReal = terraAmagat[ny][nx];
+            terraAmagat[ny][nx] = '\0'; // ja no està amagat
+            mapa.setCella(nx, ny, simbolReal); // restauram el simbol real
 
+            // ara aplicam l'efecte real
+            TipusTerra tReal = TipusTerra.de(simbolReal);
+            if (tReal != null && tReal.getMal() > 0) {
+                jugador.rebreDany(tReal.getMal());
+            }
+            if (tReal != null && tReal.isLlisca()) {
+                lliscantGel = true;
+                gelDx = dx;
+                gelDy = dy;
+            } else {
+                lliscantGel = false;
+            }
+
+            recullItemSiNHiHa(nx, ny);
+            tickTorn();
+             if (jugador.esMort()) corrent = false;
+                return; // <-- IMPORTANT: no continuar al bloc normal
+        }
+       
+        // terreny normal (no amagat)
         TipusTerra terraPeu = TipusTerra.de(mapa.getCelles()[ny][nx]);
         
         if(terraPeu !=null && terraPeu.getMal()>0){
