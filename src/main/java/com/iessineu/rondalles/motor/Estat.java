@@ -18,5 +18,7 @@ public enum Estat {
     INVENTARI, //inventari superposat damunt es mapa, perds un torn
     VICTORIA, //has guanyat! es drac ha caigut
     COMERCIANT, //pantalla de comerç amb es NPC
-    ENIGMA //pantalla de l'endevinalla del NPC
+    ENIGMA, //pantalla de l'endevinalla del NPC
+    SELECCIO_PERSONATGE, //tria de tipus de personatge
+    CREACIO_PERSONATGE //distribució de punts per al personatge personalitzat
 }

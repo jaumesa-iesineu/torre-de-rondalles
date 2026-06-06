@@ -47,6 +47,7 @@ public class Jugador extends Entitat { //el jugador tambe es una entitat
     private int tornsVeri = 0;
     private int tornsFoc = 0; //baixa atac
     private int tornsGel = 0; //baixa defensa
+    private String passiu = "";
 
     public Jugador(int x, int y) {
         this(x, y, 100, 3, 5, 10, 50, 4);
@@ -86,30 +87,25 @@ public class Jugador extends Entitat { //el jugador tambe es una entitat
     }
 
     public Carrega categoriaCarrega() {
+        if ("lleugera_vent".equals(passiu)) return Carrega.LLEUGER;
         double pct = (double) pes / pesMaxim;
-        if (pct <= 0.50) {
-            return Carrega.LLEUGER;
-        }
-        if (pct <= 0.80) {
-            return Carrega.NORMAL;
-        }
+        if (pct <= 0.50) return Carrega.LLEUGER;
+        if (pct <= 0.80) return Carrega.NORMAL;
         return Carrega.PESAT;
     }
 
-    //funcio que calcula sa velocitat segons es pes que du(s)
     public int velocitatEfectiva() {
         return switch (categoriaCarrega()) {
-            case LLEUGER ->
-                velocitat;
-            case NORMAL ->
-                Math.max(1, velocitat - 1);
-            case PESAT ->
-                Math.max(1, velocitat - 2);
+            case LLEUGER -> velocitat;
+            case NORMAL  -> Math.max(1, velocitat - 1);
+            case PESAT   -> Math.max(1, velocitat - 2);
         };
     }
 
     public int evasioEfectiva() {
-        return categoriaCarrega() == Carrega.PESAT ? Math.max(0, evasio - 5) : evasio;
+        int base = categoriaCarrega() == Carrega.PESAT ? Math.max(0, evasio - 5) : evasio;
+        if ("lleugera_vent".equals(passiu)) base = Math.min(100, base + 20);
+        return base;
     }
 
     public void setAtacExtra(int atacExtra) {
@@ -125,6 +121,7 @@ public class Jugador extends Entitat { //el jugador tambe es una entitat
     }
 
     public boolean esquiva() {
+        if ("sort_rondalla".equals(passiu) && java.util.concurrent.ThreadLocalRandom.current().nextInt(100) < 15) return true;
         int eva = evasioEfectiva();
         return eva > 0 && java.util.concurrent.ThreadLocalRandom.current().nextInt(100) < eva;
     }
@@ -162,25 +159,19 @@ public class Jugador extends Entitat { //el jugador tambe es una entitat
     }
 
     public void tickVeri() {
-        if (tornsVeri <= 0) {
-            return;
-        }
+        if (tornsVeri <= 0) return;
         rebreDany(3);
-        tornsVeri--;
+        if (!"pocions_infinites".equals(passiu)) tornsVeri--;
     }
 
     public void tickFoc() {
-        if (tornsFoc <= 0) {
-            return;
-        }
-        tornsFoc--;
+        if (tornsFoc <= 0) return;
+        if (!"pocions_infinites".equals(passiu)) tornsFoc--;
     }
 
     public void tickGel() {
-        if (tornsGel <= 0) {
-            return;
-        }
-        tornsGel--;
+        if (tornsGel <= 0) return;
+        if (!"pocions_infinites".equals(passiu)) tornsGel--;
     }
 
     public int getAtacTotal() {
@@ -300,6 +291,9 @@ public class Jugador extends Entitat { //el jugador tambe es una entitat
     public int getTornsGel() {
         return tornsGel;
     }
+
+    public void setPassiu(String passiu) { this.passiu = passiu != null ? passiu : ""; }
+    public String getPassiu() { return passiu; }
 
     public Inventari getInventari() {
         return inventari;

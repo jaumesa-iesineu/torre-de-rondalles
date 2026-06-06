@@ -56,6 +56,13 @@ public class Joc extends Motor {
     private int opcioMenuInicial = 0;
     private String[] opcionsInicials = {"Iniciar partida", "Sortir"};
 
+    // --- Selecció i creació de personatge ---
+    private int opcioPersonatge = 0;
+    private ConfigGame.TipusPersonatgeConfig personatgeTriat = null;
+    // punts distribuits per al personatge custom [vida, atac, velocitat, evasio]
+    private int[] ptsCustom = {0, 0, 0, 0};
+    private int statSeleccionat = 0;
+
     // --- Terra especial ---
     private boolean esperantSegonaAigua = false;
     private int aiguaNx = 0, aiguaNy = 0;
@@ -182,6 +189,7 @@ public class Joc extends Motor {
             opcionsPausa = new String[]{t.menuReanudar, t.menuGuardar, t.menuCarregar, t.menuSortir};
         }
 
+        boolean teTipusPersonatge = config != null && config.tipusPersonatge != null && !config.tipusPersonatge.isEmpty();
         jugador = creaJugador(trobaInicialX(), trobaInicialY());
         enemics = new ArrayList<>();
         carregaEnemics();
@@ -189,7 +197,7 @@ public class Joc extends Motor {
         carregaItemsMapa();
         carregaPortes();
         carregaNpcs();
-        carregaEquipamentInicial();
+        if (!teTipusPersonatge) carregaEquipamentInicial();
         carregaArtJugador();
         renderer.setArtJugador(artJugador);
 
@@ -313,6 +321,14 @@ public class Joc extends Motor {
             gestionaMenuInicial(tecla);
             return;
         }
+        if (estat == Estat.SELECCIO_PERSONATGE) {
+            gestionaSeleccioPersonatge(tecla);
+            return;
+        }
+        if (estat == Estat.CREACIO_PERSONATGE) {
+            gestionaCreacioPersonatge(tecla);
+            return;
+        }
         if (estat == Estat.PAUSA) {
             gestionaPausa(tecla);
             return;
@@ -378,8 +394,8 @@ public class Joc extends Motor {
         }
         if (tecla.getKeyType() == KeyType.Enter) {
             if (opcioMenuInicial == 0) {
-                estat = Estat.MON;
-                GestorMusica.reprodueix("PIS_1");
+                opcioPersonatge = 0;
+                estat = Estat.SELECCIO_PERSONATGE;
             } else {
                 corrent = false;
             }
@@ -389,6 +405,91 @@ public class Joc extends Motor {
             corrent = false;
         }
 
+    }
+
+    private List<ConfigGame.TipusPersonatgeConfig> llistaPersonatges() {
+        if (config != null && config.tipusPersonatge != null) return config.tipusPersonatge;
+        return new java.util.ArrayList<>();
+    }
+
+    private void gestionaSeleccioPersonatge(KeyStroke tecla) {
+        List<ConfigGame.TipusPersonatgeConfig> llista = llistaPersonatges();
+        int total = llista.size() + 1; // +1 per al custom
+        if (tecla.getKeyType() == KeyType.ArrowUp) {
+            opcioPersonatge = (opcioPersonatge + total - 1) % total;
+        } else if (tecla.getKeyType() == KeyType.ArrowDown) {
+            opcioPersonatge = (opcioPersonatge + 1) % total;
+        } else if (tecla.getKeyType() == KeyType.Escape) {
+            estat = Estat.MENU_INICIAL;
+        } else if (tecla.getKeyType() == KeyType.Enter) {
+            if (opcioPersonatge < llista.size()) {
+                personatgeTriat = llista.get(opcioPersonatge);
+                iniciaPartida();
+            } else {
+                ptsCustom = new int[]{0, 0, 0, 0};
+                statSeleccionat = 0;
+                estat = Estat.CREACIO_PERSONATGE;
+            }
+        }
+    }
+
+    private void gestionaCreacioPersonatge(KeyStroke tecla) {
+        ConfigGame.PersonatgeCustomConfig cc = (config != null && config.personatgeCustom != null)
+                ? config.personatgeCustom : new ConfigGame.PersonatgeCustomConfig();
+        int pressupost = cc.pressupost;
+        int gastats = ptsCustom[0] + ptsCustom[1] + ptsCustom[2] + ptsCustom[3];
+        int[] maxPts = {
+            (cc.vidaMax - cc.vidaBase) / cc.vidaPerPunt,
+            cc.atacMax - cc.atacBase,
+            cc.velocitatMax - cc.velocitatBase,
+            (cc.evasioMax - cc.evasioBase) / cc.evasioPerPunt
+        };
+        if (tecla.getKeyType() == KeyType.ArrowUp) {
+            statSeleccionat = (statSeleccionat + 3) % 4;
+        } else if (tecla.getKeyType() == KeyType.ArrowDown) {
+            statSeleccionat = (statSeleccionat + 1) % 4;
+        } else if (tecla.getKeyType() == KeyType.ArrowRight) {
+            if (gastats < pressupost && ptsCustom[statSeleccionat] < maxPts[statSeleccionat]) {
+                ptsCustom[statSeleccionat]++;
+            }
+        } else if (tecla.getKeyType() == KeyType.ArrowLeft) {
+            if (ptsCustom[statSeleccionat] > 0) {
+                ptsCustom[statSeleccionat]--;
+            }
+        } else if (tecla.getKeyType() == KeyType.Enter) {
+            ConfigGame.TipusPersonatgeConfig custom = new ConfigGame.TipusPersonatgeConfig();
+            custom.id = "custom";
+            custom.nom = "Personatge propi";
+            custom.passiu = "";
+            custom.vidaMaxima = cc.vidaBase + ptsCustom[0] * cc.vidaPerPunt;
+            custom.atac = cc.atacBase + ptsCustom[1];
+            custom.velocitat = cc.velocitatBase + ptsCustom[2];
+            custom.evasio = cc.evasioBase + ptsCustom[3] * cc.evasioPerPunt;
+            custom.pesMaxim = cc.pesMaxim;
+            personatgeTriat = custom;
+            iniciaPartida();
+        } else if (tecla.getKeyType() == KeyType.Escape) {
+            estat = Estat.SELECCIO_PERSONATGE;
+        }
+    }
+
+    private void iniciaPartida() {
+        int spawnX = trobaInicialX();
+        int spawnY = trobaInicialY();
+        ConfigGame.JugadorConfig jc = (config != null) ? config.jugador : null;
+        int ms = (jc != null && jc.artAscii != null) ? Math.max(4, jc.artAscii.length) : 4;
+        if (personatgeTriat != null) {
+            jugador = new Jugador(spawnX, spawnY,
+                    personatgeTriat.vidaMaxima, personatgeTriat.atac,
+                    personatgeTriat.velocitat, personatgeTriat.evasio,
+                    personatgeTriat.pesMaxim, ms);
+            jugador.setPassiu(personatgeTriat.passiu);
+            renderer.setNomPersonatge(personatgeTriat.nom);
+            if (personatgeTriat.artAscii != null) renderer.setArtJugador(personatgeTriat.artAscii);
+        }
+        carregaEquipamentInicial();
+        GestorMusica.reprodueix("PIS_1");
+        estat = Estat.MON;
     }
 
     private void gestionaPausa(KeyStroke tecla) {
@@ -717,7 +818,7 @@ public class Joc extends Motor {
                 mapa.getCelles()[jugador.getY()][jugador.getX()]);
         double modRadi = (terra != null) ? terra.getModRadi() : 1.0;
         //torns extra per penalitzacio de pes (velocitat 5=normal, 4=-1, 3=-2)
-        int tornsEnemics = 1 + (5 - jugador.velocitatEfectiva());
+        int tornsEnemics = Math.max(1, 1 + (5 - jugador.velocitatEfectiva()));
         for (int torn = 0; torn < tornsEnemics; torn++) {
             for (Enemic e : enemics) {
                 if (!e.isActiu()) continue;
@@ -765,6 +866,10 @@ public class Joc extends Motor {
         String nom = enemicCombat.getNom().toUpperCase();
         if (jugadorIniciaCombat) {
             int dany = SistemaCombat.atacaEnemic(jugador, enemicCombat);
+            if ("atac_sorpresa_doble".equals(jugador.getPassiu())) {
+                SistemaCombat.atacaEnemic(jugador, enemicCombat);
+                dany *= 2;
+            }
             afegeixLog("Atac sorpresa! " + nom + " ha rebut " + dany + " de dany.");
             if (enemicCombat.esMort()) {
                 afegeixLog(nom + " ha caigut!");
@@ -1268,6 +1373,15 @@ public class Joc extends Motor {
         try {
             if (estat == Estat.MENU_INICIAL) {
                 renderer.dibuixaMenuInicial(opcioMenuInicial, opcionsInicials);
+                return;
+            }
+            if (estat == Estat.SELECCIO_PERSONATGE) {
+                renderer.dibuixaSeleccioPersonatge(llistaPersonatges(), opcioPersonatge);
+                return;
+            }
+            if (estat == Estat.CREACIO_PERSONATGE) {
+                ConfigGame.PersonatgeCustomConfig cc = (config != null) ? config.personatgeCustom : null;
+                renderer.dibuixaCreacioPersonatge(ptsCustom, statSeleccionat, cc);
                 return;
             }
             if (estat == Estat.PAUSA) {

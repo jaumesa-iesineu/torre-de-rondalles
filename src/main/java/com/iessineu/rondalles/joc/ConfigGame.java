@@ -126,7 +126,39 @@ public class ConfigGame {
         public int pesMaxim = 50;
     }
 
-    //Chetos    
+    public static class TipusPersonatgeConfig {
+        public String id;
+        public String nom;
+        public String descripcio;
+        public String passiu;       // "sort_rondalla" | "pocions_infinites" | "atac_sorpresa_doble" | "lleugera_vent" | ""
+        public String descripcioPassiu;
+        public String[] artAscii;
+        public int vidaMaxima = 100;
+        public int atac = 3;
+        public int velocitat = 5;
+        public int evasio = 10;
+        public int pesMaxim = 50;
+    }
+
+    public static class PersonatgeCustomConfig {
+        public int pressupost = 10;
+        public int vidaBase = 70;
+        public int vidaPerPunt = 8;
+        public int vidaMax = 150;
+        public int atacBase = 1;
+        public int atacMax = 9;
+        public int velocitatBase = 2;
+        public int velocitatMax = 7;
+        public int evasioBase = 0;
+        public int evasioPerPunt = 5;
+        public int evasioMax = 30;
+        public int pesMaxim = 50;
+    }
+
+    public List<TipusPersonatgeConfig> tipusPersonatge;
+    public PersonatgeCustomConfig personatgeCustom;
+
+    //Chetos
     public static class ChetoConfig {
         public String accio;       // "hp", "kills", "inventari", "nextpis", "god"
         public List<String> sequencia; // ["UP","UP","DOWN","DOWN","LEFT","RIGHT"]

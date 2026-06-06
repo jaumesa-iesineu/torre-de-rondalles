@@ -54,6 +54,7 @@ public class Renderitzador { // classe per gestionar la pantalla
     private String pauseTitle = "  *** PAUSA ***  ";
     private String pauseInstructions = "Fletxes + ENTER per seleccionar";
     private String pauseResumeHint = "[ ESC ] Reanudar";
+    private String nomPersonatge = "PERSONATGE";
 
     public void setWindowTitle(String t) { this.windowTitle = t; }
     public void setHeaderTitle(String t) { this.headerTitle = t; }
@@ -61,6 +62,7 @@ public class Renderitzador { // classe per gestionar la pantalla
     public void setPauseTitle(String t) { this.pauseTitle = t; }
     public void setPauseInstructions(String t) { this.pauseInstructions = t; }
     public void setPauseResumeHint(String t) { this.pauseResumeHint = t; }
+    public void setNomPersonatge(String t) { this.nomPersonatge = t != null ? t.toUpperCase() : "PERSONATGE"; }
 
     public void setArtJugador(String[] art) {
         this.artJugador = art;
@@ -117,7 +119,7 @@ public class Renderitzador { // classe per gestionar la pantalla
         }
         pintaText(1, 1, titol, daurat);
         pintaText(colSep, 1, "║", grisMarc);
-        String titolHud = "PERSONATGE";
+        String titolHud = nomPersonatge;
         pintaText(colSep + (ampleHud - 1 - titolHud.length()) / 2, 1, titolHud, new TextColor.RGB(80, 200, 120));
         pintaText(cols - 1, 1, "║", grisMarc);
         //separador davall el títol
@@ -399,6 +401,102 @@ public class Renderitzador { // classe per gestionar la pantalla
     }
 
 
+
+    public void dibuixaSeleccioPersonatge(List<com.iessineu.rondalles.joc.ConfigGame.TipusPersonatgeConfig> llista, int opcio) throws IOException {
+        screen.clear();
+        int cols = screen.getTerminalSize().getColumns();
+        int rows = screen.getTerminalSize().getRows();
+        TextColor blanc = new TextColor.RGB(220, 220, 220);
+        TextColor daurat = new TextColor.RGB(220, 180, 50);
+        TextColor gris = new TextColor.RGB(110, 110, 110);
+        TextColor verd = new TextColor.RGB(80, 200, 120);
+        TextColor groc = new TextColor.RGB(180, 160, 80);
+
+        pintaText(0, 0, "╔" + "═".repeat(cols - 2) + "╗", blanc);
+        for (int i = 1; i < rows - 1; i++) pintaText(0, i, "║" + " ".repeat(cols - 2) + "║", gris);
+        pintaText(0, rows - 1, "╚" + "═".repeat(cols - 2) + "╝", blanc);
+
+        String titol = "T R I A   E L   T E U   P E R S O N A T G E";
+        pintaText((cols - titol.length()) / 2, 1, titol, daurat);
+        pintaText(0, 2, "╠" + "═".repeat(cols - 2) + "╣", blanc);
+
+        int panellW = cols - 6;
+        int fila = 4;
+        for (int i = 0; i < llista.size(); i++) {
+            var p = llista.get(i);
+            boolean sel = (i == opcio);
+            TextColor color = sel ? verd : blanc;
+            String prefix = sel ? "► " : "  ";
+            pintaText(3, fila, prefix + p.nom, color);
+            pintaText(5, fila + 1, p.descripcio != null ? p.descripcio : "", gris);
+            if (p.descripcioPassiu != null && !p.descripcioPassiu.isBlank()) {
+                pintaText(5, fila + 2, "✦ " + p.descripcioPassiu, groc);
+            }
+            pintaText(5, fila + 3, "HP:" + p.vidaMaxima + "  ATK:" + p.atac + "  VEL:" + p.velocitat + "  EVA:" + p.evasio + "%", gris);
+            fila += 5;
+        }
+        // opció custom
+        boolean selCustom = (opcio == llista.size());
+        TextColor colorC = selCustom ? verd : blanc;
+        pintaText(3, fila, (selCustom ? "► " : "  ") + "Personatge propi", colorC);
+        pintaText(5, fila + 1, "Distribueix els teus propis punts de stat", gris);
+        pintaText(5, fila + 2, "Sense passiu especial", gris);
+
+        pintaText(3, rows - 2, "[ ↑↓ ] Navegar    [ ENTER ] Seleccionar    [ ESC ] Tornar", gris);
+        screen.refresh();
+    }
+
+    public void dibuixaCreacioPersonatge(int[] pts, int statSel, com.iessineu.rondalles.joc.ConfigGame.PersonatgeCustomConfig cc) throws IOException {
+        screen.clear();
+        int cols = screen.getTerminalSize().getColumns();
+        int rows = screen.getTerminalSize().getRows();
+        TextColor blanc = new TextColor.RGB(220, 220, 220);
+        TextColor daurat = new TextColor.RGB(220, 180, 50);
+        TextColor gris = new TextColor.RGB(110, 110, 110);
+        TextColor verd = new TextColor.RGB(80, 200, 120);
+        TextColor groc = new TextColor.RGB(180, 160, 80);
+        TextColor vermell = new TextColor.RGB(220, 70, 70);
+
+        pintaText(0, 0, "╔" + "═".repeat(cols - 2) + "╗", blanc);
+        for (int i = 1; i < rows - 1; i++) pintaText(0, i, "║" + " ".repeat(cols - 2) + "║", gris);
+        pintaText(0, rows - 1, "╚" + "═".repeat(cols - 2) + "╝", blanc);
+
+        String titol = "C R E A   E L   T E U   P E R S O N A T G E";
+        pintaText((cols - titol.length()) / 2, 1, titol, daurat);
+        pintaText(0, 2, "╠" + "═".repeat(cols - 2) + "╣", blanc);
+
+        if (cc == null) cc = new com.iessineu.rondalles.joc.ConfigGame.PersonatgeCustomConfig();
+        int gastats = pts[0] + pts[1] + pts[2] + pts[3];
+        int restants = cc.pressupost - gastats;
+
+        String ptsStr = "Punts restants: " + restants + " / " + cc.pressupost;
+        pintaText((cols - ptsStr.length()) / 2, 4, ptsStr, restants > 0 ? groc : vermell);
+
+        String[] noms = {"Vida      ", "Atac      ", "Velocitat ", "Evasió    "};
+        int[] valors = {
+            cc.vidaBase + pts[0] * cc.vidaPerPunt,
+            cc.atacBase + pts[1],
+            cc.velocitatBase + pts[2],
+            cc.evasioBase + pts[3] * cc.evasioPerPunt
+        };
+        int[] maxVals = {cc.vidaMax, cc.atacMax, cc.velocitatMax, cc.evasioMax};
+        String[] unitats = {"", "", "", "%"};
+
+        int fila = 6;
+        for (int i = 0; i < 4; i++) {
+            boolean sel = (i == statSel);
+            TextColor color = sel ? verd : blanc;
+            String prefix = sel ? "► " : "  ";
+            int barMax = 20;
+            int barPlens = maxVals[i] > 0 ? (int)((double) valors[i] / maxVals[i] * barMax) : 0;
+            String barra = "[" + "█".repeat(barPlens) + "░".repeat(barMax - barPlens) + "]";
+            pintaText(3, fila, prefix + noms[i] + " " + barra + " " + valors[i] + unitats[i], color);
+            fila += 2;
+        }
+
+        pintaText(3, rows - 2, "[ ↑↓ ] Seleccionar stat    [ ←→ ] Ajustar    [ ENTER ] Confirmar    [ ESC ] Tornar", gris);
+        screen.refresh();
+    }
 
     public void dibuixaCombat(Enemic enemic, com.iessineu.rondalles.entitats.Jugador jugador, List<String> log) throws IOException {
         screen.clear();
