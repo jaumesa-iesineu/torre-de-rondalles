@@ -293,7 +293,7 @@ public class Renderitzador { // classe per gestionar la pantalla
             case PESAT ->
                 new TextColor.RGB(220, 60, 60);
         };
-        pintaText(col, fila++, "PAQ  " + jugador.categoriaCarrega().name(), colorCarrega);
+        pintaText(col, fila++, "SAC  " + jugador.categoriaCarrega().name(), colorCarrega);
         fila++;
 
         //inventari
@@ -425,8 +425,8 @@ public class Renderitzador { // classe per gestionar la pantalla
         //línia separadora sota el títol
         pintaText(0, 2, "╠" + "═".repeat(cols - 2) + "╣", blanc);
 
-        //separador vertical: 2/3 esquerra per al drac, 1/3 dreta per al HUD
-        int colSep = cols * 2 / 3;
+        //separador vertical: mateixa amplada que el HUD del mapa
+        int colSep = cols - ampleHud;
         pintaText(colSep, 2, "╦", blanc);
         for (int i = 3; i < rows - 6; i++) {
             pintaText(colSep, i, "║", gris);
@@ -456,108 +456,76 @@ public class Renderitzador { // classe per gestionar la pantalla
             fila++;
         }
 
-        //--- ZONA DRETA: caixa jugador + stats + accions ---
-        TextColor verd = new TextColor.RGB(80, 200, 120);
-        int cHud = colSep + 3;
-        int wBoxJug = cols - colSep - 6;
+        //--- ZONA DRETA: stats + equip + accions (mateix estil que HUD del mapa) ---
+        int cHud = colSep + 1;
+        int innerW = ampleHud - 2;
         int fHud = 3;
+        TextColor groc = new TextColor.RGB(180, 160, 80);
+        TextColor taronja2 = new TextColor.RGB(200, 120, 50);
+        TextColor blau2 = new TextColor.RGB(100, 160, 220);
+        TextColor gris2 = new TextColor.RGB(100, 100, 115);
 
-        //caixa del jugador (verda per diferenciar-la de l'enemic)
-        pintaText(cHud, fHud, "╔═ AVENTURER " + "═".repeat(Math.max(0, wBoxJug - 14)) + "╗", verd);
+        //barra de vida
+        String vidaStr = jugador.getVida() + "/" + jugador.getVidaMaxima();
+        int barW = innerW - 6 - vidaStr.length();
+        barW = Math.max(4, barW);
+        int plens = jugador.getVidaMaxima() > 0
+                ? Math.max(0, Math.min(barW, (int) ((double) jugador.getVida() / jugador.getVidaMaxima() * barW)))
+                : 0;
+        pintaText(cHud, fHud++, "HP [" + "█".repeat(plens) + "░".repeat(barW - plens) + "] " + vidaStr, colorVida(jugador.getVida(), jugador.getVidaMaxima()));
         fHud++;
-        pintaText(cHud, fHud, "║", verd);
-        pintaText(cHud + 2, fHud, barraVida(jugador.getVida(), jugador.getVidaMaxima(), 16), colorVida(jugador.getVida(), jugador.getVidaMaxima()));
-        pintaText(cHud + wBoxJug - 1, fHud, "║", verd);
-        fHud++;
-        pintaText(cHud, fHud, "╚" + "═".repeat(wBoxJug - 2) + "╝", verd);
-        fHud += 2;
 
-        //stats del jugador
-        pintaText(cHud, fHud, "ATK  " + jugador.getAtacTotal(), new TextColor.RGB(220, 130, 50));
-        fHud++;
-        pintaText(cHud, fHud, "DEF  " + jugador.getDefensaTotal(), new TextColor.RGB(100, 160, 220));
-        fHud++;
-        pintaText(cHud, fHud, "VEL  " + jugador.velocitatEfectiva(), new TextColor.RGB(100, 200, 255));
-        fHud++;
-        pintaText(cHud, fHud, "EVA  " + jugador.evasioEfectiva() + "%", new TextColor.RGB(180, 255, 180));
-        fHud++;
-        TextColor colorCar = switch (jugador.categoriaCarrega()) {
-            case LLEUGER ->
-                new TextColor.RGB(80, 220, 80);
-            case NORMAL ->
-                new TextColor.RGB(230, 200, 40);
-            case PESAT ->
-                new TextColor.RGB(220, 60, 60);
+        //estadistiques
+        pintaText(cHud, fHud++, "ATK  " + jugador.getAtacTotal(), taronja2);
+        pintaText(cHud, fHud++, "DEF  " + jugador.getDefensaTotal(), blau2);
+        pintaText(cHud, fHud++, "VEL  " + jugador.velocitatEfectiva(), new TextColor.RGB(100, 200, 255));
+        pintaText(cHud, fHud++, "EVA  " + jugador.evasioEfectiva() + "%", new TextColor.RGB(180, 255, 180));
+        pintaText(cHud, fHud++, "PES  " + jugador.getPes() + " / " + jugador.getpesMaxim(), groc);
+        TextColor colorSac = switch (jugador.categoriaCarrega()) {
+            case LLEUGER -> new TextColor.RGB(80, 220, 80);
+            case NORMAL  -> new TextColor.RGB(230, 200, 40);
+            case PESAT   -> new TextColor.RGB(220, 60, 60);
         };
-        pintaText(cHud, fHud, "CAR  " + jugador.categoriaCarrega().name(), colorCar);
+        pintaText(cHud, fHud++, "SAC  " + jugador.categoriaCarrega().name(), colorSac);
+        fHud++;
+
+        //estats temporals
+        if (jugador.getTornsVeri() > 0) { pintaText(cHud, fHud++, "VERI " + jugador.getTornsVeri() + " torns", new TextColor.RGB(100, 220, 80)); }
+        if (jugador.getTornsFoc()  > 0) { pintaText(cHud, fHud++, "FOC  " + jugador.getTornsFoc()  + " torns", new TextColor.RGB(220, 120, 30)); }
+        if (jugador.getTornsGel()  > 0) { pintaText(cHud, fHud++, "GEL  " + jugador.getTornsGel()  + " torns", new TextColor.RGB(80, 180, 220)); }
         fHud++;
 
         //equip
+        pintaText(cHud, fHud++, "--- EQUIP ---", gris2);
         var armaEqC = jugador.getInventari().getArmaEquipada();
-        if (armaEqC != null) {
-            String tA = "ARM  " + armaEqC.getSimbol() + " " + armaEqC.getNom();
-            if (tA.length() > wBoxJug - 2) {
-                tA = tA.substring(0, wBoxJug - 2);
-            }
-            pintaText(cHud, fHud, tA, armaEqC.getColor());
-            fHud++;
-        }
-        String[] sNoms = {"CAP", "PIT", "CAM", "PEU"};
+        String txtArma = "Arma : " + (armaEqC != null ? armaEqC.getNom() : "---");
+        if (txtArma.length() > innerW) txtArma = txtArma.substring(0, innerW);
+        pintaText(cHud, fHud++, txtArma, armaEqC != null ? armaEqC.getColor() : gris2);
+        String[] slotNomsC = {"Casc ", "Cos  ", "Cames", "Peus "};
         var armEqC = jugador.getInventari().getArmaduresEquipades();
         for (int i = 0; i < 4; i++) {
             com.iessineu.rondalles.inventari.Armadura.Slot s = com.iessineu.rondalles.inventari.Armadura.Slot.values()[i];
             com.iessineu.rondalles.inventari.Armadura arm = armEqC.get(s);
-            if (arm != null) {
-                String tS = sNoms[i] + "  " + arm.getSimbol() + " " + arm.getNom();
-                if (tS.length() > wBoxJug - 2) {
-                    tS = tS.substring(0, wBoxJug - 2);
-                }
-                pintaText(cHud, fHud, tS, arm.getColor());
-                fHud++;
-            }
-        }
-
-        if (jugador.getTornsVeri() > 0) {
-            pintaText(cHud, fHud, "VERI " + jugador.getTornsVeri() + " torns", new TextColor.RGB(100, 220, 80));
-            fHud++;
-        }
-        if (jugador.getTornsFoc() > 0) {
-            pintaText(cHud, fHud, "FOC  " + jugador.getTornsFoc() + " torns", new TextColor.RGB(220, 120, 30));
-            fHud++;
-        }
-        if (jugador.getTornsGel() > 0) {
-            pintaText(cHud, fHud, "GEL  " + jugador.getTornsGel() + " torns", new TextColor.RGB(80, 180, 220));
-            fHud++;
+            String tS = slotNomsC[i] + ": " + (arm != null ? arm.getNom() : "---");
+            if (tS.length() > innerW) tS = tS.substring(0, innerW);
+            pintaText(cHud, fHud++, tS, arm != null ? arm.getColor() : gris2);
         }
         fHud++;
 
-        pintaText(cHud, fHud, "─".repeat(cols - colSep - 5), gris);
-        fHud++;
-        fHud++;
-
-        //accions disponibles
-        pintaText(cHud, fHud, "ACCIONS", new TextColor.RGB(160, 160, 160));
-        fHud++;
-        pintaText(cHud, fHud, "[ A ]  Atacar", blanc);
-        fHud++;
-
+        //accions
+        pintaText(cHud, fHud++, "--- ACCIONS ---", gris2);
+        pintaText(cHud, fHud++, "[ A ]  Atacar", blanc);
         for (int i = 0; i < jugador.getInventari().getMaxSlots(); i++) {
             var slot = jugador.getInventari().getSlot(i);
-            if (slot == null) {
-                continue;
-            }
+            if (slot == null) continue;
             String quant = slot.quantitat() > 1 ? " x" + slot.quantitat() : "";
             String prefix = "[ " + (i + 1) + " ]  " + slot.item().getSimbol() + " ";
-            int maxNom = wBoxJug - prefix.length() - quant.length() - 2;
+            int maxNom = innerW - prefix.length() - quant.length();
             String nomTallat = slot.item().getNom();
-            if (nomTallat.length() > maxNom) {
-                nomTallat = nomTallat.substring(0, Math.max(0, maxNom));
-            }
-            pintaText(cHud, fHud, prefix + nomTallat + quant, slot.item().getColor());
-            fHud++;
+            if (nomTallat.length() > maxNom) nomTallat = nomTallat.substring(0, Math.max(0, maxNom));
+            pintaText(cHud, fHud++, prefix + nomTallat + quant, slot.item().getColor());
         }
-
-        pintaText(cHud, fHud, "[ F ]  Fugir", gris);
+        pintaText(cHud, fHud, "[ F ]  Fugir", gris2);
 
         //--- CAIXA DE LOG (amplada total, sota tot) ---
         int filaLog = rows - 6;
