@@ -463,7 +463,8 @@ public class Joc extends Motor {
                 }
                 if (jugador.esMort()) {
                     GestorMusica.reprodueix("GAME_OVER");
-                    corrent = false;
+                    estat = Estat.GAME_OVER;
+                    return;
                 }
             }
             return;
@@ -524,8 +525,9 @@ public class Joc extends Motor {
             }
 
             if (jugador.esMort()) {
-                GestorMusica.reprodueix("GAME_OVER");
-                corrent = false;
+                    GestorMusica.reprodueix("GAME_OVER");
+                    estat = Estat.GAME_OVER;
+                    return;
             }
 
         }
@@ -788,8 +790,9 @@ public class Joc extends Motor {
                 afegeixLog(nom + " t'ataca per sorpresa! Has rebut " + dany + " de dany.");
             }
             if (jugador.esMort()) {
-                GestorMusica.reprodueix("GAME_OVER");
-                corrent = false;
+                    GestorMusica.reprodueix("GAME_OVER");
+                    estat = Estat.GAME_OVER;
+                    return;
             }
         }
     }
