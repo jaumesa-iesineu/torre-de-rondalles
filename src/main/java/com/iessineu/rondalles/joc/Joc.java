@@ -61,6 +61,9 @@ public class Joc extends Motor {
     private int aiguaNx = 0, aiguaNy = 0;
     private boolean lliscantGel = false;
     private int tornsDesorientat = 0;
+    private boolean godMode = false;
+    private final java.util.Deque<String> bufferCheto = new java.util.ArrayDeque<>();
+    private static final int MAX_BUFFER_CHETO = 10;
     private int tornsDesorientacioGel = 1;
     private int gelDx = 0, gelDy = 0;
     private long ultimPasGel = 0;
@@ -300,6 +303,8 @@ public class Joc extends Motor {
         }
 
 
+        comprovanChetos(tecla);
+
         if (estat == Estat.MENU_INICIAL) {
             gestionaMenuInicial(tecla);
             return;
@@ -446,7 +451,7 @@ public class Joc extends Motor {
                 jugador.tickVeri();
                 jugador.tickFoc();
                 jugador.tickGel();
-                int danyRebut = SistemaCombat.atacaJugador(enemicCombat, jugador);
+                int danyRebut = atacaJugadorAmbGod(enemicCombat);
                 if (danyRebut == -1) {
                     afegeixLog("Has esquivat l'atac de " + nom + "!");
                 } else {
@@ -507,7 +512,7 @@ public class Joc extends Motor {
             jugador.tickVeri();
             jugador.tickFoc();
             jugador.tickGel();
-            int danyRebut = SistemaCombat.atacaJugador(enemicCombat, jugador);
+            int danyRebut = atacaJugadorAmbGod(enemicCombat);
             if (danyRebut == -1) {
                 afegeixLog("Has esquivat l'atac de " + nom + "!");
             } else {
@@ -710,6 +715,70 @@ public class Joc extends Motor {
 
     private boolean esBoss(Enemic e) {
         return e != null && e.isBoss();
+    }
+
+    private int atacaJugadorAmbGod(Enemic enemic) {
+        if (godMode) return -1;
+        return SistemaCombat.atacaJugador(enemic, jugador);
+    }
+
+    private String teclaANom(KeyStroke tecla) {
+        return switch (tecla.getKeyType()) {
+            case ArrowUp -> "UP";
+            case ArrowDown -> "DOWN";
+            case ArrowLeft -> "LEFT";
+            case ArrowRight -> "RIGHT";
+            case Character -> String.valueOf(tecla.getCharacter()).toUpperCase();
+            default -> "";
+        };
+    }
+
+    private void comprovanChetos(KeyStroke tecla) {
+        if (config.chetos == null) return;
+        String nom = teclaANom(tecla);
+        if (nom.isEmpty()) return;
+        bufferCheto.addLast(nom);
+        if (bufferCheto.size() > MAX_BUFFER_CHETO) bufferCheto.pollFirst();
+        String[] buffer = bufferCheto.toArray(new String[0]);
+        for (ConfigGame.ChetoConfig cheto : config.chetos) {
+            if (cheto.sequencia == null || cheto.sequencia.isEmpty()) continue;
+            int mida = cheto.sequencia.size();
+            if (buffer.length < mida) continue;
+            boolean coincideix = true;
+            for (int i = 0; i < mida; i++) {
+                if (!cheto.sequencia.get(i).equalsIgnoreCase(buffer[buffer.length - mida + i])) {
+                    coincideix = false;
+                    break;
+                }
+            }
+            if (coincideix) {
+                executaCheto(cheto.accio);
+                bufferCheto.clear();
+            }
+        }
+    }
+
+    private void executaCheto(String accio) {
+        switch (accio) {
+            case "hp" -> {
+                jugador.curar(jugador.getVidaMaxima());
+                afegeixLog(">>> CHETO: HP al màxim!");
+            }
+            case "kills" -> {
+                for (Enemic e : enemics) e.rebreDany(99999);
+                afegeixLog(">>> CHETO: Tots els enemics morts!");
+            }
+            case "inventari" -> {
+                var registre = com.iessineu.rondalles.inventari.RegistreItems.get();
+                registre.totesLesPocions().keySet().forEach(id -> jugador.getInventari().afegeix(registre.pocio(id)));
+                afegeixLog(">>> CHETO: Inventari ple!");
+            }
+            case "nextpis" -> passaSeguantPis();
+            case "god" -> {
+                godMode = !godMode;
+                afegeixLog(">>> CHETO: God mode " + (godMode ? "ON" : "OFF") + "!");
+            }
+        }
     }
 
     private void passaSeguantPis() {

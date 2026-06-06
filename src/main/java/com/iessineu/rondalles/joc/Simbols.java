@@ -53,7 +53,7 @@ public class Simbols {
 
     //simbols que bloquegen es moviment (parets, portes tancades i bloquejades)
     public static boolean bloquejaMoviment(char c) {
-        return esMur(c) || esPortaTancada(c) || esPortaBloquejada(c) || esMarcadorItem(c);
+        return esMur(c) || esPortaTancada(c) || esPortaBloquejada(c);
     }
 
     //simbols que bloquegen sa linia de visio

@@ -34,37 +34,67 @@
         {
             "simbols": ["."],
             "nom": "normal",
-            "colorR": 70, "colorG": 50, "colorB": 35,
-            "fonsR": 30, "fonsG": 20, "fonsB": 10,
-            "doblePas": false, "llisca": false, "modRadi": 1.0
+            "colorR": 70,
+            "colorG": 50,
+            "colorB": 35,
+            "fonsR": 30,
+            "fonsG": 20,
+            "fonsB": 10,
+            "doblePas": false,
+            "llisca": false,
+            "modRadi": 1.0
         },
         {
             "simbols": ["~"],
             "nom": "aigua",
-            "colorR": 50, "colorG": 100, "colorB": 200,
-            "fonsR": 10, "fonsG": 30, "fonsB": 80,
-            "doblePas": true, "llisca": false, "modRadi": 1.0
+            "colorR": 50,
+            "colorG": 100,
+            "colorB": 200,
+            "fonsR": 10,
+            "fonsG": 30,
+            "fonsB": 80,
+            "doblePas": true,
+            "llisca": false,
+            "modRadi": 1.0
         },
         {
             "simbols": [","],
             "nom": "gespa",
-            "colorR": 60, "colorG": 160, "colorB": 60,
-            "fonsR": 0, "fonsG": 0, "fonsB": 0,
-            "doblePas": false, "llisca": false, "modRadi": 0.5
+            "colorR": 60,
+            "colorG": 160,
+            "colorB": 60,
+            "fonsR": 0,
+            "fonsG": 0,
+            "fonsB": 0,
+            "doblePas": false,
+            "llisca": false,
+            "modRadi": 0.5
         },
         {
             "simbols": ["="],
             "nom": "metal",
-            "colorR": 160, "colorG": 160, "colorB": 160,
-            "fonsR": 0, "fonsG": 0, "fonsB": 0,
-            "doblePas": false, "llisca": false, "modRadi": 2.0
+            "colorR": 160,
+            "colorG": 160,
+            "colorB": 160,
+            "fonsR": 0,
+            "fonsG": 0,
+            "fonsB": 0,
+            "doblePas": false,
+            "llisca": false,
+            "modRadi": 2.0
         },
         {
             "simbols": ["*"],
             "nom": "gel",
-            "colorR": 180, "colorG": 230, "colorB": 255,
-            "fonsR": 20, "fonsG": 60, "fonsB": 90,
-            "doblePas": false, "llisca": true, "modRadi": 1.0
+            "colorR": 180,
+            "colorG": 230,
+            "colorB": 255,
+            "fonsR": 20,
+            "fonsG": 60,
+            "fonsB": 90,
+            "doblePas": false,
+            "llisca": true,
+            "modRadi": 1.0
         },
         {
             "simbols": ["♦"],
@@ -78,9 +108,15 @@
         {
             "simbols": ["Ø"],
             "nom": "buit",
-            "colorR": 180, "colorG": 230, "colorB": 255,
-            "fonsR": 20, "fonsG": 60, "fonsB": 90,
-            "doblePas": false, "llisca": true, "modRadi": 1.0,
+            "colorR": 180,
+            "colorG": 230,
+            "colorB": 255,
+            "fonsR": 20,
+            "fonsG": 60,
+            "fonsB": 90,
+            "doblePas": false,
+            "llisca": true,
+            "modRadi": 1.0,
             "mal": 1000
         }
     ],
@@ -352,184 +388,484 @@
         "groc": [230, 200, 40]
     },
 
-  "mapes": {
-    "ordre": ["planta1", "planta2", "planta3", "planta4", "planta5"],
-    "registres": [
-      {"id": "planta1", "fitxer": "mapes/planta1.map"},
-      {"id": "planta2", "fitxer": "mapes/planta2.map"},
-      {"id": "planta3", "fitxer": "mapes/planta3.map"},
-      {"id": "planta4", "fitxer": "mapes/planta4.map"},
-      {"id": "planta5", "fitxer": "mapes/planta5.map"}
-    ]
-  },
+    "mapes": {
+        "ordre": ["planta1", "planta2", "planta3", "planta4", "planta5"],
+        "registres": [
+            {
+                "id": "planta1",
+                "fitxer": "mapes/planta1.map"
+            },
+            {
+                "id": "planta2",
+                "fitxer": "mapes/planta2.map"
+            },
+            {
+                "id": "planta3",
+                "fitxer": "mapes/planta3.map"
+            },
+            {
+                "id": "planta4",
+                "fitxer": "mapes/planta4.map"
+            },
+            {
+                "id": "planta5",
+                "fitxer": "mapes/planta5.map"
+            }
+        ]
+    },
 
-  "enemics": {
-    "tipus": [
-      {
-        "simbols": ["d", "e"],
-        "nom": "DimoniBoiet",
-        "vida": 10, "atac": 5, "radi": 5,
-        "colorR": 180, "colorG": 40, "colorB": 10,
-        "patroIA": "pacman",
-        "esBoss": false,
-        "artFitxer": "art/dimoni.txt"
-      },
-      {
-        "simbols": ["B"],
-        "nom": "Bubota",
-        "vida": 20, "atac": 5, "radi": 100,
-        "colorR": 180, "colorG": 180, "colorB": 255,
-        "velocitat": 2,
-        "travessaParets": true,
-        "patroIA": "perseguir",
-        "requereixDescobriment": true,
-        "esBoss": false,
-        "artFitxer": "art/bubota.txt"
-      },
-      {
-        "simbols": ["G"],
-        "nom": "Gegant",
-        "vida": 40, "atac": 10, "radi": 4,
-        "colorR": 200, "colorG": 120, "colorB": 50,
-        "velocitat": 2,
-        "patroIA": "guardia",
-        "esBoss": true,
-        "clauDropejada": "clau-planta1",
-        "artFitxer": "art/gegant.txt"
-      },
-      {
-        "simbols": ["D"],
-        "nom": "Drac",
-        "vida": 50, "atac": 20, "radi": 8,
-        "colorR": 220, "colorG": 30, "colorB": 30,
-        "velocitat": 2,
-        "patroIA": "guardia",
-        "esBoss": true,
-        "clauDropejada": "clau-planta1",
-        "artFitxer": "art/drac.txt"
-      },
-      {
-        "simbols": ["M"],
-        "nom": "NaMariaEnganxa",
-        "vida": 30, "atac": 9999, "radi": 0,
-        "colorR": 180, "colorG": 50, "colorB": 220,
-        "patroIA": "estatic",
-        "esBoss": true,
-        "clauDropejada": "clau-planta1",
-        "artFitxer": "art/maria.txt"
-      }
+    "enemics": {
+        "tipus": [
+            {
+                "simbols": ["d", "e"],
+                "nom": "DimoniBoiet",
+                "vida": 10,
+                "atac": 5,
+                "radi": 5,
+                "colorR": 180,
+                "colorG": 40,
+                "colorB": 10,
+                "patroIA": "pacman",
+                "esBoss": false,
+                "artFitxer": "art/dimoni.txt"
+            },
+            {
+                "simbols": ["B"],
+                "nom": "Bubota",
+                "vida": 20,
+                "atac": 5,
+                "radi": 100,
+                "colorR": 180,
+                "colorG": 180,
+                "colorB": 255,
+                "velocitat": 2,
+                "travessaParets": true,
+                "patroIA": "perseguir",
+                "requereixDescobriment": true,
+                "esBoss": false,
+                "artFitxer": "art/bubota.txt"
+            },
+            {
+                "simbols": ["G"],
+                "nom": "Gegant",
+                "vida": 40,
+                "atac": 10,
+                "radi": 4,
+                "colorR": 200,
+                "colorG": 120,
+                "colorB": 50,
+                "velocitat": 2,
+                "patroIA": "guardia",
+                "esBoss": true,
+                "clauDropejada": "clau-planta1",
+                "artFitxer": "art/gegant.txt"
+            },
+            {
+                "simbols": ["D"],
+                "nom": "Drac",
+                "vida": 50,
+                "atac": 20,
+                "radi": 8,
+                "colorR": 220,
+                "colorG": 30,
+                "colorB": 30,
+                "velocitat": 2,
+                "patroIA": "guardia",
+                "esBoss": true,
+                "clauDropejada": "clau-planta1",
+                "artFitxer": "art/drac.txt"
+            },
+            {
+                "simbols": ["M"],
+                "nom": "NaMariaEnganxa",
+                "vida": 30,
+                "atac": 9999,
+                "radi": 0,
+                "colorR": 180,
+                "colorG": 50,
+                "colorB": 220,
+                "patroIA": "estatic",
+                "esBoss": true,
+                "clauDropejada": "clau-planta1",
+                "artFitxer": "art/maria.txt"
+            }
+        ],
+        "posicions": [
+            {
+                "mapa": "planta1",
+                "simbol": "M",
+                "x": 13,
+                "y": 2
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "G",
+                "x": 13,
+                "y": 3,
+                "area": 5
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 13,
+                "y": 4
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "D",
+                "x": 13,
+                "y": 5,
+                "area": 5
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "e",
+                "x": 13,
+                "y": 6
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 13,
+                "y": 6
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "D",
+                "x": 80,
+                "y": 6,
+                "area": 5
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 40,
+                "y": 7
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "D",
+                "x": 86,
+                "y": 14,
+                "area": 5
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 27,
+                "y": 15
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 27,
+                "y": 22
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 30,
+                "y": 22
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 27,
+                "y": 25
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "D",
+                "x": 60,
+                "y": 29,
+                "area": 5
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 25,
+                "y": 30
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "D",
+                "x": 26,
+                "y": 35,
+                "area": 5
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "D",
+                "x": 77,
+                "y": 35,
+                "area": 5
+            }
+        ]
+    },
+
+    "items": {
+        "posicions": [
+            {
+                "mapa": "planta1",
+                "id": "pocio-vida",
+                "x": 105,
+                "y": 1
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-veri",
+                "x": 107,
+                "y": 1
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-foc",
+                "x": 109,
+                "y": 1
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-gel",
+                "x": 111,
+                "y": 1
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-vida",
+                "x": 113,
+                "y": 1
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-veri",
+                "x": 105,
+                "y": 2
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-foc",
+                "x": 85,
+                "y": 3
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-gel",
+                "x": 4,
+                "y": 5
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-vida",
+                "x": 8,
+                "y": 5
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-veri",
+                "x": 10,
+                "y": 7
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-foc",
+                "x": 14,
+                "y": 7
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-gel",
+                "x": 3,
+                "y": 8
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-vida",
+                "x": 8,
+                "y": 8
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-veri",
+                "x": 14,
+                "y": 8
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-foc",
+                "x": 8,
+                "y": 9
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-gel",
+                "x": 24,
+                "y": 14
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-vida",
+                "x": 25,
+                "y": 17
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-veri",
+                "x": 40,
+                "y": 22
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-foc",
+                "x": 40,
+                "y": 23
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-gel",
+                "x": 33,
+                "y": 24
+            }
+        ]
+    },
+
+    "portes": {
+        "posicions": [
+            {
+                "mapa": "planta1",
+                "x": 2,
+                "y": 1,
+                "esPortaCanviPlanta": true
+            },
+            {
+                "mapa": "planta1",
+                "x": 2,
+                "y": 3
+            }
+        ]
+    },
+
+    "npcs": {
+        "tipus": [
+            {
+                "simbols": ["N"],
+                "nom": "EnPere el Ferreter",
+                "dialeg": "Benvingut, aventurer! Tinc eines i armadures de primera qualitat. Compra abans que s'acabi!",
+                "colorR": 80,
+                "colorG": 160,
+                "colorB": 255,
+                "estatica": true,
+                "artFitxer": "art/npc_pere.txt"
+            },
+            {
+                "simbols": ["n"],
+                "nom": "La Griselda l'Herbolera",
+                "dialeg": "Les meves pocions curen qualsevol ferida... i alguns mals d'amor. Que vols comprar, estimat?",
+                "colorR": 50,
+                "colorG": 200,
+                "colorB": 80,
+                "estatica": true,
+                "artFitxer": "art/npc_griselda.txt"
+            },
+            {
+                "simbols": ["ñ"],
+                "nom": "En Blai el Misteriós",
+                "dialeg": "Psst... tinc objectes que no trobaràs enlloc més. Però no preguntis d'on venen.",
+                "colorR": 230,
+                "colorG": 200,
+                "colorB": 40,
+                "estatica": true,
+                "artFitxer": "art/npc_blai.txt"
+            }
+        ],
+        "posicions": [
+            {
+                "mapa": "planta1",
+                "simbol": "N",
+                "x": 10,
+                "y": 10
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "n",
+                "x": 10,
+                "y": 10
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "ñ",
+                "x": 10,
+                "y": 10
+            }
+        ]
+    },
+
+    "jugador": {
+        "artFitxer": "art/jugador.txt",
+        "vidaMaxima": 100,
+        "atac": 3,
+        "velocitat": 5,
+        "evasio": 10,
+        "pesMaxim": 50
+    },
+
+    "enigmes": [
+        {
+            "planta": 1,
+            "pregunta": "Tenc ales però no vol, tenc cua però no és animal. Què sóc?",
+            "resposta": "una fletxa"
+        },
+        {
+            "planta": 2,
+            "pregunta": "Com més gran em fas, menys pots veure. Què sóc?",
+            "resposta": "la foscor"
+        },
+        {
+            "planta": 3,
+            "pregunta": "Estic sempre davant teu però no es pot veure. Què sóc?",
+            "resposta": "el futur"
+        },
+        {
+            "planta": 4,
+            "pregunta": "Parleu de mi però mai m'heu vist. Qui sóc?",
+            "resposta": "el silenci"
+        },
+        {
+            "planta": 5,
+            "pregunta": "Tenc boca però no puc parlar, tenc llit però no puc dormir. Què sóc?",
+            "resposta": "un riu"
+        }
     ],
-    "posicions": [
-      {"mapa": "planta1", "simbol": "M", "x": 13, "y": 2},
-      {"mapa": "planta1", "simbol": "G", "x": 13, "y": 3, "area": 5},
-      {"mapa": "planta1", "simbol": "B", "x": 13, "y": 4},
-      {"mapa": "planta1", "simbol": "D", "x": 13, "y": 5, "area": 5},
-      {"mapa": "planta1", "simbol": "e", "x": 13, "y": 6},
-      {"mapa": "planta1", "simbol": "B", "x": 13, "y": 6},
-      {"mapa": "planta1", "simbol": "D", "x": 80, "y": 6, "area": 5},
-      {"mapa": "planta1", "simbol": "B", "x": 40, "y": 7},
-      {"mapa": "planta1", "simbol": "D", "x": 86, "y": 14, "area": 5},
-      {"mapa": "planta1", "simbol": "B", "x": 27, "y": 15},
-      {"mapa": "planta1", "simbol": "B", "x": 27, "y": 22},
-      {"mapa": "planta1", "simbol": "B", "x": 30, "y": 22},
-      {"mapa": "planta1", "simbol": "B", "x": 27, "y": 25},
-      {"mapa": "planta1", "simbol": "D", "x": 60, "y": 29, "area": 5},
-      {"mapa": "planta1", "simbol": "B", "x": 25, "y": 30},
-      {"mapa": "planta1", "simbol": "D", "x": 26, "y": 35, "area": 5},
-      {"mapa": "planta1", "simbol": "D", "x": 77, "y": 35, "area": 5}
-    ]
-  },
-
-  "items": {
-    "posicions": [
-      {"mapa": "planta1", "id": "pocio-vida", "x": 105, "y": 1},
-      {"mapa": "planta1", "id": "pocio-veri", "x": 107, "y": 1},
-      {"mapa": "planta1", "id": "pocio-foc",  "x": 109, "y": 1},
-      {"mapa": "planta1", "id": "pocio-gel",  "x": 111, "y": 1},
-      {"mapa": "planta1", "id": "pocio-vida", "x": 113, "y": 1},
-      {"mapa": "planta1", "id": "pocio-veri", "x": 105, "y": 2},
-      {"mapa": "planta1", "id": "pocio-foc",  "x": 85,  "y": 3},
-      {"mapa": "planta1", "id": "pocio-gel",  "x": 4,   "y": 5},
-      {"mapa": "planta1", "id": "pocio-vida", "x": 8,   "y": 5},
-      {"mapa": "planta1", "id": "pocio-veri", "x": 10,  "y": 7},
-      {"mapa": "planta1", "id": "pocio-foc",  "x": 14,  "y": 7},
-      {"mapa": "planta1", "id": "pocio-gel",  "x": 3,   "y": 8},
-      {"mapa": "planta1", "id": "pocio-vida", "x": 8,   "y": 8},
-      {"mapa": "planta1", "id": "pocio-veri", "x": 14,  "y": 8},
-      {"mapa": "planta1", "id": "pocio-foc",  "x": 8,   "y": 9},
-      {"mapa": "planta1", "id": "pocio-gel",  "x": 24,  "y": 14},
-      {"mapa": "planta1", "id": "pocio-vida", "x": 25,  "y": 17},
-      {"mapa": "planta1", "id": "pocio-veri", "x": 40,  "y": 22},
-      {"mapa": "planta1", "id": "pocio-foc",  "x": 40,  "y": 23},
-      {"mapa": "planta1", "id": "pocio-gel",  "x": 33,  "y": 24}
-    ]
-  },
-
-  "portes": {
-    "posicions": [
-      {"mapa": "planta1", "x": 2, "y": 1, "esPortaCanviPlanta": true},
-      {"mapa": "planta1", "x": 2, "y": 3}
-    ]
-  },
-
-  "npcs": {
-    "tipus": [
-      {
-        "simbols": ["N"],
-        "nom": "EnPere el Ferreter",
-        "dialeg": "Benvingut, aventurer! Tinc eines i armadures de primera qualitat. Compra abans que s'acabi!",
-        "colorR": 80, "colorG": 160, "colorB": 255,
-        "estatica": true,
-        "artFitxer": "art/npc_pere.txt"
-      },
-      {
-        "simbols": ["n"],
-        "nom": "La Griselda l'Herbolera",
-        "dialeg": "Les meves pocions curen qualsevol ferida... i alguns mals d'amor. Que vols comprar, estimat?",
-        "colorR": 50, "colorG": 200, "colorB": 80,
-        "estatica": true,
-        "artFitxer": "art/npc_griselda.txt"
-      },
-      {
-        "simbols": ["ñ"],
-        "nom": "En Blai el Misteriós",
-        "dialeg": "Psst... tinc objectes que no trobaràs enlloc més. Però no preguntis d'on venen.",
-        "colorR": 230, "colorG": 200, "colorB": 40,
-        "estatica": true,
-        "artFitxer": "art/npc_blai.txt"
-      }
-    ],
-    "posicions": [
-      {"mapa": "planta1", "simbol": "N", "x": 10, "y": 10},
-      {"mapa": "planta1", "simbol": "n", "x": 10, "y": 10},
-      {"mapa": "planta1", "simbol": "ñ", "x": 10, "y": 10}
-    ]
-  },
-
-  "jugador": {
-    "artFitxer": "art/jugador.txt",
-    "vidaMaxima": 100,
-    "atac": 3,
-    "velocitat": 5,
-    "evasio": 10,
-    "pesMaxim": 50
-  },
-
-  "enigmes": [
-    {"planta": 1, "pregunta": "Tenc ales però no vol, tenc cua però no és animal. Què sóc?", "resposta": "una fletxa"},
-    {"planta": 2, "pregunta": "Com més gran em fas, menys pots veure. Què sóc?", "resposta": "la foscor"},
-    {"planta": 3, "pregunta": "Estic sempre davant teu però no es pot veure. Què sóc?", "resposta": "el futur"},
-    {"planta": 4, "pregunta": "Parleu de mi però mai m'heu vist. Qui sóc?", "resposta": "el silenci"},
-    {"planta": 5, "pregunta": "Tenc boca però no puc parlar, tenc llit però no puc dormir. Què sóc?", "resposta": "un riu"}
-  ],
 
     "equipamentInicial": {
         "armadures": ["capell-pages", "camisa-lli", "calcons-llana", "espardenyes-canem"],
         "arma": "falc-llaurador"
     },
 
+    "chetos": [
+        {
+            "accio": "hp",
+            "sequencia": ["UP", "UP", "DOWN", "DOWN", "H"]
+        },
+        {
+            "accio": "kills",
+            "sequencia": ["UP", "DOWN", "UP", "DOWN", "K"]
+        },
+        {
+            "accio": "inventari",
+            "sequencia": ["LEFT", "RIGHT", "LEFT", "RIGHT", "I"]
+        },
+        {
+            "accio": "nextpis",
+            "sequencia": ["DOWN", "DOWN", "DOWN", "N"]
+        },
+        {
+            "accio": "god",
+            "sequencia": ["UP", "RIGHT", "DOWN", "LEFT", "G"]
+        }
+    ],
+
     "texts": {
-        "windowTitle": "RONDALLES",
+        "windowTitle": "torre-de-rondalles",
         "headerTitle": " TORRE DE RONDALLES  ~  ",
         "subtitle": "~ Un joc de rondalles mallorquines ~",
         "menuIniciar": "Iniciar partida",

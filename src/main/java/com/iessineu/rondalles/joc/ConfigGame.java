@@ -127,6 +127,13 @@ public class ConfigGame {
     }
 
     //una endevinalla per planta
+    public static class ChetoConfig {
+        public String accio;       // "hp", "kills", "inventari", "nextpis", "god"
+        public List<String> sequencia; // ["UP","UP","DOWN","DOWN","LEFT","RIGHT"]
+    }
+
+    public List<ChetoConfig> chetos;
+
     public static class EnigmeConfig {
 
         public int planta;
