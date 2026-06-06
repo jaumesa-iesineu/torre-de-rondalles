@@ -59,6 +59,7 @@ public class Joc extends Motor {
     // --- Terra especial ---
     private boolean esperantSegonaAigua = false;
     private int aiguaNx = 0, aiguaNy = 0;
+    private int tornsEsperantEntrada = 0;
     private boolean lliscantGel = false;
     private int tornsDesorientat = 0;
     private boolean godMode = false;
@@ -618,22 +619,35 @@ public class Joc extends Motor {
 
         char simbolDesti = mapa.getCelles()[ny][nx];
         TipusTerra terraDestiT = TipusTerra.de(simbolDesti);
-        if (terraDestiT != null && terraDestiT.isDoblePas()) {
-            if (!esperantSegonaAigua || aiguaNx != nx || aiguaNy != ny) {
-                esperantSegonaAigua = true;
+        // també miram el tipus real si està amagat
+        TipusTerra terraDestiReal = terraDestiT;
+        if (terraAmagat != null && terraAmagat[ny][nx] != '\0') {
+            terraDestiReal = TipusTerra.de(terraAmagat[ny][nx]);
+        }
+        
+        int velTerra = (terraDestiReal != null) ? terraDestiReal.getVelocitat() : 1;
+        
+        if (velTerra > 1) {
+            if (aiguaNx != nx || aiguaNy != ny) {
+                // nova cel·la, reiniciam comptador
+                tornsEsperantEntrada = 1;
                 aiguaNx = nx;
                 aiguaNy = ny;
+                tickTorn(); // passa el torn sense moure
                 return;
-
+            } else {
+                tornsEsperantEntrada++;
+                if (tornsEsperantEntrada < velTerra) {
+                    tickTorn(); // passa el torn sense moure
+                    return;
+                }
+                // ja hem esperat prou, entram
+                tornsEsperantEntrada = 0;
             }
-            esperantSegonaAigua = false;
         } else {
-            esperantSegonaAigua = false;
-        }
-
-        if (Simbols.esEscalaBaix(simbolDesti)) {
-            passaSeguantPis();
-            return;
+            tornsEsperantEntrada = 0;
+            aiguaNx = -1;
+            aiguaNy = -1;
         }
 
         jugador.setX(nx);

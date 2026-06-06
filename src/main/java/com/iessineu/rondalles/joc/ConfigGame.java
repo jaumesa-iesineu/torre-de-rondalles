@@ -1,10 +1,9 @@
 package com.iessineu.rondalles.joc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Arrays;
-import java.util.HashMap;
 
 //POJO arrel que Gson omple amb tot es game.json
 public class ConfigGame {
@@ -45,7 +44,8 @@ public class ConfigGame {
         public char amagat;
         public int colorR, colorG, colorB;
         public int fonsR, fonsG, fonsB;
-        public boolean doblePas;
+        public int velocitat;
+        //public boolean doblePas;
         public boolean llisca;
         public double modRadi = 1.0;
         public int mal;
@@ -126,7 +126,7 @@ public class ConfigGame {
         public int pesMaxim = 50;
     }
 
-    //una endevinalla per planta
+    //Chetos    
     public static class ChetoConfig {
         public String accio;       // "hp", "kills", "inventari", "nextpis", "god"
         public List<String> sequencia; // ["UP","UP","DOWN","DOWN","LEFT","RIGHT"]
@@ -134,6 +134,8 @@ public class ConfigGame {
 
     public List<ChetoConfig> chetos;
 
+
+    //una endevinalla per planta
     public static class EnigmeConfig {
 
         public int planta;

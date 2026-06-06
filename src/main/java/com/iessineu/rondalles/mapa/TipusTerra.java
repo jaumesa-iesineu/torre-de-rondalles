@@ -1,9 +1,10 @@
 package com.iessineu.rondalles.mapa;
 
-import com.iessineu.rondalles.joc.ConfigGame;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.iessineu.rondalles.joc.ConfigGame;
 
 //cada tipus de terra es carrega des del game.json
 public class TipusTerra {
@@ -13,7 +14,8 @@ public class TipusTerra {
     private final char amagat;
     private final int colorR, colorG, colorB;
     private final int fonsR, fonsG, fonsB;
-    private final boolean doblePas;
+    private final int velocitat;
+    //private final boolean doblePas;
     private final boolean llisca;
     private final double modRadi;
     private final int mal;
@@ -22,7 +24,7 @@ public class TipusTerra {
     private TipusTerra(List<Character> simbols, String nom, char amagat,
                        int colorR, int colorG, int colorB,
                        int fonsR, int fonsG, int fonsB,
-                       boolean doblePas, boolean llisca, double modRadi, int mal) {
+                       int velocitat, boolean llisca, double modRadi, int mal) {
         this.simbols = simbols;
         this.nom = nom;
         this.amagat = amagat;
@@ -32,7 +34,8 @@ public class TipusTerra {
         this.fonsR = fonsR;
         this.fonsG = fonsG;
         this.fonsB = fonsB;
-        this.doblePas = doblePas;
+        this.velocitat = velocitat;
+        //this.doblePas = doblePas;
         this.llisca = llisca;
         this.modRadi = modRadi;
         this.mal = mal;
@@ -49,7 +52,7 @@ public class TipusTerra {
             TipusTerra t = new TipusTerra(tc.simbols, tc.nom, tc.amagat,
                     tc.colorR, tc.colorG, tc.colorB,
                     tc.fonsR, tc.fonsG, tc.fonsB,
-                    tc.doblePas, tc.llisca, tc.modRadi, tc.mal);
+                    tc.velocitat, tc.llisca, tc.modRadi, tc.mal);
             for (Character s : tc.simbols) {
                 cache.put(s, t);
             }
@@ -70,7 +73,8 @@ public class TipusTerra {
     public int getFonsR() { return fonsR; }
     public int getFonsG() { return fonsG; }
     public int getFonsB() { return fonsB; }
-    public boolean isDoblePas() { return doblePas; }
+    public int getVelocitat() { return velocitat; }
+    public boolean isDoblePas() { return velocitat > 1; }
     public boolean isLlisca() { return llisca; }
     public double getModRadi() { return modRadi; }
     public int getMal() { return mal; }

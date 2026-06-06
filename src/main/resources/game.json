@@ -53,7 +53,20 @@
             "fonsR": 10,
             "fonsG": 30,
             "fonsB": 80,
-            "doblePas": true,
+            "velocitat": 2,
+            "llisca": false,
+            "modRadi": 1.0
+        },
+        {
+            "simbols": ["≈"],
+            "nom": "aigua profunda",
+            "colorR": 50,
+            "colorG": 100,
+            "colorB": 200,
+            "fonsR": 5,
+            "fonsG": 15,
+            "fonsB": 50,
+            "velocitat": 4,
             "llisca": false,
             "modRadi": 1.0
         },
