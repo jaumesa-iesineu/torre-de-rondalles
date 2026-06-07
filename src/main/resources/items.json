@@ -1,0 +1,369 @@
+{
+    "catalogItems": {
+        "armes": [
+            {
+                "id": "puny",
+                "nom": "Puny",
+                "pes": 0,
+                "simbol": "p",
+                "atac": 1,
+                "rang": 1,
+                "tier": 0
+            },
+            {
+                "id": "falc-llaurador",
+                "nom": "Falç de llaurador",
+                "pes": 1,
+                "simbol": "f",
+                "atac": 3,
+                "rang": 1,
+                "tier": 0
+            },
+            {
+                "id": "garrot-olivera",
+                "nom": "Garrot d'olivera",
+                "pes": 2,
+                "simbol": "g",
+                "atac": 5,
+                "rang": 1,
+                "tier": 1
+            },
+            {
+                "id": "llanca-pescador",
+                "nom": "Llança de pescador",
+                "pes": 3,
+                "simbol": "l",
+                "atac": 7,
+                "rang": 2,
+                "tier": 1
+            },
+            {
+                "id": "espasa-cavaller",
+                "nom": "Espasa del Cavaller Sant",
+                "pes": 3,
+                "simbol": "E",
+                "atac": 9,
+                "rang": 1,
+                "tier": 2
+            },
+            {
+                "id": "destral-gegant",
+                "nom": "Destral de Gegant",
+                "pes": 5,
+                "simbol": "X",
+                "atac": 15,
+                "rang": 1,
+                "tier": 3
+            }
+        ],
+        "armadures": [
+            {
+                "id": "capell-pages",
+                "nom": "Capell de pagès",
+                "pes": 2,
+                "simbol": "q",
+                "defensa": 1,
+                "slot": "CASC",
+                "tier": 0
+            },
+            {
+                "id": "elm-ferro-oxidat",
+                "nom": "Elm de ferro oxidat",
+                "pes": 5,
+                "simbol": "h",
+                "defensa": 3,
+                "slot": "CASC",
+                "tier": 1
+            },
+            {
+                "id": "casc-cavaller",
+                "nom": "Casc de Cavaller Sant",
+                "pes": 9,
+                "simbol": "C",
+                "defensa": 6,
+                "slot": "CASC",
+                "tier": 2
+            },
+            {
+                "id": "camisa-lli",
+                "nom": "Camisa de lli",
+                "pes": 5,
+                "simbol": "c",
+                "defensa": 2,
+                "slot": "COS",
+                "tier": 0
+            },
+            {
+                "id": "cota-malla",
+                "nom": "Cota de malla",
+                "pes": 12,
+                "simbol": "m",
+                "defensa": 5,
+                "slot": "COS",
+                "tier": 1
+            },
+            {
+                "id": "armadura-cuir-drac",
+                "nom": "Armadura de cuir de drac",
+                "pes": 20,
+                "simbol": "A",
+                "defensa": 9,
+                "slot": "COS",
+                "tier": 3
+            },
+            {
+                "id": "calcons-llana",
+                "nom": "Calçons de llana",
+                "pes": 3,
+                "simbol": "k",
+                "defensa": 1,
+                "slot": "CAMES",
+                "tier": 0
+            },
+            {
+                "id": "greves-ferro",
+                "nom": "Greves de ferro",
+                "pes": 7,
+                "simbol": "v",
+                "defensa": 3,
+                "slot": "CAMES",
+                "tier": 1
+            },
+            {
+                "id": "polaines-encantades",
+                "nom": "Polaines encantades",
+                "pes": 12,
+                "simbol": "P",
+                "defensa": 6,
+                "slot": "CAMES",
+                "tier": 3
+            },
+            {
+                "id": "espardenyes-canem",
+                "nom": "Espardenyes de cànem",
+                "pes": 2,
+                "simbol": "s",
+                "defensa": 1,
+                "slot": "PEUS",
+                "tier": 0
+            },
+            {
+                "id": "botes-cuir",
+                "nom": "Botes de cuir",
+                "pes": 4,
+                "simbol": "b",
+                "defensa": 2,
+                "slot": "PEUS",
+                "tier": 1
+            },
+            {
+                "id": "botes-ferro",
+                "nom": "Botes de ferro",
+                "pes": 8,
+                "simbol": "F",
+                "defensa": 4,
+                "slot": "PEUS",
+                "tier": 2
+            }
+        ],
+        "claus": [
+            {
+                "id": "clau-planta1",
+                "nom": "Clau de la Planta 1",
+                "pes": 0,
+                "simbol": "k",
+                "planta": 1
+            },
+            {
+                "id": "clau-planta2",
+                "nom": "Clau de la Planta 2",
+                "pes": 0,
+                "simbol": "k",
+                "planta": 2
+            },
+            {
+                "id": "clau-planta3",
+                "nom": "Clau de la Planta 3",
+                "pes": 0,
+                "simbol": "k",
+                "planta": 3
+            },
+            {
+                "id": "clau-planta4",
+                "nom": "Clau de la Planta 4",
+                "pes": 0,
+                "simbol": "k",
+                "planta": 4
+            },
+            {
+                "id": "clau-planta5",
+                "nom": "Clau de la Planta 5",
+                "pes": 0,
+                "simbol": "k",
+                "planta": 5
+            }
+        ],
+        "pocions": [
+            {
+                "id": "pocio-vida",
+                "nom": "Poció de vida",
+                "pes": 1,
+                "simbol": "!",
+                "tipus": "VIDA",
+                "valor": 30,
+                "tier": 0
+            },
+            {
+                "id": "pocio-veri",
+                "nom": "Poció de verí",
+                "pes": 1,
+                "simbol": "~",
+                "tipus": "VERI",
+                "valor": 5,
+                "tier": 1
+            },
+            {
+                "id": "pocio-foc",
+                "nom": "Poció de foc",
+                "pes": 1,
+                "simbol": "%",
+                "tipus": "FOC",
+                "valor": 4,
+                "tier": 1
+            },
+            {
+                "id": "pocio-gel",
+                "nom": "Poció de gel",
+                "pes": 1,
+                "simbol": "*",
+                "tipus": "GEL",
+                "valor": 4,
+                "tier": 1
+            }
+        ]
+    },
+    "items": {
+        "posicions": [
+            {
+                "mapa": "planta1",
+                "id": "pocio-vida",
+                "x": 105,
+                "y": 1
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-veri",
+                "x": 107,
+                "y": 1
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-foc",
+                "x": 109,
+                "y": 1
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-gel",
+                "x": 111,
+                "y": 1
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-vida",
+                "x": 113,
+                "y": 1
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-veri",
+                "x": 105,
+                "y": 2
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-foc",
+                "x": 85,
+                "y": 3
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-gel",
+                "x": 4,
+                "y": 5
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-vida",
+                "x": 8,
+                "y": 5
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-veri",
+                "x": 10,
+                "y": 7
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-foc",
+                "x": 14,
+                "y": 7
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-gel",
+                "x": 3,
+                "y": 8
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-vida",
+                "x": 8,
+                "y": 8
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-veri",
+                "x": 14,
+                "y": 8
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-foc",
+                "x": 8,
+                "y": 9
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-gel",
+                "x": 24,
+                "y": 14
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-vida",
+                "x": 25,
+                "y": 17
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-veri",
+                "x": 40,
+                "y": 22
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-foc",
+                "x": 40,
+                "y": 23
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-gel",
+                "x": 33,
+                "y": 24
+            }
+        ]
+    }
+}

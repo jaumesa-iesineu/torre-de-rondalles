@@ -31,6 +31,7 @@ import com.iessineu.rondalles.motor.Motor;
 import com.iessineu.rondalles.motor.PantallaGameOver;
 import com.iessineu.rondalles.motor.CarregadorPantallaGameOver;
 import com.iessineu.rondalles.motor.Renderitzador;
+import com.iessineu.rondalles.joc.Mecaniques;
 
 public class Joc extends Motor {
 
@@ -176,8 +177,11 @@ public class Joc extends Motor {
 
         //carregam les pistes de música des del JSON
         GestorMusica.inicialitza(config != null ? config.musica : null);
+        com.iessineu.rondalles.audio.GestorSfx.inicialitza(config != null ? config.sfx : null);
+        com.iessineu.rondalles.audio.GestorSfx.setMut(mut);
 
         //carregam les constants des del JSON
+        Mecaniques.inicialitza(config != null ? config.configuracio : null);
         if (config != null && config.configuracio != null) {
             ConfigGame.Configuracio cfg = config.configuracio;
             radiVisio = cfg.radiVisio;
@@ -504,6 +508,7 @@ public class Joc extends Motor {
                     personatgeTriat.pesMaxim, ms);
             jugador.setPassiu(personatgeTriat.passiu);
             renderer.setNomPersonatge(personatgeTriat.nom);
+            com.iessineu.rondalles.audio.GestorSfx.setPersonatgeId(personatgeTriat.id);
             if (personatgeTriat.artAscii != null) renderer.setArtJugador(personatgeTriat.artAscii);
         }
         carregaEquipamentInicial();
@@ -600,8 +605,10 @@ public class Joc extends Motor {
         if (Controls.esAtacar(c)) {
             String nom = enemicCombat.getNom().toUpperCase();
             int danyFet = SistemaCombat.atacaEnemic(jugador, enemicCombat);
+            com.iessineu.rondalles.audio.GestorSfx.reprodueix("ATAC_JUGADOR");
             afegeixLog("Has atacat! " + nom + " ha rebut " + danyFet + " de dany.");
             if (enemicCombat.esMort()) {
+                com.iessineu.rondalles.audio.GestorSfx.reprodueix("MORT_ENEMIC");
                 afegeixLog(nom + " ha caigut!");
 
                 //guardam ses dades del boss abans de treure'l de la llista
@@ -638,12 +645,15 @@ public class Joc extends Motor {
             jugador.tickGel();
             int danyRebut = atacaJugadorAmbGod(enemicCombat);
             if (danyRebut == -1) {
+                com.iessineu.rondalles.audio.GestorSfx.reprodueix("ESQUIVAT");
                 afegeixLog("Has esquivat l'atac de " + nom + "!");
             } else {
+                com.iessineu.rondalles.audio.GestorSfx.reprodueix("ATAC_ENEMIC");
                 afegeixLog(nom + " contraataca! Has rebut " + danyRebut + " de dany.");
             }
 
             if (jugador.esMort()) {
+                    com.iessineu.rondalles.audio.GestorSfx.reprodueix("MORT_JUGADOR");
                     iniciaGameOver(enemicCombat);
                     return;
             }
@@ -1197,6 +1207,7 @@ public class Joc extends Motor {
                     return;
                 }
                 porta.interactua(jugador);
+                com.iessineu.rondalles.audio.GestorSfx.reprodueix("PORTA_OBERTA");
                 mapa.setCella(dx, dy, porta.getSimbol());
                 tickTorn();
                 return;
@@ -1225,6 +1236,7 @@ public class Joc extends Motor {
             return;
         }
         jugador.afegeixItem(trobat.getItem());
+        com.iessineu.rondalles.audio.GestorSfx.reprodueix("RECULL_ITEM");
         mapa.setCella(x, y, '.');
         itemsMapa.remove(trobat);
     }

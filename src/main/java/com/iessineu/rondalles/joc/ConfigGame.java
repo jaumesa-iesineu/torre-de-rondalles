@@ -2,6 +2,7 @@ package com.iessineu.rondalles.joc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ public class ConfigGame {
     public SimbolsConfig simbols;
     public ControlsConfig controls;
     public MusicaConfig musica;
+    public Map<String, String> sfx;
     public MapesGroup mapes;
     public EnemicsGroup enemics;
     public ItemsGroup items;
@@ -34,6 +36,17 @@ public class ConfigGame {
         public int tornsDesorientacioGel = 1;
         public int maxLog = 3;
         public int maxSlotsInventari = 4;
+
+        public int danyVeri = 3;
+        public int penalitzacioFoc = 2;
+        public int penalitzacioGel = 2;
+        public double llindCarregaNormal = 0.50;
+        public double llindCarregaPesat = 0.80;
+        public int penalitzacioEvasioCarrega = 5;
+        public int penalitzacioVelNormal = 1;
+        public int penalitzacioVelPesat = 2;
+        public int pctSortRondalla = 15;
+        public int bonusEvasioLleugera = 20;
     }
 
     //definició d'un tipus de terra des del JSON

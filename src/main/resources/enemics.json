@@ -1,0 +1,203 @@
+{
+    "enemics": {
+        "tipus": [
+            {
+                "simbols": [
+                    "d",
+                    "e"
+                ],
+                "nom": "DimoniBoiet",
+                "vida": 10,
+                "atac": 5,
+                "radi": 5,
+                "colorR": 180,
+                "colorG": 40,
+                "colorB": 10,
+                "patroIA": "pacman",
+                "esBoss": false,
+                "artFitxer": "art/dimoni.txt"
+            },
+            {
+                "simbols": [
+                    "B"
+                ],
+                "nom": "Bubota",
+                "vida": 20,
+                "atac": 5,
+                "radi": 100,
+                "colorR": 180,
+                "colorG": 180,
+                "colorB": 255,
+                "velocitat": 2,
+                "travessaParets": true,
+                "patroIA": "perseguir",
+                "requereixDescobriment": true,
+                "esBoss": false,
+                "artFitxer": "art/bubota.txt"
+            },
+            {
+                "simbols": [
+                    "G"
+                ],
+                "nom": "Gegant",
+                "vida": 40,
+                "atac": 10,
+                "radi": 4,
+                "colorR": 200,
+                "colorG": 120,
+                "colorB": 50,
+                "velocitat": 2,
+                "patroIA": "guardia",
+                "esBoss": true,
+                "clauDropejada": "clau-planta1",
+                "artFitxer": "art/gegant.txt"
+            },
+            {
+                "simbols": [
+                    "D"
+                ],
+                "nom": "Drac",
+                "vida": 50,
+                "atac": 20,
+                "radi": 8,
+                "colorR": 220,
+                "colorG": 30,
+                "colorB": 30,
+                "velocitat": 2,
+                "patroIA": "guardia",
+                "esBoss": true,
+                "clauDropejada": "clau-planta1",
+                "artFitxer": "art/drac.txt",
+                "gameOver": "gameover/drac.json"
+            },
+            {
+                "simbols": [
+                    "M"
+                ],
+                "nom": "NaMariaEnganxa",
+                "vida": 30,
+                "atac": 9999,
+                "radi": 0,
+                "colorR": 180,
+                "colorG": 50,
+                "colorB": 220,
+                "patroIA": "estatic",
+                "esBoss": true,
+                "clauDropejada": "clau-planta1",
+                "artFitxer": "art/maria.txt",
+                "gameOver": "gameover/maria.json"
+            }
+        ],
+        "posicions": [
+            {
+                "mapa": "planta1",
+                "simbol": "M",
+                "x": 13,
+                "y": 2
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "G",
+                "x": 13,
+                "y": 3,
+                "area": 5
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 13,
+                "y": 4
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "D",
+                "x": 13,
+                "y": 5,
+                "area": 5
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "e",
+                "x": 13,
+                "y": 6
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 13,
+                "y": 6
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "D",
+                "x": 80,
+                "y": 6,
+                "area": 5
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 40,
+                "y": 7
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "D",
+                "x": 86,
+                "y": 14,
+                "area": 5
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 27,
+                "y": 15
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 27,
+                "y": 22
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 30,
+                "y": 22
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 27,
+                "y": 25
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "D",
+                "x": 60,
+                "y": 29,
+                "area": 5
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "B",
+                "x": 25,
+                "y": 30
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "D",
+                "x": 26,
+                "y": 35,
+                "area": 5
+            },
+            {
+                "mapa": "planta1",
+                "simbol": "D",
+                "x": 77,
+                "y": 35,
+                "area": 5
+            }
+        ]
+    }
+}
