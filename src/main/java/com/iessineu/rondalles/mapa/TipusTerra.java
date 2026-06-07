@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.iessineu.rondalles.joc.ConfigGame;
+import com.iessineu.rondalles.motor.EinesColor;
 
 //cada tipus de terra es carrega des del game.json
 public class TipusTerra {
@@ -15,7 +16,6 @@ public class TipusTerra {
     private final int colorR, colorG, colorB;
     private final int fonsR, fonsG, fonsB;
     private final int velocitat;
-    //private final boolean doblePas;
     private final boolean llisca;
     private final double modRadi;
     private final int mal;
@@ -28,14 +28,13 @@ public class TipusTerra {
         this.simbols = simbols;
         this.nom = nom;
         this.amagat = amagat;
-        this.colorR = colorR;
-        this.colorG = colorG;
-        this.colorB = colorB;
-        this.fonsR = fonsR;
-        this.fonsG = fonsG;
-        this.fonsB = fonsB;
+        this.colorR = EinesColor.limita(colorR);
+        this.colorG = EinesColor.limita(colorG);
+        this.colorB = EinesColor.limita(colorB);
+        this.fonsR = EinesColor.limita(fonsR);
+        this.fonsG = EinesColor.limita(fonsG);
+        this.fonsB = EinesColor.limita(fonsB);
         this.velocitat = velocitat;
-        //this.doblePas = doblePas;
         this.llisca = llisca;
         this.modRadi = modRadi;
         this.mal = mal;

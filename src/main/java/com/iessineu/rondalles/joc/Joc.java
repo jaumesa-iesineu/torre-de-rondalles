@@ -64,7 +64,6 @@ public class Joc extends Motor {
     private int statSeleccionat = 0;
 
     // --- Terra especial ---
-    private boolean esperantSegonaAigua = false;
     private int aiguaNx = 0, aiguaNy = 0;
     private int tornsEsperantEntrada = 0;
     private boolean lliscantGel = false;

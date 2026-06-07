@@ -1,6 +1,7 @@
 package com.iessineu.rondalles.entitats;
 
 import com.googlecode.lanterna.TextColor;
+import com.iessineu.rondalles.motor.EinesColor;
 import com.iessineu.rondalles.joc.TipusEnemic;
 import com.iessineu.rondalles.joc.Simbols;
 import java.util.List;
@@ -400,7 +401,7 @@ public class Enemic extends Entitat {
         this.vidaMaxima = def.vida;
         this.atac = def.atac;
         this.radDeteccio = def.radi;
-        this.colorDef = new TextColor.RGB(def.colorR, def.colorG, def.colorB);
+        this.colorDef = EinesColor.creaColor(def.colorR, def.colorG, def.colorB);
         this.artAscii = def.artAscii;
         setVelocitat(def.velocitat);
         setTravessaParets(def.travessaParets);

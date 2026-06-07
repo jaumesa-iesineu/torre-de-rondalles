@@ -256,9 +256,9 @@ public class Renderitzador { // classe per gestionar la pantalla
         if (!(color instanceof TextColor.RGB rgb)) {
             return color;
         }
-        int r = Math.max(0, Math.min(255, (int) (rgb.getRed() * factor)));
-        int g = Math.max(0, Math.min(255, (int) (rgb.getGreen() * factor)));
-        int b = Math.max(0, Math.min(255, (int) (rgb.getBlue() * factor)));
+        int r = EinesColor.limita((int) (rgb.getRed() * factor));
+        int g = EinesColor.limita((int) (rgb.getGreen() * factor));
+        int b = EinesColor.limita((int) (rgb.getBlue() * factor));
         return new TextColor.RGB(r, g, b);
     }
 
