@@ -23,7 +23,8 @@
         "atacar": "a",
         "fugir": "f",
         "inventari": "i",
-        "interactuar": "e"
+        "interactuar": "e",
+        "mourePes": "m"
     },
     "musica": {
         "menu": "menu.wav",
