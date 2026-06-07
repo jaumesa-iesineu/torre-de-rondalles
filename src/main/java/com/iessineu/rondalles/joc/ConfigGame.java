@@ -18,6 +18,7 @@ public class ConfigGame {
     public EnemicsGroup enemics;
     public ItemsGroup items;
     public PortesGroup portes;
+    public NpcsGroup npcs;
     public EquipamentInicial equipamentInicial;
     public JugadorConfig jugador;
     public List<EnigmeConfig> enigmes;
@@ -109,6 +110,12 @@ public class ConfigGame {
         public List<PosicioPorta> posicions;
     }
 
+    public static class NpcsGroup {
+
+        public List<Object> tipus;
+        public List<PosicioNpc> posicions;
+    }
+
     public static class EquipamentInicial {
 
         public List<String> armadures;
@@ -167,12 +174,18 @@ public class ConfigGame {
     public List<ChetoConfig> chetos;
 
 
-    //una endevinalla per planta
-    public static class EnigmeConfig {
-
-        public int planta;
+    //una dita mallorquina amb el seu nivell de dificultat
+    public static class DitaConfig {
+        public int nivell; // 1=fàcil, 2=normal, 3=difícil
         public String pregunta;
         public String resposta;
+    }
+
+    //configuració de les dites i botiga per planta
+    public static class EnigmeConfig {
+        public int planta;
+        public List<DitaConfig> dites; // 3 dites de diferent dificultat
+        public List<String> itemsVenda; // IDs dels ítems disponibles a la botiga
     }
 
     //cerca el tipus que conté el simbol donat dins la seva llista de simbols
@@ -233,6 +246,19 @@ public class ConfigGame {
         List<PosicioPorta> resultat = new ArrayList<>();
         for (PosicioPorta p : portes.posicions) {
             if (p.mapa.equals(mapaId)) {
+                resultat.add(p);
+            }
+        }
+        return resultat;
+    }
+
+    public List<PosicioNpc> getPosicionsNpcPerMapa(String mapaId) {
+        if (npcs == null || npcs.posicions == null) {
+            return new ArrayList<>();
+        }
+        List<PosicioNpc> resultat = new ArrayList<>();
+        for (PosicioNpc p : npcs.posicions) {
+            if (mapaId.equals(p.mapa)) {
                 resultat.add(p);
             }
         }

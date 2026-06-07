@@ -796,20 +796,32 @@
             {
                 "mapa": "planta1",
                 "simbol": "N",
-                "x": 10,
-                "y": 10
+                "x": 4,
+                "y": 2
             },
             {
-                "mapa": "planta1",
-                "simbol": "n",
-                "x": 10,
-                "y": 10
+                "mapa": "planta2",
+                "simbol": "N",
+                "x": 4,
+                "y": 2
             },
             {
-                "mapa": "planta1",
-                "simbol": "ñ",
-                "x": 10,
-                "y": 10
+                "mapa": "planta3",
+                "simbol": "N",
+                "x": 4,
+                "y": 2
+            },
+            {
+                "mapa": "planta4",
+                "simbol": "N",
+                "x": 4,
+                "y": 2
+            },
+            {
+                "mapa": "planta5",
+                "simbol": "N",
+                "x": 4,
+                "y": 2
             }
         ]
     },
@@ -892,28 +904,48 @@
     "enigmes": [
         {
             "planta": 1,
-            "pregunta": "Tenc ales però no vol, tenc cua però no és animal. Què sóc?",
-            "resposta": "una fletxa"
+            "dites": [
+                {"nivell": 1, "pregunta": "Qui tot ho vol, tot ho ___", "resposta": "perd"},
+                {"nivell": 2, "pregunta": "Poc a poc s'arriba ___", "resposta": "lluny"},
+                {"nivell": 3, "pregunta": "No hi ha mal que per bé no ___", "resposta": "vengui"}
+            ],
+            "itemsVenda": ["pocio-vida", "pocio-veri", "pocio-foc", "falc-llaurador", "capell-pages", "espardenyes-canem"]
         },
         {
             "planta": 2,
-            "pregunta": "Com més gran em fas, menys pots veure. Què sóc?",
-            "resposta": "la foscor"
+            "dites": [
+                {"nivell": 1, "pregunta": "Qui no treballa, no ___", "resposta": "menja"},
+                {"nivell": 2, "pregunta": "Menys paraules i més ___", "resposta": "fets"},
+                {"nivell": 3, "pregunta": "A enemics que fugen, ponts ___", "resposta": "d'or"}
+            ],
+            "itemsVenda": ["pocio-vida", "pocio-gel", "pocio-foc", "garrot-olivera", "elm-ferro-oxidat", "cota-malla", "botes-cuir", "calcons-llana"]
         },
         {
             "planta": 3,
-            "pregunta": "Estic sempre davant teu però no es pot veure. Què sóc?",
-            "resposta": "el futur"
+            "dites": [
+                {"nivell": 1, "pregunta": "Qui fa mal, mal ___", "resposta": "trobarà"},
+                {"nivell": 2, "pregunta": "Home adormit, home ___", "resposta": "perdut"},
+                {"nivell": 3, "pregunta": "Qui cerca, ___", "resposta": "troba"}
+            ],
+            "itemsVenda": ["pocio-vida", "pocio-veri", "llanca-pescador", "elm-ferro-oxidat", "cota-malla", "greves-ferro", "botes-cuir", "calcons-llana"]
         },
         {
             "planta": 4,
-            "pregunta": "Parleu de mi però mai m'heu vist. Qui sóc?",
-            "resposta": "el silenci"
+            "dites": [
+                {"nivell": 1, "pregunta": "Tant va el càntir a la font que a la ___", "resposta": "fi es trenca"},
+                {"nivell": 2, "pregunta": "Qui no s'arrisca, no ___", "resposta": "pisca"},
+                {"nivell": 3, "pregunta": "El temps és ___", "resposta": "or"}
+            ],
+            "itemsVenda": ["pocio-vida", "pocio-gel", "espasa-cavaller", "casc-cavaller", "cota-malla", "greves-ferro", "botes-ferro", "polaines-encantades"]
         },
         {
             "planta": 5,
-            "pregunta": "Tenc boca però no puc parlar, tenc llit però no puc dormir. Què sóc?",
-            "resposta": "un riu"
+            "dites": [
+                {"nivell": 1, "pregunta": "Qui ven la seva terra, ven la seva ___", "resposta": "mare"},
+                {"nivell": 2, "pregunta": "Val més tard que ___", "resposta": "mai"},
+                {"nivell": 3, "pregunta": "De gra en gra, s'omple la ___", "resposta": "pansa"}
+            ],
+            "itemsVenda": ["pocio-vida", "pocio-vida", "destral-gegant", "espasa-cavaller", "casc-cavaller", "armadura-cuir-drac", "polaines-encantades", "botes-ferro"]
         }
     ],
 

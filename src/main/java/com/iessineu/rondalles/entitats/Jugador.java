@@ -144,6 +144,12 @@ public class Jugador extends Entitat { //el jugador tambe es una entitat
         pes += item.getPes();
     }
 
+    public boolean intentaAfegirItem(Item item) {
+        boolean ok = inventari.afegeix(item);
+        if (ok) pes += item.getPes();
+        return ok;
+    }
+
     public String usaItem(int index) { //usa l'item del slot indicat (0-based); retorna nom o null
         if (index < 0 || index >= inventari.getMaxSlots()) {
             return null;
