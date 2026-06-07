@@ -265,6 +265,7 @@ public class ConfigGame {
         public String menuCarregar = "Carregar";
         public String pauseTitle = "  *** PAUSA ***  ";
         public String pauseInstructions = "Fletxes + ENTER per seleccionar";
-        public String pauseResumeHint = "[ ESC ] Reanudar";
+        public String pauseResumePista = "[ ESC ] Reanudar";
+        public String menuTornaAcomencar = "Torna a començar";
     }
 }

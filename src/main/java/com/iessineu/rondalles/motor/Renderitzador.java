@@ -53,7 +53,7 @@ public class Renderitzador { // classe per gestionar la pantalla
     private String subtitle = "~ Un joc de rondalles mallorquines ~";
     private String pauseTitle = "  *** PAUSA ***  ";
     private String pauseInstructions = "Fletxes + ENTER per seleccionar";
-    private String pauseResumeHint = "[ ESC ] Reanudar";
+    private String pauseResumePista = "[ ESC ] Reanudar";
     private String nomPersonatge = "PERSONATGE";
 
     public void setWindowTitle(String t) { this.windowTitle = t; }
@@ -61,7 +61,7 @@ public class Renderitzador { // classe per gestionar la pantalla
     public void setSubtitle(String t) { this.subtitle = t; }
     public void setPauseTitle(String t) { this.pauseTitle = t; }
     public void setPauseInstructions(String t) { this.pauseInstructions = t; }
-    public void setPauseResumeHint(String t) { this.pauseResumeHint = t; }
+    public void setPauseResumePista(String t) { this.pauseResumePista = t; }
     public void setNomPersonatge(String t) { this.nomPersonatge = t != null ? t.toUpperCase() : "PERSONATGE"; }
 
     public void setArtJugador(String[] art) {
@@ -886,7 +886,7 @@ public class Renderitzador { // classe per gestionar la pantalla
         }
 
         //nota de tecla ràpida ESC
-        String escNota = pauseResumeHint;
+        String escNota = pauseResumePista;
         int en = cx - escNota.length() / 2;
         for (int j = 0; j < escNota.length(); j++) {
             screen.setCharacter(en + j, boxY + 3 + opcions.length + 1,
@@ -927,6 +927,75 @@ public class Renderitzador { // classe per gestionar la pantalla
         pintaText(cx - 12, cy - 3, "[ COMERCIANT - PIS " + pis + " ]", groc);
         pintaText(cx - 15, cy, "Benvingut! (comerç per implementar)", blanc);
         pintaText(cx - 10, cy + 3, "ESC / ENTER per sortir", new TextColor.RGB(110, 110, 110));
+        screen.refresh();
+    }
+
+    // Dibuixa la pantalla de game over amb animacio typewriter sobre el text.
+    // caractersVisibles: quants caracters del text ja s'han de mostrar.
+    // animacioAcabada: quan es true, mostra el menu d'opcions.
+    public void dibuixaGameOver(PantallaGameOver pantalla, int caractersVisibles, boolean animacioAcabada, String[] opcions, int opcioSeleccionada) throws IOException {
+        screen.clear();
+        int cols = screen.getTerminalSize().getColumns();
+        int files = screen.getTerminalSize().getRows();
+
+        TextColor vermellSang = new TextColor.RGB(190, 35, 35);
+        TextColor blanc = new TextColor.RGB(220, 220, 220);
+
+        // titol centrat a la part de dalt
+        String titol = pantalla.getTitol();
+        int titolY = Math.max(2, files / 8);
+        pintaText((cols - titol.length()) / 2, titolY, titol, vermellSang);
+
+        // linea separadora sota el titol
+        String sep = "═".repeat(Math.min(cols - 4, titol.length() + 4));
+        pintaText((cols - sep.length()) / 2, titolY + 1, sep, new TextColor.RGB(80, 20, 20));
+
+        // text amb efecte typewriter, centrat com a bloc
+        String[] liniesText = pantalla.getLiniesText();
+        int ampleText = 0;
+        for (String l : liniesText) {
+            if (l.length() > ampleText) ampleText = l.length();
+        }
+        int textY = titolY + 4;
+        int consumits = 0;
+        for (int i = 0; i < liniesText.length; i++) {
+            String linia = liniesText[i];
+            if (textY + i >= files - 2) break;
+            if (caractersVisibles <= consumits) break;
+            int carLinia = Math.min(linia.length(), caractersVisibles - consumits);
+            if (carLinia > 0) {
+                String visible = linia.substring(0, carLinia);
+                pintaText((cols - ampleText) / 2, textY + i, visible, blanc);
+            }
+            consumits += linia.length() + 1;
+        }
+
+        // ascii art en color de sang, centrat
+        String[] liniesArt = pantalla.getLiniesArt();
+        int artY = textY + liniesText.length + 2;
+        int ampleArt = 0;
+        for (String l : liniesArt) {
+            if (l.length() > ampleArt) ampleArt = l.length();
+        }
+        for (int i = 0; i < liniesArt.length; i++) {
+            if (artY + i >= files - 2) break;
+            pintaText((cols - ampleArt) / 2, artY + i, liniesArt[i], vermellSang);
+        }
+
+        // menu d'opcions (només quan l'animacio ja ha acabat)
+        if (animacioAcabada) {
+            int oy = Math.min(files - opcions.length - 2, Math.max(artY + liniesArt.length + 2, files / 2 + 2));
+            for (int i = 0; i < opcions.length; i++) {
+                String prefix = (i == opcioSeleccionada) ? " > " : "   ";
+                String text = prefix + opcions[i];
+                int ox = (cols - text.length()) / 2;
+                TextColor color = (i == opcioSeleccionada)
+                        ? TextColor.ANSI.YELLOW_BRIGHT
+                        : TextColor.ANSI.WHITE;
+                pintaText(ox, oy + i * 2, text, color);
+            }
+        }
+
         screen.refresh();
     }
 

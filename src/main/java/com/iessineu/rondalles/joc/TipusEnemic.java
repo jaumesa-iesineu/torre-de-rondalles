@@ -27,4 +27,8 @@ public class TipusEnemic {
     public String clauDropejada; //id de la clau que deixa anar al morir (ex: "clau-planta1")
     public String artFitxer;  //ruta a resources/art/xxx.txt (prioritat sobre artAscii)
     public String[] artAscii; //fallback inline si no hi ha artFitxer
+
+    // Ruta al fitxer JSON amb la pantalla de game over personalitzada
+    // d'aquest enemic (opcional). Ex: "gameover/drac.json".
+    public String gameOver;
 }

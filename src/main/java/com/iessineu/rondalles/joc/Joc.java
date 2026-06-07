@@ -28,6 +28,8 @@ import com.iessineu.rondalles.mapa.Mapa;
 import com.iessineu.rondalles.mapa.TipusTerra;
 import com.iessineu.rondalles.motor.Estat;
 import com.iessineu.rondalles.motor.Motor;
+import com.iessineu.rondalles.motor.PantallaGameOver;
+import com.iessineu.rondalles.motor.CarregadorPantallaGameOver;
 import com.iessineu.rondalles.motor.Renderitzador;
 
 public class Joc extends Motor {
@@ -75,6 +77,17 @@ public class Joc extends Motor {
     private int gelDx = 0, gelDy = 0;
     private long ultimPasGel = 0;
     private long msPasGel = 140;
+
+    // --- Game over: qui ha matat el jugador, quina pantalla mostrar i animacio ---
+    private Enemic enemicMortJugador = null;
+    private PantallaGameOver pantallaGameOver = null;
+    private long iniciAnimacioGameOver = 0;
+    private int caractersVisiblesGameOver = 0;
+    private boolean animantGameOver = true;
+    // velocitat de l'animacio typewriter (caracters per segon)
+    private static final int CPS_GAME_OVER = 35;
+    private int opcioGameOver = 0;
+    private String[] opcionsGameOver = {"Torna a començar", "Sortir"};
 
     private int maxLog = 3;
     private boolean jugadorIniciaCombat = false;
@@ -183,9 +196,10 @@ public class Joc extends Motor {
             renderer.setSubtitle(t.subtitle);
             renderer.setPauseTitle(t.pauseTitle);
             renderer.setPauseInstructions(t.pauseInstructions);
-            renderer.setPauseResumeHint(t.pauseResumeHint);
+            renderer.setPauseResumePista(t.pauseResumePista);
             opcionsInicials = new String[]{t.menuIniciar, t.menuSortir};
             opcionsPausa = new String[]{t.menuReanudar, t.menuGuardar, t.menuCarregar, t.menuSortir};
+            opcionsGameOver = new String[]{t.menuTornaAcomencar, t.menuSortir};
         }
 
         boolean teTipusPersonatge = config != null && config.tipusPersonatge != null && !config.tipusPersonatge.isEmpty();
@@ -212,7 +226,8 @@ public class Joc extends Motor {
 
     @Override
     protected boolean estaAnimant() {
-        return lliscantGel;
+        //mentre es juga l'animacio typewriter del game over volem un bucle no bloquejant
+        return lliscantGel || animantGameOver;
     }
     
     private void amagaTerrenyEspecial() {
@@ -299,9 +314,14 @@ public class Joc extends Motor {
                     }
                 }
                 if (jugador.esMort()) {
-                    corrent = false;
+                    iniciaGameOver(null);
                 }
             }
+            return;
+        }
+
+        if (estat == Estat.GAME_OVER) {
+            gestionaGameOver(tecla);
             return;
         }
 
@@ -562,8 +582,7 @@ public class Joc extends Motor {
                     afegeixLog(nom + " aprofita! Has rebut " + danyRebut + " de dany.");
                 }
                 if (jugador.esMort()) {
-                    GestorMusica.reprodueix("GAME_OVER");
-                    estat = Estat.GAME_OVER;
+                    iniciaGameOver(enemicCombat);
                     return;
                 }
             }
@@ -625,8 +644,7 @@ public class Joc extends Motor {
             }
 
             if (jugador.esMort()) {
-                    GestorMusica.reprodueix("GAME_OVER");
-                    estat = Estat.GAME_OVER;
+                    iniciaGameOver(enemicCombat);
                     return;
             }
 
@@ -782,7 +800,7 @@ public class Joc extends Motor {
 
             recullItemSiNHiHa(nx, ny);
             tickTorn();
-             if (jugador.esMort()) corrent = false;
+             if (jugador.esMort()) iniciaGameOver(null);
                 return; // <-- IMPORTANT: no continuar al bloc normal
         }
        
@@ -805,7 +823,7 @@ public class Joc extends Motor {
         tickTorn();
 
         if (jugador.esMort()) {
-            corrent = false;
+            iniciaGameOver(null);
         }
     }
 
@@ -894,8 +912,7 @@ public class Joc extends Motor {
                 afegeixLog(nom + " t'ataca per sorpresa! Has rebut " + dany + " de dany.");
             }
             if (jugador.esMort()) {
-                    GestorMusica.reprodueix("GAME_OVER");
-                    estat = Estat.GAME_OVER;
+                    iniciaGameOver(enemicCombat);
                     return;
             }
         }
@@ -1370,6 +1387,15 @@ public class Joc extends Motor {
     @Override
     protected void renderitza() {
         try {
+            if (estat == Estat.GAME_OVER) {
+                renderer.dibuixaGameOver(
+                        pantallaGameOver,
+                        caractersVisiblesGameOver,
+                        !animantGameOver,
+                        opcionsGameOver,
+                        opcioGameOver);
+                return;
+            }
             if (estat == Estat.MENU_INICIAL) {
                 renderer.dibuixaMenuInicial(opcioMenuInicial, opcionsInicials);
                 return;
@@ -1449,5 +1475,162 @@ public class Joc extends Motor {
             }
         }
         return 1;
+    }
+
+    // --- Game over ---
+
+    // Prepara la pantalla de game over i arrenca l'animacio typewriter.
+    private void iniciaGameOver(Enemic mort) {
+        enemicMortJugador = mort;
+        pantallaGameOver = carregaPantallaGameOver(mort);
+        iniciAnimacioGameOver = System.currentTimeMillis();
+        caractersVisiblesGameOver = 0;
+        animantGameOver = true;
+        opcioGameOver = 0;
+        GestorMusica.reprodueix("GAME_OVER");
+        estat = Estat.GAME_OVER;
+    }
+
+    // Decideix quina pantalla de game over mostrar.
+    // Prioritat: fitxer de l'enemic > fitxer per defecte > fallback en memoria.
+    private PantallaGameOver carregaPantallaGameOver(Enemic mort) {
+        if (mort != null) {
+            String ruta = mort.getGameOver();
+            if (ruta != null && !ruta.isBlank()) {
+                PantallaGameOver custom = CarregadorPantallaGameOver.carrega(ruta);
+                if (custom != null) return custom;
+            }
+        }
+        PantallaGameOver def = CarregadorPantallaGameOver.carrega("gameover/default.json");
+        if (def != null) return def;
+        // fallback final si no hi ha cap fitxer
+        return new PantallaGameOver(
+                "GAME OVER",
+                new String[]{
+                    "La teva aventura acaba aquí.",
+                    "La foscor t'engoleix per sempre més."
+                },
+                new String[]{
+                    "  __________",
+                    " |  R.I.P.  |",
+                    " |  ______  |",
+                    " |__________|"
+                }
+        );
+    }
+
+    // Gestiona l'estat GAME_OVER: avanca l'animacio i, en acabat,
+    // mostra menu per torna a començar o sortir.
+    private void gestionaGameOver(KeyStroke tecla) {
+        if (pantallaGameOver == null) {
+            reiniciaPartida();
+            return;
+        }
+
+        if (animantGameOver) {
+            long ara = System.currentTimeMillis();
+            long delta = ara - iniciAnimacioGameOver;
+            int total = pantallaGameOver.totalCaracters();
+            int nousVisibles = (int) ((long) delta * CPS_GAME_OVER / 1000L);
+            if (nousVisibles >= total) {
+                caractersVisiblesGameOver = total;
+                animantGameOver = false;
+            } else {
+                caractersVisiblesGameOver = nousVisibles;
+            }
+            return;
+        }
+
+        if (tecla == null) return;
+
+        if (tecla.getKeyType() == KeyType.ArrowUp) {
+            opcioGameOver = (opcioGameOver + opcionsGameOver.length - 1) % opcionsGameOver.length;
+        } else if (tecla.getKeyType() == KeyType.ArrowDown) {
+            opcioGameOver = (opcioGameOver + 1) % opcionsGameOver.length;
+        } else if (tecla.getKeyType() == KeyType.Enter) {
+            if (opcioGameOver == 0) {
+                reiniciaPartida();
+            } else {
+                corrent = false;
+            }
+        }
+    }
+
+    // Torna a començar la partida de zero: reseteam estat, tornam al menu
+    // inicial i deixam que l'inici de partida construeixi un jugador nou.
+    private void reiniciaPartida() {
+        try {
+            // reseteam variables de torn
+            animantGameOver = false;
+            enemicMortJugador = null;
+            pantallaGameOver = null;
+            caractersVisiblesGameOver = 0;
+            iniciAnimacioGameOver = 0;
+
+            // reseteam estat de combat
+            enemicCombat = null;
+            jugadorIniciaCombat = false;
+            logCombat.clear();
+            enemicsMorts = new ArrayList<>();
+
+            // reseteam estat de joc (pis, chetos, etc)
+            pisActual = 1;
+            godMode = false;
+            bufferCheto.clear();
+            tornsDesorientat = 0;
+            lliscantGel = false;
+            tornsEsperantEntrada = 0;
+            aiguaNx = 0;
+            aiguaNy = 0;
+            npcActual = null;
+            enigmaInput = "";
+
+            // reseteam menus i seleccio de personatge
+            opcioMenuInicial = 0;
+            opcioPersonatge = 0;
+            personatgeTriat = null;
+            ptsCustom = new int[]{0, 0, 0, 0};
+            statSeleccionat = 0;
+            opcioMenuPausa = 0;
+            opcioGameOver = 0;
+
+            // tornam al mapa inicial
+            idMapaActual = config != null ? config.getMapaInicial() : "planta1";
+            MapaConfig mc = config != null ? config.getMapaConfig(idMapaActual) : null;
+            fitxerMapa = mc != null ? mc.fitxer : "mapes/" + idMapaActual + ".map";
+            mapa = CarregadorMapa.carrega(fitxerMapa);
+
+            // jugador provisional (es substitueix a seleccionaPersonatge)
+            jugador = creaJugador(trobaInicialX(), trobaInicialY());
+
+            // recarregam contingut del pis
+            enemics = new ArrayList<>();
+            carregaEnemics();
+            for (Enemic e : enemics) e.setTotsEnemics(enemics);
+            itemsMapa = new ArrayList<>();
+            carregaItemsMapa();
+            portes = new ArrayList<>();
+            carregaPortes();
+            npcs = new ArrayList<>();
+            carregaNpcs();
+            carregaEquipamentInicial();
+            renderer.setArtJugador(artJugador);
+
+            // boira de guerra fresca
+            explorat = new boolean[mapa.getAlcada()][mapa.getAmplada()];
+            mapaRecord = new char[mapa.getAlcada()][mapa.getAmplada()];
+            for (char[] fila : mapaRecord) {
+                java.util.Arrays.fill(fila, ' ');
+            }
+            amagaTerrenyEspecial();
+
+            // tornam al menu inicial per tornar a triar personatge
+            estat = Estat.MENU_INICIAL;
+            GestorMusica.reprodueix("MENU");
+        } catch (Exception ex) {
+            // si algo falla durant el reinici, aturam el motor
+            System.err.println("[REINICI] Error reiniciant la partida: " + ex.getMessage());
+            corrent = false;
+        }
     }
 }

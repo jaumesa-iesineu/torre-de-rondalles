@@ -486,7 +486,8 @@
                 "patroIA": "guardia",
                 "esBoss": true,
                 "clauDropejada": "clau-planta1",
-                "artFitxer": "art/drac.txt"
+                "artFitxer": "art/drac.txt",
+                "gameOver": "gameover/drac.json"
             },
             {
                 "simbols": ["M"],
@@ -500,7 +501,8 @@
                 "patroIA": "estatic",
                 "esBoss": true,
                 "clauDropejada": "clau-planta1",
-                "artFitxer": "art/maria.txt"
+                "artFitxer": "art/maria.txt",
+                "gameOver": "gameover/maria.json"
             }
         ],
         "posicions": [
@@ -954,6 +956,7 @@
         "menuCarregar": "Carregar",
         "pauseTitle": "  *** PAUSA ***  ",
         "pauseInstructions": "Fletxes + ENTER per seleccionar",
-        "pauseResumeHint": "[ ESC ] Reanudar"
+        "pauseResumePista": "[ ESC ] Reanudar",
+        "menuTornaAcomencar": "Torna a començar"
     }
 }
