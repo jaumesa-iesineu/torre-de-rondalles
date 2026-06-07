@@ -7,6 +7,7 @@ package com.iessineu.rondalles.entitats;
 import com.googlecode.lanterna.TextColor;
 import com.iessineu.rondalles.inventari.Inventari;
 import com.iessineu.rondalles.inventari.Item;
+import com.iessineu.rondalles.joc.Mecaniques;
 
 /**
  *
@@ -89,22 +90,22 @@ public class Jugador extends Entitat { //el jugador tambe es una entitat
     public Carrega categoriaCarrega() {
         if ("lleugera_vent".equals(passiu)) return Carrega.LLEUGER;
         double pct = (double) pes / pesMaxim;
-        if (pct <= 0.50) return Carrega.LLEUGER;
-        if (pct <= 0.80) return Carrega.NORMAL;
+        if (pct <= Mecaniques.llindCarregaNormal) return Carrega.LLEUGER;
+        if (pct <= Mecaniques.llindCarregaPesat) return Carrega.NORMAL;
         return Carrega.PESAT;
     }
 
     public int velocitatEfectiva() {
         return switch (categoriaCarrega()) {
             case LLEUGER -> velocitat;
-            case NORMAL  -> Math.max(1, velocitat - 1);
-            case PESAT   -> Math.max(1, velocitat - 2);
+            case NORMAL  -> Math.max(1, velocitat - Mecaniques.penalitzacioVelNormal);
+            case PESAT   -> Math.max(1, velocitat - Mecaniques.penalitzacioVelPesat);
         };
     }
 
     public int evasioEfectiva() {
-        int base = categoriaCarrega() == Carrega.PESAT ? Math.max(0, evasio - 5) : evasio;
-        if ("lleugera_vent".equals(passiu)) base = Math.min(100, base + 20);
+        int base = categoriaCarrega() == Carrega.PESAT ? Math.max(0, evasio - Mecaniques.penalitzacioEvasioCarrega) : evasio;
+        if ("lleugera_vent".equals(passiu)) base = Math.min(100, base + Mecaniques.bonusEvasioLleugera);
         return base;
     }
 
@@ -121,7 +122,7 @@ public class Jugador extends Entitat { //el jugador tambe es una entitat
     }
 
     public boolean esquiva() {
-        if ("sort_rondalla".equals(passiu) && java.util.concurrent.ThreadLocalRandom.current().nextInt(100) < 15) return true;
+        if ("sort_rondalla".equals(passiu) && java.util.concurrent.ThreadLocalRandom.current().nextInt(100) < Mecaniques.pctSortRondalla) return true;
         int eva = evasioEfectiva();
         return eva > 0 && java.util.concurrent.ThreadLocalRandom.current().nextInt(100) < eva;
     }
@@ -166,7 +167,7 @@ public class Jugador extends Entitat { //el jugador tambe es una entitat
 
     public void tickVeri() {
         if (tornsVeri <= 0) return;
-        rebreDany(3);
+        rebreDany(Mecaniques.danyVeri);
         if (!"pocions_infinites".equals(passiu)) tornsVeri--;
     }
 
@@ -181,12 +182,12 @@ public class Jugador extends Entitat { //el jugador tambe es una entitat
     }
 
     public int getAtacTotal() {
-        int penalitzacio = tornsFoc > 0 ? 2 : 0;
+        int penalitzacio = tornsFoc > 0 ? Mecaniques.penalitzacioFoc : 0;
         return Math.max(1, atac + atacExtra - penalitzacio);
     }
 
     public int getDefensaTotal() {
-        int penalitzacio = tornsGel > 0 ? 2 : 0;
+        int penalitzacio = tornsGel > 0 ? Mecaniques.penalitzacioGel : 0;
         return Math.max(0, defensa + defensaExtra - penalitzacio);
     }
 

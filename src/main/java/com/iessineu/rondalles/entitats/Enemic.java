@@ -506,34 +506,45 @@ public class Enemic extends Entitat {
     protected int[] primerPasBFS(int tx, int ty, char[][] cells) {
         if (cells == null) return new int[]{tx, ty};
         int rows = cells.length, cols = rows > 0 ? cells[0].length : 0;
-        boolean[][] visitat = new boolean[rows][cols];
+        int[] gCost = new int[rows * cols];
         int[] firstX = new int[rows * cols];
         int[] firstY = new int[rows * cols];
+        java.util.Arrays.fill(gCost, Integer.MAX_VALUE);
         java.util.Arrays.fill(firstX, -1);
         java.util.Arrays.fill(firstY, -1);
-        java.util.Queue<int[]> cua = new java.util.LinkedList<>();
+        // PriorityQueue ordenada per f = g + h (heurística Manhattan)
+        java.util.PriorityQueue<int[]> obert = new java.util.PriorityQueue<>(
+            java.util.Comparator.comparingInt(a -> a[2])
+        );
         int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};
-        visitat[this.y][this.x] = true;
+        gCost[this.y * cols + this.x] = 0;
         for (int[] d : dirs) {
             int nx = this.x + d[0], ny = this.y + d[1];
-            if (ny >= 0 && ny < rows && nx >= 0 && nx < cols && !visitat[ny][nx] && esTravessable(cells, nx, ny)) {
-                visitat[ny][nx] = true;
+            if (ny >= 0 && ny < rows && nx >= 0 && nx < cols && esTravessable(cells, nx, ny)) {
+                int g = 1;
+                int h = Math.abs(nx - tx) + Math.abs(ny - ty);
+                gCost[ny * cols + nx] = g;
                 firstX[ny * cols + nx] = nx;
                 firstY[ny * cols + nx] = ny;
-                cua.add(new int[]{nx, ny});
+                obert.add(new int[]{nx, ny, g + h, g});
             }
         }
-        while (!cua.isEmpty()) {
-            int[] cur = cua.poll();
-            int cx = cur[0], cy = cur[1];
+        while (!obert.isEmpty()) {
+            int[] cur = obert.poll();
+            int cx = cur[0], cy = cur[1], cg = cur[3];
+            if (cg > gCost[cy * cols + cx]) continue; // nodo obsolet
             if (cx == tx && cy == ty) return new int[]{firstX[cy * cols + cx], firstY[cy * cols + cx]};
             for (int[] d : dirs) {
                 int nx = cx + d[0], ny = cy + d[1];
-                if (ny >= 0 && ny < rows && nx >= 0 && nx < cols && !visitat[ny][nx] && esTravessable(cells, nx, ny)) {
-                    visitat[ny][nx] = true;
+                if (ny < 0 || ny >= rows || nx < 0 || nx >= cols) continue;
+                if (!esTravessable(cells, nx, ny)) continue;
+                int ng = cg + 1;
+                if (ng < gCost[ny * cols + nx]) {
+                    gCost[ny * cols + nx] = ng;
                     firstX[ny * cols + nx] = firstX[cy * cols + cx];
                     firstY[ny * cols + nx] = firstY[cy * cols + cx];
-                    cua.add(new int[]{nx, ny});
+                    int h = Math.abs(nx - tx) + Math.abs(ny - ty);
+                    obert.add(new int[]{nx, ny, ng + h, ng});
                 }
             }
         }
