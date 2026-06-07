@@ -12,6 +12,11 @@ import java.util.List;
 
 public class CarregadorGame {
 
+    private static String basedir = null;
+
+    public static void setBasedir(String dir) { basedir = dir; }
+    public static String getBasedir() { return basedir; }
+
     //carrega es game.json des de dins del jar (us intern per defecte)
     public static ConfigGame carrega(String rutaRecurs) throws Exception {
         InputStream is = CarregadorGame.class.getClassLoader().getResourceAsStream(rutaRecurs);
@@ -22,8 +27,42 @@ public class CarregadorGame {
         try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
             config = new Gson().fromJson(reader, ConfigGame.class);
         }
+        carregaSubfitxers(config);
         resolgArt(config);
         return config;
+    }
+
+    private static void carregaSubfitxers(ConfigGame config) throws Exception {
+        String[] subfitxers = {"terrenys.json", "mapes.json", "enemics.json", "items.json", "portes.json", "personatges.json"};
+        Gson gson = new Gson();
+        for (String nom : subfitxers) {
+            InputStream is = obriRecurs(nom);
+            if (is == null) continue;
+            ConfigGame fragment;
+            try (Reader r = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+                fragment = gson.fromJson(r, ConfigGame.class);
+            }
+            fusiona(config, fragment);
+        }
+    }
+
+    private static InputStream obriRecurs(String nom) throws Exception {
+        if (basedir != null) {
+            java.io.File f = new java.io.File(basedir, nom);
+            if (f.exists()) return new java.io.FileInputStream(f);
+        }
+        return CarregadorGame.class.getClassLoader().getResourceAsStream(nom);
+    }
+
+    private static void fusiona(ConfigGame base, ConfigGame fragment) {
+        if (fragment == null) return;
+        if (fragment.terrenys != null) base.terrenys = fragment.terrenys;
+        if (fragment.mapes != null) base.mapes = fragment.mapes;
+        if (fragment.enemics != null) base.enemics = fragment.enemics;
+        if (fragment.items != null) base.items = fragment.items;
+        if (fragment.portes != null) base.portes = fragment.portes;
+        if (fragment.tipusPersonatge != null) base.tipusPersonatge = fragment.tipusPersonatge;
+        if (fragment.personatgeCustom != null) base.personatgeCustom = fragment.personatgeCustom;
     }
 
     //carrega un JSON extern del sistema de fitxers (argument -game o -mod)

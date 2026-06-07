@@ -71,13 +71,17 @@ public class CarregadorMapa {
 
     private static InputStream obriStream(String rutaFitxer) throws Exception {
         File fitxer = new File(rutaFitxer);
-        if (fitxer.exists()) {
-            return new java.io.FileInputStream(fitxer);
+        if (fitxer.exists()) return new java.io.FileInputStream(fitxer);
+
+        // si hi ha basedir extern, busca relatiu a ell
+        String basedir = com.iessineu.rondalles.joc.CarregadorGame.getBasedir();
+        if (basedir != null) {
+            File fitxerBase = new File(basedir, rutaFitxer);
+            if (fitxerBase.exists()) return new java.io.FileInputStream(fitxerBase);
         }
+
         InputStream is = CarregadorMapa.class.getResourceAsStream("/" + rutaFitxer);
-        if (is == null) {
-            throw new Exception("no trobat el fitxer: " + rutaFitxer);
-        }
+        if (is == null) throw new Exception("no trobat el fitxer: " + rutaFitxer);
         return is;
     }
 

@@ -1016,7 +1016,7 @@ public class Renderitzador { // classe per gestionar la pantalla
         screen.clear();
         int cols = screen.getTerminalSize().getColumns();
         int files = screen.getTerminalSize().getRows();
-        int cx = cols / 2, cy = files / 2;
+        int cx = cols / 2, cy = files / 4;
         TextColor blanc = new TextColor.RGB(220, 220, 220);
         TextColor groc = new TextColor.RGB(220, 180, 50);
         TextColor gris = new TextColor.RGB(110, 110, 110);
