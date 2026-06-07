@@ -684,6 +684,10 @@ public class Joc extends Motor {
                 interactuaPorta();
                 return;
             }
+            if (Controls.esMourePes(c)) {//en pitjar 'm' intentam moure items.
+                mourePesAdjacent();
+                return;
+            }
             if (c >= '1' && c <= '9') {
                 jugador.usaItem(c - '1');
 
@@ -1067,7 +1071,61 @@ public class Joc extends Motor {
         }
         return true;
     }
+    private void mourePesAdjacent() {//Funció que mou els items
+        int jx = jugador.getX();//Posició x del jugador.
+        int jy = jugador.getY();//Posició y del jugador.
+        int[][] dirs = {{-1,0},{1,0},{0,-1},{0,1}};//Direccions posibles
 
+        for (int[] d : dirs) {//Comprova cada direcció posible.
+            int ix = jx + d[0];//Posició x del posible item.
+            int iy = jy + d[1];//Posició y del posible item.
+
+            ItemMapa trobat = null;
+            for (ItemMapa im : itemsMapa) {//Comprova si hi ha item i el guarda en trobat.
+                if (im.getX() == ix && im.getY() == iy) {
+                    trobat = im;
+                    break;
+                }
+            }
+            if (trobat == null) continue;
+
+            int pes = trobat.getItem().getPes();//Agafam el pes de l'item.
+            if (jugador.getAtacTotal() < pes) {//
+                afegeixLog("L'objecte és massa pesat per moure'l!");
+                continue;
+            }
+
+            int nx = ix + d[0];//Posició x a la que s'ha de moure l'item.
+            int ny = iy + d[1];//Posició y a la que s'ha de moure l'item.
+
+            if (!mapa.esPasable(nx, ny)) {//Comprovam que podem moure l'objecte.
+                afegeixLog("No hi ha espai per moure l'objecte!");
+                continue;
+            }
+
+            boolean ocupat = false;
+            for (ItemMapa im2 : itemsMapa)//Comprovam que avon volem moure no hi hagi items ja.
+                if (im2.getX() == nx && im2.getY() == ny) { ocupat = true; break; }
+            for (Enemic e : enemics)//Comprovam que avon volem moure no hi hagi enemics.
+                if (e.isActiu() && e.getX() == nx && e.getY() == ny) { ocupat = true; break; }
+
+            if (ocupat) {//Si hi ha objectes o enemics on volem moure no movem.
+                afegeixLog("No hi ha espai per moure l'objecte!");
+                continue;
+            }
+
+            //Si pasa totes les condicions movem l'item.
+            mapa.setCella(ix, iy, '.');
+            trobat.setX(nx);
+            trobat.setY(ny);
+            mapa.setCella(nx, ny, trobat.getItem().getSimbol());
+            afegeixLog("Has mogut " + trobat.getItem().getNom() + "!");
+            tickTorn();
+            return;
+        }
+
+        afegeixLog("No hi ha cap objecte adjacent per moure.");
+    }
     //calcula quines caselles veu el jugador i actualitza explorat i mapaRecord
     private boolean[][] actualitzaVisio() {
         boolean[][] visible = new boolean[mapa.getAlcada()][mapa.getAmplada()];

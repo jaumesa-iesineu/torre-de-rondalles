@@ -70,6 +70,7 @@ public class ConfigGame {
         public char fugir = 'f';
         public char inventari = 'i';
         public char interactuar = 'e';
+        public char mourePes = 'm';
     }
 
     //definició dels fitxers de música per a cada situació

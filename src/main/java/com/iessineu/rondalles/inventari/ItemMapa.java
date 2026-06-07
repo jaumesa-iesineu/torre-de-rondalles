@@ -23,4 +23,11 @@ public class ItemMapa { //un item que hi ha al terra del mapa
     public Item getItem() {
         return item;
     }
+    public void setX(int x) {
+        this.x=x;
+    }
+
+    public void setY(int y) {
+        this.y=y;
+    }
 }
