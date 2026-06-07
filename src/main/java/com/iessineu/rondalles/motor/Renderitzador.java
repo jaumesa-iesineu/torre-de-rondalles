@@ -916,17 +916,36 @@ public class Renderitzador { // classe per gestionar la pantalla
         screen.refresh();
     }
 
-    public void dibuixaComerciants(int pis) throws IOException {
+    public void dibuixaComerciants(int pis, java.util.List<com.iessineu.rondalles.inventari.Item> items, int seleccionat, boolean confirmant) throws IOException {
         screen.clear();
         int cols = screen.getTerminalSize().getColumns();
         int files = screen.getTerminalSize().getRows();
-        int cx = cols / 2, cy = files / 2;
+        int cx = cols / 2, cy = files / 4;
         TextColor blanc = new TextColor.RGB(220, 220, 220);
         TextColor groc = new TextColor.RGB(220, 180, 50);
+        TextColor gris = new TextColor.RGB(110, 110, 110);
+        TextColor verd = new TextColor.RGB(80, 200, 100);
+        TextColor selColor = new TextColor.RGB(255, 220, 80);
 
-        pintaText(cx - 12, cy - 3, "[ COMERCIANT - PIS " + pis + " ]", groc);
-        pintaText(cx - 15, cy, "Benvingut! (comerç per implementar)", blanc);
-        pintaText(cx - 10, cy + 3, "ESC / ENTER per sortir", new TextColor.RGB(110, 110, 110));
+        pintaText(cx - 12, cy, "[ COMERCIANT - PIS " + pis + " ]", groc);
+        pintaText(cx - 14, cy + 1, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", gris);
+
+        if (items.isEmpty()) {
+            pintaText(cx - 10, cy + 3, "No queden articles disponibles.", blanc);
+        } else if (confirmant) {
+            com.iessineu.rondalles.inventari.Item item = items.get(seleccionat);
+            pintaText(cx - 14, cy + 3, "Vols agafar: " + item.getNom() + "?", blanc);
+            pintaText(cx - 10, cy + 5, "[ S ] Sí        [ N ] No", groc);
+        } else {
+            pintaText(cx - 14, cy + 2, "Articles disponibles:", blanc);
+            for (int i = 0; i < items.size(); i++) {
+                com.iessineu.rondalles.inventari.Item it = items.get(i);
+                String prefix = (i == seleccionat) ? " > " : "   ";
+                TextColor c = (i == seleccionat) ? selColor : blanc;
+                pintaText(cx - 14, cy + 3 + i, prefix + it.getNom() + " (pes: " + it.getPes() + ")", c);
+            }
+            pintaText(cx - 14, cy + 3 + items.size() + 1, "ENTER per agafar  |  ESC per sortir", gris);
+        }
         screen.refresh();
     }
 

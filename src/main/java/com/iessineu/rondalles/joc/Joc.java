@@ -54,6 +54,9 @@ public class Joc extends Motor {
     private List<NpcComerciants> npcs = new ArrayList<>();
     private NpcComerciants npcActual = null;
     private String enigmaInput = "";
+    private List<com.iessineu.rondalles.inventari.Item> vendaItems = new ArrayList<>();
+    private int opcioVenda = 0;
+    private boolean confirmantCompra = false;
 
     // --- Menú inicial amb fletxa ---
     private int opcioMenuInicial = 0;
@@ -728,6 +731,7 @@ public class Joc extends Motor {
             npcActual = npc;
             enigmaInput = "";
             if (npc.getEnigma() == null || npc.isEnigmaResult()) {
+                iniciaVenda();
                 estat = Estat.COMERCIANT;
             } else {
                 estat = Estat.ENIGMA;
@@ -1230,9 +1234,48 @@ public class Joc extends Motor {
         }
     }
 
+    private void iniciaVenda() {
+        vendaItems = new ArrayList<>();
+        com.iessineu.rondalles.inventari.RegistreItems reg = com.iessineu.rondalles.inventari.RegistreItems.get();
+        for (com.iessineu.rondalles.inventari.Pocio p : reg.totesLesPocions().values()) {
+            vendaItems.add(p);
+        }
+        opcioVenda = 0;
+        confirmantCompra = false;
+    }
+
     private void gestionaComerciants(KeyStroke tecla) {
-        if (tecla.getKeyType() == KeyType.Escape || tecla.getKeyType() == KeyType.Enter) {
+        if (vendaItems.isEmpty()) {
+            if (tecla.getKeyType() == KeyType.Escape || tecla.getKeyType() == KeyType.Enter) estat = Estat.MON;
+            return;
+        }
+        if (confirmantCompra) {
+            if (tecla.getKeyType() == KeyType.Character) {
+                char c = Character.toLowerCase(tecla.getCharacter());
+                if (c == 's') {
+                    com.iessineu.rondalles.inventari.Item item = vendaItems.get(opcioVenda);
+                    if (jugador.getInventari().afegeix(item)) {
+                        jugador.getInventari(); // actualitza pes
+                        afegeixLog("Has rebut: " + item.getNom() + "!");
+                        com.iessineu.rondalles.audio.GestorSfx.reprodueix("RECULL_ITEM");
+                        vendaItems.remove(opcioVenda);
+                        if (opcioVenda >= vendaItems.size() && opcioVenda > 0) opcioVenda--;
+                    } else {
+                        afegeixLog("No tens espai a l'inventari!");
+                    }
+                }
+            }
+            confirmantCompra = false;
+            return;
+        }
+        if (tecla.getKeyType() == KeyType.Escape) {
             estat = Estat.MON;
+        } else if (tecla.getKeyType() == KeyType.ArrowUp) {
+            opcioVenda = (opcioVenda + vendaItems.size() - 1) % vendaItems.size();
+        } else if (tecla.getKeyType() == KeyType.ArrowDown) {
+            opcioVenda = (opcioVenda + 1) % vendaItems.size();
+        } else if (tecla.getKeyType() == KeyType.Enter) {
+            confirmantCompra = true;
         }
     }
 
@@ -1488,7 +1531,7 @@ public class Joc extends Motor {
                 return;
             }
             if (estat == Estat.COMERCIANT) {
-                renderer.dibuixaComerciants(pisActual);
+                renderer.dibuixaComerciants(pisActual, vendaItems, opcioVenda, confirmantCompra);
                 return;
             }
 
