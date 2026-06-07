@@ -54,6 +54,9 @@ public class Main {
         //carregam la configuració directament des del JSON
         ConfigGame config;
         if (fitxerGame != null) {
+            // establim la base dir perquè subfitxers i mapes es trobin relatius al game.json
+            java.io.File gameFile = new java.io.File(fitxerGame).getAbsoluteFile();
+            CarregadorGame.setBasedir(gameFile.getParent());
             config = CarregadorGame.carregaFitxerExtern(fitxerGame);
         } else {
             config = CarregadorGame.carrega("game.json");

@@ -12,6 +12,11 @@ import java.util.List;
 
 public class CarregadorGame {
 
+    private static String basedir = null;
+
+    public static void setBasedir(String dir) { basedir = dir; }
+    public static String getBasedir() { return basedir; }
+
     //carrega es game.json des de dins del jar (us intern per defecte)
     public static ConfigGame carrega(String rutaRecurs) throws Exception {
         InputStream is = CarregadorGame.class.getClassLoader().getResourceAsStream(rutaRecurs);
@@ -31,7 +36,7 @@ public class CarregadorGame {
         String[] subfitxers = {"terrenys.json", "mapes.json", "enemics.json", "items.json", "portes.json", "personatges.json"};
         Gson gson = new Gson();
         for (String nom : subfitxers) {
-            InputStream is = CarregadorGame.class.getClassLoader().getResourceAsStream(nom);
+            InputStream is = obriRecurs(nom);
             if (is == null) continue;
             ConfigGame fragment;
             try (Reader r = new InputStreamReader(is, StandardCharsets.UTF_8)) {
@@ -39,6 +44,14 @@ public class CarregadorGame {
             }
             fusiona(config, fragment);
         }
+    }
+
+    private static InputStream obriRecurs(String nom) throws Exception {
+        if (basedir != null) {
+            java.io.File f = new java.io.File(basedir, nom);
+            if (f.exists()) return new java.io.FileInputStream(f);
+        }
+        return CarregadorGame.class.getClassLoader().getResourceAsStream(nom);
     }
 
     private static void fusiona(ConfigGame base, ConfigGame fragment) {
