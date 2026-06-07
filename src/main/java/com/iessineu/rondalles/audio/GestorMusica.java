@@ -12,8 +12,8 @@ public class GestorMusica {
     private static boolean silenciat = false;
     private static String pistaActual = null;
     private static final Map<String, String> pistes = new HashMap<>();
+    private static float volum = 0.75f; // 0.0 - 1.0
 
-    //carrega ses pistes des del JSON
     public static void inicialitza(ConfigGame.MusicaConfig cfg) {
         pistes.clear();
         if (cfg == null) return;
@@ -52,12 +52,13 @@ public class GestorMusica {
                 return;
             }
 
-            try (AudioInputStream ais = AudioSystem.getAudioInputStream(url)) {
-                clipActual = AudioSystem.getClip();
-                clipActual.open(ais);
-                clipActual.loop(Clip.LOOP_CONTINUOUSLY);
-                clipActual.start();
-            }
+            AudioInputStream ais = AudioSystem.getAudioInputStream(url);
+            clipActual = AudioSystem.getClip();
+            clipActual.open(ais);
+            ais.close(); // el Clip ja ha llegit les dades, podem tancar el stream
+            aplicaVolum();
+            clipActual.loop(Clip.LOOP_CONTINUOUSLY);
+            clipActual.start();
 
         } catch (Exception e) {
             System.out.println("Error reproduint música: " + e.getMessage());
@@ -79,6 +80,30 @@ public class GestorMusica {
         } else if (pistaActual != null) {
             reprodueix(pistaActual);
         }
+    }
+
+    public static void setVolum(float v) {
+        volum = Math.max(0f, Math.min(1f, v));
+        aplicaVolum();
+    }
+
+    public static float getVolum() { return volum; }
+
+    private static void aplicaVolum() {
+        if (clipActual == null) return;
+        try {
+            if (clipActual.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+                FloatControl gain = (FloatControl) clipActual.getControl(FloatControl.Type.MASTER_GAIN);
+                float dB;
+                if (volum <= 0.001f) {
+                    dB = gain.getMinimum();
+                } else {
+                    dB = 20f * (float) Math.log10(volum);
+                    dB = Math.max(gain.getMinimum(), Math.min(gain.getMaximum(), dB));
+                }
+                gain.setValue(dB);
+            }
+        } catch (Exception ignored) {}
     }
 
     public static boolean estaSilenciat() { return silenciat; }

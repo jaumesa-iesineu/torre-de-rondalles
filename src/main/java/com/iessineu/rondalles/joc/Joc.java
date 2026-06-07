@@ -11,6 +11,7 @@ import java.util.List;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.iessineu.rondalles.audio.GestorMusica;
+import com.iessineu.rondalles.joc.GestorIdioma;
 import com.iessineu.rondalles.combat.SistemaCombat;
 import com.iessineu.rondalles.entitats.Enemic;
 import com.iessineu.rondalles.entitats.Entitat;
@@ -53,10 +54,22 @@ public class Joc extends Motor {
     private List<NpcComerciants> npcs = new ArrayList<>();
     private NpcComerciants npcActual = null;
     private String enigmaInput = "";
+    // 0=seleccionant dita, 1=escrivint resposta
+    private int enigmaFase = 0;
+    private int ditaSeleccionada = 0;
+    private String enigmaErrorMsg = "";
+
+    // --- Botiga del comerciant ---
+    private List<com.iessineu.rondalles.inventari.Item> itemsComerciant = new ArrayList<>();
+    private int opcioComerciant = 0;
+    private int itemsAgafats = 0;
+    private int maxItemsComerciant = 2;
 
     // --- Menú inicial amb fletxa ---
+    // opcions: 0=Iniciar, 1=Música (slider), 2=Idioma, 3=Sortir
     private int opcioMenuInicial = 0;
-    private String[] opcionsInicials = {"Iniciar partida", "Sortir"};
+    private static final int MENU_OPCIONS = 4;
+    private String[] opcionsInicials = {"Iniciar partida", "Música", "Idioma", "Sortir"};
 
     // --- Selecció i creació de personatge ---
     private int opcioPersonatge = 0;
@@ -406,16 +419,55 @@ public class Joc extends Motor {
     }
 
     private void gestionaMenuInicial(KeyStroke tecla) {
-
-        if (tecla.getKeyType() == KeyType.ArrowUp || tecla.getKeyType() == KeyType.ArrowDown) {
-            opcioMenuInicial = 1 - opcioMenuInicial;
+        if (tecla.getKeyType() == KeyType.ArrowUp) {
+            opcioMenuInicial = (opcioMenuInicial + MENU_OPCIONS - 1) % MENU_OPCIONS;
+            return;
+        }
+        if (tecla.getKeyType() == KeyType.ArrowDown) {
+            opcioMenuInicial = (opcioMenuInicial + 1) % MENU_OPCIONS;
+            return;
+        }
+        if (tecla.getKeyType() == KeyType.ArrowLeft) {
+            if (opcioMenuInicial == 1) {
+                // volum -10%
+                float v = Math.max(0f, GestorMusica.getVolum() - 0.1f);
+                GestorMusica.setVolum(v);
+            } else if (opcioMenuInicial == 2) {
+                // idioma anterior
+                String[] codis = GestorIdioma.getIdiomasCodi();
+                for (int i = 0; i < codis.length; i++) {
+                    if (codis[i].equals(GestorIdioma.getIdioma())) {
+                        GestorIdioma.setIdioma(codis[(i + codis.length - 1) % codis.length]);
+                        actualitzaTextosIdioma();
+                        break;
+                    }
+                }
+            }
+            return;
+        }
+        if (tecla.getKeyType() == KeyType.ArrowRight) {
+            if (opcioMenuInicial == 1) {
+                // volum +10%
+                float v = Math.min(1f, GestorMusica.getVolum() + 0.1f);
+                GestorMusica.setVolum(v);
+            } else if (opcioMenuInicial == 2) {
+                // idioma següent
+                String[] codis = GestorIdioma.getIdiomasCodi();
+                for (int i = 0; i < codis.length; i++) {
+                    if (codis[i].equals(GestorIdioma.getIdioma())) {
+                        GestorIdioma.setIdioma(codis[(i + 1) % codis.length]);
+                        actualitzaTextosIdioma();
+                        break;
+                    }
+                }
+            }
             return;
         }
         if (tecla.getKeyType() == KeyType.Enter) {
             if (opcioMenuInicial == 0) {
                 opcioPersonatge = 0;
                 estat = Estat.SELECCIO_PERSONATGE;
-            } else {
+            } else if (opcioMenuInicial == 3) {
                 corrent = false;
             }
             return;
@@ -423,7 +475,22 @@ public class Joc extends Motor {
         if (tecla.getKeyType() == KeyType.Escape) {
             corrent = false;
         }
+    }
 
+    private void actualitzaTextosIdioma() {
+        renderer.setPauseTitle(GestorIdioma.t("pauseTitle"));
+        renderer.setPauseInstructions(GestorIdioma.t("pauseInstructions"));
+        renderer.setPauseResumePista(GestorIdioma.t("pauseResumePista"));
+        opcionsPausa = new String[]{
+            GestorIdioma.t("menuReanudar"),
+            GestorIdioma.t("menuGuardar"),
+            GestorIdioma.t("menuCarregar"),
+            GestorIdioma.t("menuSortir")
+        };
+        opcionsGameOver = new String[]{
+            GestorIdioma.t("menuTornaAcomencar"),
+            GestorIdioma.t("menuSortir")
+        };
     }
 
     private List<ConfigGame.TipusPersonatgeConfig> llistaPersonatges() {
@@ -713,9 +780,16 @@ public class Joc extends Motor {
         if (npc != null) {
             npcActual = npc;
             enigmaInput = "";
-            if (npc.getEnigma() == null || npc.isEnigmaResult()) {
+            enigmaErrorMsg = "";
+            ditaSeleccionada = 0;
+            if (npc.isResolt()) {
+                preparaBotiga();
+                estat = Estat.COMERCIANT;
+            } else if (!npc.teDites()) {
+                preparaBotiga();
                 estat = Estat.COMERCIANT;
             } else {
+                enigmaFase = 0;
                 estat = Estat.ENIGMA;
             }
             return;
@@ -1122,6 +1196,15 @@ public class Joc extends Motor {
     }
 
     private void carregaNpcs() {
+        if (config != null) {
+            List<com.iessineu.rondalles.joc.PosicioNpc> posicions = config.getPosicionsNpcPerMapa(idMapaActual);
+            if (!posicions.isEmpty()) {
+                for (com.iessineu.rondalles.joc.PosicioNpc p : posicions) {
+                    npcs.add(new NpcComerciants(p.x, p.y, pisActual, config));
+                }
+                return;
+            }
+        }
         char[][] celles = mapa.getCelles();
         for (int y = 0; y < celles.length; y++) {
             for (int x = 0; x < celles[y].length; x++) {
@@ -1142,29 +1225,93 @@ public class Joc extends Motor {
     }
 
     private void gestionaEnigma(KeyStroke tecla) {
-        if (tecla.getKeyType() == KeyType.Escape) {
-            estat = Estat.MON;
-            return;
-        }
-        if (tecla.getKeyType() == KeyType.Enter) {
-            if (npcActual.comprovaSolucio(enigmaInput)) {
-                estat = Estat.COMERCIANT;
-            } else {
-                enigmaInput = "";
+        if (enigmaFase == 0) {
+            // Fase 0: selecció de dita
+            List<ConfigGame.DitaConfig> dites = npcActual.getDites();
+            int total = dites.size();
+            if (tecla.getKeyType() == KeyType.Escape) {
+                estat = Estat.MON;
+                return;
             }
-            return;
+            if (tecla.getKeyType() == KeyType.ArrowUp) {
+                ditaSeleccionada = (ditaSeleccionada + total - 1) % total;
+                return;
+            }
+            if (tecla.getKeyType() == KeyType.ArrowDown) {
+                ditaSeleccionada = (ditaSeleccionada + 1) % total;
+                return;
+            }
+            if (tecla.getKeyType() == KeyType.Enter && total > 0) {
+                enigmaFase = 1;
+                enigmaInput = "";
+                enigmaErrorMsg = "";
+                return;
+            }
+        } else {
+            // Fase 1: escriure resposta
+            if (tecla.getKeyType() == KeyType.Escape) {
+                enigmaFase = 0;
+                enigmaInput = "";
+                enigmaErrorMsg = "";
+                return;
+            }
+            if (tecla.getKeyType() == KeyType.Enter) {
+                if (npcActual.comprovaSolucio(ditaSeleccionada, enigmaInput)) {
+                    enigmaErrorMsg = "";
+                    preparaBotiga();
+                    estat = Estat.COMERCIANT;
+                } else {
+                    enigmaErrorMsg = GestorIdioma.t("enigmaError");
+                    enigmaInput = "";
+                }
+                return;
+            }
+            if (tecla.getKeyType() == KeyType.Backspace && enigmaInput.length() > 0) {
+                enigmaInput = enigmaInput.substring(0, enigmaInput.length() - 1);
+                enigmaErrorMsg = "";
+            }
+            if (tecla.getKeyType() == KeyType.Character) {
+                enigmaInput += tecla.getCharacter();
+                enigmaErrorMsg = "";
+            }
         }
-        if (tecla.getKeyType() == KeyType.Backspace && enigmaInput.length() > 0) {
-            enigmaInput = enigmaInput.substring(0, enigmaInput.length() - 1);
-        }
-        if (tecla.getKeyType() == KeyType.Character) {
-            enigmaInput += tecla.getCharacter();
+    }
+
+    private void preparaBotiga() {
+        itemsAgafats = 0;
+        maxItemsComerciant = npcActual.getMaxItems();
+        opcioComerciant = 0;
+        itemsComerciant = new ArrayList<>();
+        List<String> ids = npcActual.getItemsVenda();
+        for (String id : ids) {
+            try {
+                com.iessineu.rondalles.inventari.Item item = RegistreItems.get().itemPerId(id);
+                if (item != null) itemsComerciant.add(item);
+            } catch (Exception ignored) {}
         }
     }
 
     private void gestionaComerciants(KeyStroke tecla) {
-        if (tecla.getKeyType() == KeyType.Escape || tecla.getKeyType() == KeyType.Enter) {
+        if (tecla.getKeyType() == KeyType.Escape) {
             estat = Estat.MON;
+            return;
+        }
+        if (itemsAgafats >= maxItemsComerciant) {
+            if (tecla.getKeyType() == KeyType.Enter) estat = Estat.MON;
+            return;
+        }
+        if (tecla.getKeyType() == KeyType.ArrowUp) {
+            opcioComerciant = (opcioComerciant + itemsComerciant.size() - 1) % Math.max(1, itemsComerciant.size());
+        } else if (tecla.getKeyType() == KeyType.ArrowDown) {
+            opcioComerciant = (opcioComerciant + 1) % Math.max(1, itemsComerciant.size());
+        } else if (tecla.getKeyType() == KeyType.Enter && !itemsComerciant.isEmpty()) {
+            com.iessineu.rondalles.inventari.Item item = itemsComerciant.get(opcioComerciant);
+            boolean afegit = jugador.intentaAfegirItem(item);
+            if (afegit) {
+                itemsAgafats++;
+                itemsComerciant.remove(opcioComerciant);
+                if (opcioComerciant >= itemsComerciant.size()) opcioComerciant = Math.max(0, itemsComerciant.size() - 1);
+            }
         }
     }
 
@@ -1414,11 +1561,11 @@ public class Joc extends Motor {
                 return;
             }
             if (estat == Estat.ENIGMA) {
-                renderer.dibuixaEnigma(npcActual.getEnigma(), enigmaInput);
+                renderer.dibuixaEnigma(npcActual.getDites(), ditaSeleccionada, enigmaFase, enigmaInput, enigmaErrorMsg);
                 return;
             }
             if (estat == Estat.COMERCIANT) {
-                renderer.dibuixaComerciants(pisActual);
+                renderer.dibuixaComerciants(itemsComerciant, opcioComerciant, itemsAgafats, maxItemsComerciant);
                 return;
             }
 

@@ -808,7 +808,7 @@ public class Renderitzador { // classe per gestionar la pantalla
             "╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚══════╝"
         };
 
-        int titolY = cy - 8;
+        int titolY = cy - 9;
         for (int i = 0; i < titol.length; i++) {
             String linia = titol[i];
             int x = cx - linia.length() / 2;
@@ -826,13 +826,40 @@ public class Renderitzador { // classe per gestionar la pantalla
                     new TextCharacter(subtitol.charAt(j), TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
         }
 
-        //opcions del menú amb fletxa de selecció
-        int oy = cy + 2;
+        // opcions del menú (4 opcions: 0=Iniciar, 1=Música, 2=Idioma, 3=Sortir)
+        int oy = cy + 1;
         for (int i = 0; i < opcions.length; i++) {
-            String prefix = (i == opcioSeleccionada) ? " > " : "   ";
-            String text = prefix + opcions[i];
+            boolean sel = (i == opcioSeleccionada);
+            TextColor color = sel ? TextColor.ANSI.YELLOW_BRIGHT : TextColor.ANSI.WHITE;
+            String prefix = sel ? " > " : "   ";
+            String text;
+            if (i == 1) {
+                // Música: slider de volum
+                int volPct = Math.round(com.iessineu.rondalles.audio.GestorMusica.getVolum() * 100);
+                int barLen = 10;
+                int plens = (int) (com.iessineu.rondalles.audio.GestorMusica.getVolum() * barLen);
+                String slider = "[" + "█".repeat(plens) + "░".repeat(barLen - plens) + "] " + volPct + "%";
+                text = prefix + com.iessineu.rondalles.joc.GestorIdioma.t("menuMusica") + ":  " + slider;
+                if (sel) {
+                    TextColor grisAjuda = new TextColor.RGB(100, 100, 100);
+                    String ajuda = "[ ← → ] ajustar";
+                    pintaText(cx - ajuda.length() / 2, oy + i * 2 + 1, ajuda, grisAjuda);
+                }
+            } else if (i == 2) {
+                // Idioma
+                text = prefix + com.iessineu.rondalles.joc.GestorIdioma.t("menuIdioma") + ":  "
+                        + com.iessineu.rondalles.joc.GestorIdioma.getNomIdioma();
+                if (sel) {
+                    TextColor grisAjuda = new TextColor.RGB(100, 100, 100);
+                    String ajuda = "[ ← → ] canviar";
+                    pintaText(cx - ajuda.length() / 2, oy + i * 2 + 1, ajuda, grisAjuda);
+                }
+            } else if (i == 0) {
+                text = prefix + com.iessineu.rondalles.joc.GestorIdioma.t("menuIniciar");
+            } else {
+                text = prefix + com.iessineu.rondalles.joc.GestorIdioma.t("menuSortir");
+            }
             int ox = cx - text.length() / 2;
-            TextColor color = (i == opcioSeleccionada) ? TextColor.ANSI.YELLOW_BRIGHT : TextColor.ANSI.WHITE;
             for (int j = 0; j < text.length(); j++) {
                 screen.setCharacter(ox + j, oy + i * 2,
                         new TextCharacter(text.charAt(j), color, TextColor.ANSI.BLACK));
@@ -900,7 +927,9 @@ public class Renderitzador { // classe per gestionar la pantalla
         screen.close();
     }
 
-    public void dibuixaEnigma(String pregunta, String inputActual) throws IOException {
+    public void dibuixaEnigma(
+            List<com.iessineu.rondalles.joc.ConfigGame.DitaConfig> dites,
+            int ditaSeleccionada, int fase, String input, String errorMsg) throws IOException {
         screen.clear();
         int cols = screen.getTerminalSize().getColumns();
         int files = screen.getTerminalSize().getRows();
@@ -908,25 +937,131 @@ public class Renderitzador { // classe per gestionar la pantalla
         TextColor blanc = new TextColor.RGB(220, 220, 220);
         TextColor groc = new TextColor.RGB(220, 180, 50);
         TextColor verd = new TextColor.RGB(80, 200, 120);
+        TextColor vermell = new TextColor.RGB(220, 70, 70);
+        TextColor gris = new TextColor.RGB(110, 110, 110);
+        TextColor cian = new TextColor.RGB(80, 200, 220);
 
-        pintaText(cx - 10, cy - 4, "[ ENIGMA DEL NPC ]", groc);
-        pintaText(cx - pregunta.length() / 2, cy - 2, pregunta, blanc);
-        pintaText(cx - 15, cy + 1, "Resposta: " + inputActual + "_", verd);
-        pintaText(cx - 12, cy + 3, "ENTER per confirmar  |  ESC per sortir", new TextColor.RGB(110, 110, 110));
+        int boxW = 56;
+        int boxX = cx - boxW / 2;
+
+        if (fase == 0) {
+            // Fase 0: selecció de dita
+            String titol = com.iessineu.rondalles.joc.GestorIdioma.t("enigmaSeleccionaTitol");
+            int boxH = dites.size() + 8;
+            int boxY = cy - boxH / 2;
+
+            pintaText(boxX, boxY, "╔" + "═".repeat(boxW - 2) + "╗", blanc);
+            pintaText(boxX, boxY + 1, "║" + centrat(titol, boxW - 2) + "║", groc);
+            pintaText(boxX, boxY + 2, "╠" + "═".repeat(boxW - 2) + "╣", blanc);
+            for (int i = 3; i < boxH - 1; i++) pintaText(boxX, boxY + i, "║" + " ".repeat(boxW - 2) + "║", gris);
+            pintaText(boxX, boxY + boxH - 1, "╚" + "═".repeat(boxW - 2) + "╝", blanc);
+
+            String subtxt = com.iessineu.rondalles.joc.GestorIdioma.t("enigmaSeleccioText");
+            pintaText(boxX + 2, boxY + 4, subtxt, blanc);
+
+            String[] nomsDificultats = {
+                com.iessineu.rondalles.joc.GestorIdioma.t("enigmaFacil"),
+                com.iessineu.rondalles.joc.GestorIdioma.t("enigmaNormal"),
+                com.iessineu.rondalles.joc.GestorIdioma.t("enigmaDificil")
+            };
+
+            for (int i = 0; i < dites.size(); i++) {
+                boolean sel = (i == ditaSeleccionada);
+                TextColor color = sel ? verd : blanc;
+                String prefix = sel ? "► " : "  ";
+                String nom = i < nomsDificultats.length ? nomsDificultats[i] : "Nivell " + (i + 1);
+                pintaText(boxX + 3, boxY + 6 + i, prefix + "[" + (i + 1) + "] " + nom, color);
+            }
+
+            String nav = com.iessineu.rondalles.joc.GestorIdioma.t("enigmaNavegar");
+            pintaText(boxX + (boxW - nav.length()) / 2, boxY + boxH - 2, nav, gris);
+
+        } else {
+            // Fase 1: resposta
+            com.iessineu.rondalles.joc.ConfigGame.DitaConfig dita = ditaSeleccionada < dites.size() ? dites.get(ditaSeleccionada) : null;
+            String pregunta = dita != null ? dita.pregunta : "???";
+            String titol = com.iessineu.rondalles.joc.GestorIdioma.t("enigmaTitol") + " - " + com.iessineu.rondalles.joc.GestorIdioma.t(ditaSeleccionada == 0 ? "enigmaFacil" : ditaSeleccionada == 1 ? "enigmaNormal" : "enigmaDificil").split(" ")[0];
+
+            int boxH = 11;
+            int boxY = cy - boxH / 2;
+
+            pintaText(boxX, boxY, "╔" + "═".repeat(boxW - 2) + "╗", blanc);
+            pintaText(boxX, boxY + 1, "║" + centrat(titol, boxW - 2) + "║", cian);
+            pintaText(boxX, boxY + 2, "╠" + "═".repeat(boxW - 2) + "╣", blanc);
+            for (int i = 3; i < boxH - 1; i++) pintaText(boxX, boxY + i, "║" + " ".repeat(boxW - 2) + "║", gris);
+            pintaText(boxX, boxY + boxH - 1, "╚" + "═".repeat(boxW - 2) + "╝", blanc);
+
+            pintaText(boxX + 2, boxY + 4, "\"" + pregunta + "\"", groc);
+            String etiqResposta = com.iessineu.rondalles.joc.GestorIdioma.t("enigmaResposta");
+            pintaText(boxX + 2, boxY + 6, etiqResposta + input + "_", verd);
+            if (!errorMsg.isEmpty()) {
+                pintaText(boxX + 2, boxY + 7, errorMsg, vermell);
+            }
+            String confirmar = com.iessineu.rondalles.joc.GestorIdioma.t("enigmaConfirmar");
+            pintaText(boxX + (boxW - confirmar.length()) / 2, boxY + boxH - 2, confirmar, gris);
+        }
+
         screen.refresh();
     }
 
-    public void dibuixaComerciants(int pis) throws IOException {
+    private String centrat(String text, int ample) {
+        if (text.length() >= ample) return text.substring(0, ample);
+        int pad = (ample - text.length()) / 2;
+        return " ".repeat(pad) + text + " ".repeat(ample - pad - text.length());
+    }
+
+    public void dibuixaComerciants(
+            List<com.iessineu.rondalles.inventari.Item> items,
+            int opcio, int agafats, int maxItems) throws IOException {
         screen.clear();
         int cols = screen.getTerminalSize().getColumns();
         int files = screen.getTerminalSize().getRows();
         int cx = cols / 2, cy = files / 2;
         TextColor blanc = new TextColor.RGB(220, 220, 220);
         TextColor groc = new TextColor.RGB(220, 180, 50);
+        TextColor gris = new TextColor.RGB(110, 110, 110);
+        TextColor verd = new TextColor.RGB(80, 200, 120);
+        TextColor cian = new TextColor.RGB(80, 200, 220);
+        TextColor vermell = new TextColor.RGB(220, 70, 70);
 
-        pintaText(cx - 12, cy - 3, "[ COMERCIANT - PIS " + pis + " ]", groc);
-        pintaText(cx - 15, cy, "Benvingut! (comerç per implementar)", blanc);
-        pintaText(cx - 10, cy + 3, "ESC / ENTER per sortir", new TextColor.RGB(110, 110, 110));
+        int boxW = 56;
+        int boxX = cx - boxW / 2;
+        int boxH = Math.max(12, items.size() + 9);
+        int boxY = cy - boxH / 2;
+
+        String titol = com.iessineu.rondalles.joc.GestorIdioma.t("botiga");
+        pintaText(boxX, boxY, "╔" + "═".repeat(boxW - 2) + "╗", blanc);
+        pintaText(boxX, boxY + 1, "║" + centrat(titol, boxW - 2) + "║", groc);
+        pintaText(boxX, boxY + 2, "╠" + "═".repeat(boxW - 2) + "╣", blanc);
+        for (int i = 3; i < boxH - 1; i++) pintaText(boxX, boxY + i, "║" + " ".repeat(boxW - 2) + "║", gris);
+        pintaText(boxX, boxY + boxH - 1, "╚" + "═".repeat(boxW - 2) + "╝", blanc);
+
+        String contadorTxt = com.iessineu.rondalles.joc.GestorIdioma.t("botigaItemsAgafats") + agafats
+                + com.iessineu.rondalles.joc.GestorIdioma.t("botigaMaxItems") + maxItems;
+        pintaText(boxX + 2, boxY + 3, contadorTxt, agafats >= maxItems ? vermell : cian);
+
+        pintaText(boxX + 2, boxY + 4, com.iessineu.rondalles.joc.GestorIdioma.t("botigaDisponibles"), blanc);
+
+        if (agafats >= maxItems) {
+            pintaText(boxX + 2, boxY + 6, com.iessineu.rondalles.joc.GestorIdioma.t("botigaEpuisada"), groc);
+        } else if (items.isEmpty()) {
+            pintaText(boxX + 2, boxY + 6, "--- No queden ítems ---", gris);
+        } else {
+            for (int i = 0; i < items.size(); i++) {
+                int fila = boxY + 6 + i;
+                if (fila >= boxY + boxH - 3) break;
+                boolean sel = (i == opcio);
+                TextColor color = sel ? verd : blanc;
+                String prefix = sel ? "► " : "  ";
+                com.iessineu.rondalles.inventari.Item item = items.get(i);
+                String linia = prefix + item.getSimbol() + " " + item.getNom();
+                if (linia.length() > boxW - 4) linia = linia.substring(0, boxW - 4);
+                pintaText(boxX + 2, fila, linia, sel ? color : item.getColor());
+            }
+        }
+
+        String instruccions = com.iessineu.rondalles.joc.GestorIdioma.t("botigaAgafa");
+        pintaText(boxX + (boxW - instruccions.length()) / 2, boxY + boxH - 2, instruccions, gris);
         screen.refresh();
     }
 
