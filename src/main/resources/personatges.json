@@ -1,0 +1,66 @@
+{
+    "tipusPersonatge": [
+        {
+            "id": "joanet",
+            "nom": "En Joanet",
+            "descripcio": "El protagonista clàssic de les rondalles. Equilibrat i afortunat.",
+            "passiu": "sort_rondalla",
+            "descripcioPassiu": "Sort de rondalla: 15% de cada torn, l'enemic falla l'atac.",
+            "vidaMaxima": 100,
+            "atac": 3,
+            "velocitat": 5,
+            "evasio": 10,
+            "pesMaxim": 50
+        },
+        {
+            "id": "bruixa",
+            "nom": "Sa Bruixa",
+            "descripcio": "Mestra de les arts ocultes i els beuratges. Feble, però letal.",
+            "passiu": "pocions_infinites",
+            "descripcioPassiu": "Mestra de pocions: els efectes de verí, foc i gel no s'acaben mai.",
+            "vidaMaxima": 70,
+            "atac": 2,
+            "velocitat": 5,
+            "evasio": 15,
+            "pesMaxim": 40
+        },
+        {
+            "id": "gegant",
+            "nom": "Es Gegant",
+            "descripcio": "Força bruta descomunal. Lent com una roca, però demolidor.",
+            "passiu": "atac_sorpresa_doble",
+            "descripcioPassiu": "Força descomunal: l'atac sorpresa fa el doble de dany.",
+            "vidaMaxima": 150,
+            "atac": 6,
+            "velocitat": 2,
+            "evasio": 3,
+            "pesMaxim": 80
+        },
+        {
+            "id": "catalineta",
+            "nom": "Na Catalineta",
+            "descripcio": "Àgil i escorredissa. Difícil d'atrapar, però fràgil com el vent.",
+            "passiu": "lleugera_vent",
+            "descripcioPassiu": "Lleugera com el vent: evasió +20% i sense penalització de càrrega.",
+            "vidaMaxima": 75,
+            "atac": 2,
+            "velocitat": 8,
+            "evasio": 20,
+            "pesMaxim": 35
+        }
+    ],
+    "personatgeCustom": {
+        "pressupost": 10,
+        "vidaBase": 70,
+        "vidaPerPunt": 8,
+        "vidaMax": 150,
+        "atacBase": 1,
+        "atacMax": 9,
+        "velocitatBase": 2,
+        "velocitatMax": 7,
+        "evasioBase": 0,
+        "evasioPerPunt": 5,
+        "evasioMax": 30,
+        "pesMaxim": 50
+    }
+}

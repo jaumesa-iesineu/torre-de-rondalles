@@ -31,9 +31,9 @@ public class RegistreItems {
     }
 
     private void carregaDeJson() {
-        //carregam tots els items del game.json d'una vegada
-        InputStream in = getClass().getResourceAsStream("/game.json");
-        if (in == null) throw new RuntimeException("No s'ha trobat game.json");
+        //carregam tots els items del items.json
+        InputStream in = getClass().getResourceAsStream("/items.json");
+        if (in == null) throw new RuntimeException("No s'ha trobat items.json");
 
         JsonObject arrel = new Gson().fromJson(
             new InputStreamReader(in, StandardCharsets.UTF_8), JsonObject.class);

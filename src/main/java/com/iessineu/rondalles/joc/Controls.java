@@ -7,6 +7,7 @@ public class Controls {
     private static char fugir = 'f';
     private static char inventari = 'i';
     private static char interactuar = 'e';
+    private static char mourePes = 'm';
 
     public static void inicialitza(ConfigGame.ControlsConfig cfg) {
         if (cfg == null) return;
@@ -14,10 +15,12 @@ public class Controls {
         fugir = cfg.fugir;
         inventari = cfg.inventari;
         interactuar = cfg.interactuar;
+        mourePes = cfg.mourePes;
     }
 
     public static boolean esAtacar(char c) { return Character.toLowerCase(c) == atacar; }
     public static boolean esFugir(char c) { return Character.toLowerCase(c) == fugir; }
     public static boolean esInventari(char c) { return Character.toLowerCase(c) == inventari; }
     public static boolean esInteractuar(char c) { return Character.toLowerCase(c) == interactuar; }
+    public static boolean esMourePes(char c)    { return Character.toLowerCase(c) == mourePes; }
 }
