@@ -11,6 +11,38 @@
                 "mapa": "planta1",
                 "x": 2,
                 "y": 3
+            },
+            {
+                "mapa": "planta1",
+                "x": 82,
+                "y": 17,
+                "bloquejada": true,
+                "esPortaCanviPlanta": false,
+                "clauId": "clau-planta1"
+            },
+            {
+                "mapa": "planta2",
+                "x": 104,
+                "y": 20,
+                "bloquejada": true,
+                "esPortaCanviPlanta": false,
+                "clauId": "clau-planta2"
+            },
+            {
+                "mapa": "planta3",
+                "x": 170,
+                "y": 19,
+                "bloquejada": true,
+                "esPortaCanviPlanta": false,
+                "clauId": "clau-planta3"
+            },
+            {
+                "mapa": "planta4",
+                "x": 106,
+                "y": 21,
+                "bloquejada": true,
+                "esPortaCanviPlanta": false,
+                "clauId": "clau-planta4"
             }
         ]
     }

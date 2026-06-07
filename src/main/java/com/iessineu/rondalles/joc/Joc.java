@@ -619,6 +619,9 @@ public class Joc extends Motor {
                 int bossX = enemicCombat.getX();
                 int bossY = enemicCombat.getY();
                 String clauDropejada = enemicCombat.getClauDropejada();
+                if (clauDropejada != null && clauDropejada.startsWith("clau-planta")) {
+                    clauDropejada = "clau-planta" + pisActual;
+                }
 
                 enemics.remove(enemicCombat);
                 enemicCombat = null;
@@ -761,6 +764,14 @@ public class Joc extends Motor {
         }
 
         char simbolDesti = mapa.getCelles()[ny][nx];
+
+        if (Simbols.esEscalaBaix(simbolDesti)) {
+            jugador.setX(nx);
+            jugador.setY(ny);
+            passaSeguantPis();
+            return;
+        }
+
         TipusTerra terraDestiT = TipusTerra.de(simbolDesti);
         // també miram el tipus real si està amagat
         TipusTerra terraDestiReal = terraDestiT;
@@ -910,6 +921,9 @@ public class Joc extends Motor {
                 afegeixLog(nom + " ha caigut!");
                 boolean eraBoss = esBoss(enemicCombat);
                 String clauDropejada = enemicCombat.getClauDropejada();
+                if (clauDropejada != null && clauDropejada.startsWith("clau-planta")) {
+                    clauDropejada = "clau-planta" + pisActual;
+                }
                 enemics.remove(enemicCombat);
                 if (eraBoss && clauDropejada != null && !clauDropejada.isBlank()) {
                     try {

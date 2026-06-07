@@ -50,7 +50,8 @@
                 "patroIA": "guardia",
                 "esBoss": true,
                 "clauDropejada": "clau-planta1",
-                "artFitxer": "art/gegant.txt"
+                "artFitxer": "art/gegant.txt",
+                "boss": true
             },
             {
                 "simbols": [
@@ -68,7 +69,8 @@
                 "esBoss": true,
                 "clauDropejada": "clau-planta1",
                 "artFitxer": "art/drac.txt",
-                "gameOver": "gameover/drac.json"
+                "gameOver": "gameover/drac.json",
+                "boss": true
             },
             {
                 "simbols": [
@@ -197,6 +199,27 @@
                 "x": 77,
                 "y": 35,
                 "area": 5
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "G",
+                "x": 90,
+                "y": 20,
+                "area": 10
+            },
+            {
+                "mapa": "planta3",
+                "simbol": "G",
+                "x": 90,
+                "y": 20,
+                "area": 10
+            },
+            {
+                "mapa": "planta4",
+                "simbol": "G",
+                "x": 90,
+                "y": 20,
+                "area": 10
             }
         ]
     }
