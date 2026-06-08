@@ -57,6 +57,9 @@
         "escalaBaix": [
             "<"
         ],
+        "escalaPuj": [
+            ">"
+        ],
         "marcadorItem": [
             "i"
         ],

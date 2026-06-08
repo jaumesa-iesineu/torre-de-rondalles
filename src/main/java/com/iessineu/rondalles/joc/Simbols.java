@@ -13,6 +13,7 @@ public class Simbols {
     private static Set<Character> portaBloquejada = new HashSet<>();
     private static Set<Character> spawnJugador = new HashSet<>();
     private static Set<Character> escalaBaix = new HashSet<>();
+    private static Set<Character> escalaPuj = new HashSet<>();
     private static Set<Character> marcadorItem = new HashSet<>();
     private static Set<Character> marcadorPorta = new HashSet<>();
     private static Set<Character> marcadorNpc = new HashSet<>();
@@ -27,6 +28,7 @@ public class Simbols {
         portaBloquejada = new HashSet<>(cfg.portaBloquejada);
         spawnJugador = new HashSet<>(cfg.spawnJugador);
         escalaBaix = new HashSet<>(cfg.escalaBaix);
+        escalaPuj = new HashSet<>(cfg.escalaPuj);
         marcadorItem = new HashSet<>(cfg.marcadorItem);
         marcadorPorta = new HashSet<>(cfg.marcadorPorta);
         marcadorNpc = new HashSet<>(cfg.marcadorNpc);
@@ -42,6 +44,7 @@ public class Simbols {
     public static boolean esPortaBloquejada(char c) { return te(portaBloquejada, c); }
     public static boolean esSpawnJugador(char c) { return te(spawnJugador, c); }
     public static boolean esEscalaBaix(char c) { return te(escalaBaix, c); }
+    public static boolean esEscalaPuj(char c) { return te(escalaPuj, c); }
     public static boolean esMarcadorItem(char c) { return te(marcadorItem, c); }
     public static boolean esMarcadorPorta(char c) { return te(marcadorPorta, c); }
     public static boolean esMarcadorNpc(char c) { return te(marcadorNpc, c); }

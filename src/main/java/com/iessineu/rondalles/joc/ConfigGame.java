@@ -97,6 +97,7 @@ public class ConfigGame {
         public List<Character> portaBloquejada = Arrays.asList('&');
         public List<Character> spawnJugador = Arrays.asList('@');
         public List<Character> escalaBaix = Arrays.asList('<');
+        public List<Character> escalaPuj = Arrays.asList('>');
         public List<Character> marcadorItem = Arrays.asList('i');
         public List<Character> marcadorPorta = Arrays.asList('P');
         public List<Character> marcadorNpc = Arrays.asList('N');
