@@ -88,6 +88,24 @@
             },
             {
                 "simbols": [
+                    "£"
+                ],
+                "nom": "Drac antic",
+                "vida": 100,
+                "atac": 35,
+                "radi": 15,
+                "colorR": 220,
+                "colorG": 30,
+                "colorB": 30,
+                "velocitat": 3,
+                "patroIA": "guardia",
+                "esBoss": true,
+                "artFitxer": "art/drac47x24.json",
+                "gameOver": "gameover/drac.json",
+                "boss": true
+            },
+            {
+                "simbols": [
                     "đ"
                 ],
                 "nom": "Drac",
@@ -100,7 +118,7 @@
                 "velocitat": 2,
                 "patroIA": "guardia",
                 "esBoss": true,
-                "artFitxer": "art/drac.txt",
+                "artFitxer": "art/drac47x24.json",
                 "gameOver": "gameover/drac.json",
                 "boss": true
             },
@@ -461,6 +479,12 @@
             {
                 "mapa": "planta2",
                 "simbol": "đ",
+                "x": 25,
+                "y": 17
+            },
+            {
+                "mapa": "planta3",
+                "simbol": "£",
                 "x": 25,
                 "y": 17
             }
