@@ -6,7 +6,9 @@ package com.iessineu.rondalles.joc;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
@@ -50,6 +52,8 @@ public class Joc extends Motor {
 
     // --- Pisos ---
     private int pisActual = 1;
+    // guarda l'estat de cada pis per poder tornar enrere
+    private Map<Integer, EstatPis> estatsPisos = new HashMap<>();
 
     // --- Portes ---
     private List<Porta> portes = new ArrayList<>();
@@ -879,6 +883,13 @@ public class Joc extends Motor {
             return;
         }
 
+        if (Simbols.esEscalaPuj(simbolDesti)) {
+            jugador.setX(nx);
+            jugador.setY(ny);
+            passaPisAnterior();
+            return;
+        }
+
         TipusTerra terraDestiT = TipusTerra.de(simbolDesti);
         // també miram el tipus real si està amagat
         TipusTerra terraDestiReal = terraDestiT;
@@ -1120,6 +1131,7 @@ public class Joc extends Motor {
     }
 
     private void passaSeguantPis() {
+        guardaEstatPis();
         pisActual++;
         if (pisActual > config.mapes.ordre.size()) {
             GestorMusica.reprodueix("VICTORIA");
@@ -1159,6 +1171,63 @@ public class Joc extends Motor {
             GestorMusica.reprodueix("PIS_" + pisActual);
         } catch (Exception ex) {
             corrent = false;
+        }
+    }
+
+    // Guarda l'estat del pis actual per poder tornar-hi
+    private void guardaEstatPis() {
+        EstatPis ep = new EstatPis();
+        ep.mapa = this.mapa;
+        ep.enemics = new ArrayList<>(this.enemics);
+        ep.itemsMapa = new ArrayList<>(this.itemsMapa);
+        ep.npcs = new ArrayList<>(this.npcs);
+        ep.portes = new ArrayList<>(this.portes);
+        ep.terraAmagat = this.terraAmagat;
+        ep.explorat = this.explorat;
+        ep.mapaRecord = this.mapaRecord;
+        ep.idMapaActual = this.idMapaActual;
+        ep.jugadorX = jugador.getX();
+        ep.jugadorY = jugador.getY();
+        estatsPisos.put(this.pisActual, ep);
+    }
+
+    // Torna al pis anterior (si n'hi ha) restaurant l'estat guardat
+    private void passaPisAnterior() {
+        if (pisActual <= 1) return;
+
+        guardaEstatPis();
+
+        pisActual--;
+
+        if (estatsPisos.containsKey(pisActual)) {
+            restauraEstatPis(pisActual);
+        }
+
+        GestorMusica.reprodueix("PIS_" + pisActual);
+    }
+
+    // Restaura l'estat guardat d'un pis
+    private void restauraEstatPis(int pis) {
+        EstatPis ep = estatsPisos.get(pis);
+        if (ep == null) return;
+
+        this.mapa = ep.mapa;
+        this.enemics = ep.enemics;
+        for (Enemic e : enemics) e.setTotsEnemics(enemics);
+        this.itemsMapa = ep.itemsMapa;
+        this.npcs = ep.npcs;
+        this.portes = ep.portes;
+        this.terraAmagat = ep.terraAmagat;
+        this.explorat = ep.explorat;
+        this.mapaRecord = ep.mapaRecord;
+        this.idMapaActual = ep.idMapaActual;
+
+        if (mapa.esPasable(ep.jugadorX, ep.jugadorY)) {
+            jugador.setX(ep.jugadorX);
+            jugador.setY(ep.jugadorY);
+        } else {
+            jugador.setX(trobaInicialX());
+            jugador.setY(trobaInicialY());
         }
     }
 
@@ -1875,6 +1944,7 @@ public class Joc extends Motor {
 
             // reseteam estat de joc (pis, chetos, etc)
             pisActual = 1;
+            estatsPisos.clear();
             godMode = false;
             bufferCheto.clear();
             tornsDesorientat = 0;
@@ -1997,5 +2067,19 @@ public class Joc extends Motor {
             dialogActiu = null;
             estat = Estat.MON;
         }
+    }
+
+    // guarda l'estat d'un pis per tornar enrere
+    private static class EstatPis {
+        Mapa mapa;
+        List<Enemic> enemics;
+        List<ItemMapa> itemsMapa;
+        List<NpcComerciants> npcs;
+        List<Porta> portes;
+        char[][] terraAmagat;
+        boolean[][] explorat;
+        char[][] mapaRecord;
+        String idMapaActual;
+        int jugadorX, jugadorY;
     }
 }
