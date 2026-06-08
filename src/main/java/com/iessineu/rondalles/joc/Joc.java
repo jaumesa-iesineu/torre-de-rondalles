@@ -1873,6 +1873,7 @@ public class Joc extends Motor {
         enemicMortJugador = mort;
         pantallaGameOver = carregaPantallaGameOver(mort);
         ultimTerrenyMal = null; //resetejam per al proxim cop
+        lliscantGel = false; //si mor patinant, aturam sa lliscada
         String titol = pantallaGameOver.getTitol();
         String[] linies = pantallaGameOver.getLiniesText();
         dialogGameOver = new MotorDialog(titol, linies, CPS_GAME_OVER);
