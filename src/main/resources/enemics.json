@@ -244,6 +244,190 @@
                 "simbol": "d",
                 "x": 84,
                 "y": 28
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "B",
+                "x": 30,
+                "y": 2
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "B",
+                "x": 30,
+                "y": 3
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "B",
+                "x": 30,
+                "y": 4
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "B",
+                "x": 30,
+                "y": 5
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "B",
+                "x": 30,
+                "y": 6
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "B",
+                "x": 30,
+                "y": 7
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "B",
+                "x": 30,
+                "y": 8
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "B",
+                "x": 45,
+                "y": 2
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "B",
+                "x": 47,
+                "y": 2
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "B",
+                "x": 45,
+                "y": 3
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "B",
+                "x": 96,
+                "y": 5
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "B",
+                "x": 100,
+                "y": 5
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "d",
+                "x": 120,
+                "y": 5
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "d",
+                "x": 120,
+                "y": 5
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "d",
+                "x": 127,
+                "y": 6
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "d",
+                "x": 121,
+                "y": 4
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "d",
+                "x": 129,
+                "y": 7
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "d",
+                "x": 130,
+                "y": 3
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "d",
+                "x": 130,
+                "y": 5
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "d",
+                "x": 160,
+                "y": 5
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "d",
+                "x": 160,
+                "y": 7
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "d",
+                "x": 150,
+                "y": 4
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "D",
+                "x": 138,
+                "y": 21,
+                "area": 10
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "g",
+                "x": 138,
+                "y": 21,
+                "area": 10
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "D",
+                "x": 20,
+                "y": 10,
+                "area": 10
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "d",
+                "x": 175,
+                "y": 26
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "d",
+                "x": 175,
+                "y": 27
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "d",
+                "x": 175,
+                "y": 28
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "d",
+                "x": 175,
+                "y": 29
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "G",
+                "x": 5,
+                "y": 3,
+                "area": 10
             }
         ]
     }
