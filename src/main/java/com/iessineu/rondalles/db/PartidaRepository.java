@@ -166,7 +166,6 @@ public class PartidaRepository {
                 pacman_flanc_passes    INTEGER NOT NULL DEFAULT 4,
                 requereix_descobriment INTEGER NOT NULL DEFAULT 0,
                 es_boss                INTEGER NOT NULL DEFAULT 0,
-                clau_dropejada         TEXT,
                 art_fitxer             TEXT,
                 art_ascii              TEXT,
                 game_over              TEXT
@@ -470,7 +469,7 @@ public class PartidaRepository {
     private static void ompleTipusEnemics(Connection conn, ConfigGame config) throws Exception {
         if (config.enemics == null || config.enemics.tipus == null) return;
         try (PreparedStatement ps = conn.prepareStatement(
-                "INSERT OR IGNORE INTO tipus_enemics VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")) {
+                "INSERT OR IGNORE INTO tipus_enemics VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")) {
             for (TipusEnemic t : config.enemics.tipus) {
                 ps.setString(1, unirTextos(t.simbols));
                 ps.setString(2, t.nom);
@@ -488,10 +487,9 @@ public class PartidaRepository {
                 ps.setInt(14, t.pacmanFlancPasses);
                 ps.setInt(15, t.requereixDescobriment ? 1 : 0);
                 ps.setInt(16, t.esBoss ? 1 : 0);
-                ps.setString(17, t.clauDropejada);
-                ps.setString(18, t.artFitxer);
-                ps.setString(19, t.artAscii != null ? String.join("\n", t.artAscii) : null);
-                ps.setString(20, t.gameOver);
+                ps.setString(17, t.artFitxer);
+                ps.setString(18, t.artAscii != null ? String.join("\n", t.artAscii) : null);
+                ps.setString(19, t.gameOver);
                 ps.executeUpdate();
             }
         }
@@ -927,7 +925,7 @@ public class PartidaRepository {
         try (ResultSet rs = conn.createStatement().executeQuery("""
                 SELECT simbols, nom, vida, atac, radi, color_r, color_g, color_b, velocitat,
                        travessa_parets, estatica, patro_ia, pacman_previsions, pacman_flanc_passes,
-                       requereix_descobriment, es_boss, clau_dropejada, art_fitxer, art_ascii, game_over
+                       requereix_descobriment, es_boss, art_fitxer, art_ascii, game_over
                 FROM tipus_enemics""")) {
             while (rs.next()) {
                 TipusEnemic te = new TipusEnemic();
@@ -947,11 +945,10 @@ public class PartidaRepository {
                 te.pacmanFlancPasses = rs.getInt(14);
                 te.requereixDescobriment = rs.getInt(15) == 1;
                 te.esBoss = rs.getInt(16) == 1;
-                te.clauDropejada = rs.getString(17);
-                te.artFitxer = rs.getString(18);
-                String art = rs.getString(19);
+                te.artFitxer = rs.getString(17);
+                String art = rs.getString(18);
                 te.artAscii = art != null ? art.split("\n") : null;
-                te.gameOver = rs.getString(20);
+                te.gameOver = rs.getString(19);
                 enemics.tipus.add(te);
             }
         }
