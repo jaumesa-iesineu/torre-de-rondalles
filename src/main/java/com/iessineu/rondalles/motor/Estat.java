@@ -1,13 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.iessineu.rondalles.motor;
 
-/**
- *
- * @author jaume, dani, sergi, kanhai i pere
- */
 public enum Estat {
     MENU, //pantalla inicial, menú principal
     MENU_INICIAL, //benvinguda abans de començar a jugar
@@ -20,5 +12,6 @@ public enum Estat {
     COMERCIANT, //pantalla de comerç amb es NPC
     ENIGMA, //pantalla de l'endevinalla del NPC
     SELECCIO_PERSONATGE, //tria de tipus de personatge
-    CREACIO_PERSONATGE //distribució de punts per al personatge personalitzat
+    CREACIO_PERSONATGE, //distribució de punts per al personatge personalitzat
+    DIALEG //pantalla de dialeg amb animacio typewriter
 }
