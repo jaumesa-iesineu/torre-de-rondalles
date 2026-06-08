@@ -13,6 +13,7 @@ import java.util.Map;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.iessineu.rondalles.audio.GestorMusica;
+import com.iessineu.rondalles.audio.GestorSfx;
 import com.iessineu.rondalles.joc.GestorIdioma;
 import com.iessineu.rondalles.combat.SistemaCombat;
 import com.iessineu.rondalles.entitats.Enemic;
@@ -76,8 +77,8 @@ public class Joc extends Motor {
     // --- Menú inicial amb fletxa ---
     // opcions: 0=Iniciar, 1=Música (slider), 2=Idioma, 3=Sortir
     private int opcioMenuInicial = 0;
-    private static final int MENU_OPCIONS = 4;
-    private String[] opcionsInicials = {"Iniciar partida", "Música", "Idioma", "Sortir"};
+    private static final int MENU_OPCIONS = 5;
+    private String[] opcionsInicials = {"Iniciar partida", "Música", "SFX", "Idioma", "Sortir"};
 
     // --- Selecció i creació de personatge ---
     private int opcioPersonatge = 0;
@@ -326,8 +327,9 @@ public class Joc extends Motor {
 
                         // aplicam mal del terreny actual (ja sigui revelat o no)
                         TipusTerra terraActual = TipusTerra.de(mapa.getCelles()[gy][gx]);
-                        if (terraActual != null && terraActual.getMal() > 0) {
-                            jugador.rebreDany(terraActual.getMal());
+                        if (terraActual != null) {
+                            ultimTerrenyMal = terraActual.getNom();
+                            if (terraActual.getMal() > 0) jugador.rebreDany(terraActual.getMal());
                         }
                     
                         tickTorn();
@@ -344,8 +346,9 @@ public class Joc extends Motor {
                                 terraAmagat[gy][gx] = '\0';
                                 mapa.setCella(gx, gy, simbolReal);
                                 TipusTerra tReal = TipusTerra.de(simbolReal);
-                                if (tReal != null && tReal.getMal() > 0) {
-                                    jugador.rebreDany(tReal.getMal());
+                                if (tReal != null) {
+                                    ultimTerrenyMal = tReal.getNom();
+                                    if (tReal.getMal() > 0) jugador.rebreDany(tReal.getMal());
                                 }
                             }
                         
@@ -466,10 +469,14 @@ public class Joc extends Motor {
         }
         if (tecla.getKeyType() == KeyType.ArrowLeft) {
             if (opcioMenuInicial == 1) {
-                // volum -10%
+                // música -10%
                 float v = Math.max(0f, GestorMusica.getVolum() - 0.1f);
                 GestorMusica.setVolum(v);
             } else if (opcioMenuInicial == 2) {
+                // sfx -10%
+                float v = Math.max(0f, GestorSfx.getVolum() - 0.1f);
+                GestorSfx.setVolum(v);
+            } else if (opcioMenuInicial == 3) {
                 // idioma anterior
                 String[] codis = GestorIdioma.getIdiomasCodi();
                 for (int i = 0; i < codis.length; i++) {
@@ -484,10 +491,14 @@ public class Joc extends Motor {
         }
         if (tecla.getKeyType() == KeyType.ArrowRight) {
             if (opcioMenuInicial == 1) {
-                // volum +10%
+                // música +10%
                 float v = Math.min(1f, GestorMusica.getVolum() + 0.1f);
                 GestorMusica.setVolum(v);
             } else if (opcioMenuInicial == 2) {
+                // sfx +10%
+                float v = Math.min(1f, GestorSfx.getVolum() + 0.1f);
+                GestorSfx.setVolum(v);
+            } else if (opcioMenuInicial == 3) {
                 // idioma següent
                 String[] codis = GestorIdioma.getIdiomasCodi();
                 for (int i = 0; i < codis.length; i++) {
@@ -504,7 +515,7 @@ public class Joc extends Motor {
             if (opcioMenuInicial == 0) {
                 opcioPersonatge = 0;
                 estat = Estat.SELECCIO_PERSONATGE;
-            } else if (opcioMenuInicial == 3) {
+            } else if (opcioMenuInicial == 4) {
                 corrent = false;
             }
             return;
