@@ -235,7 +235,7 @@ public class Joc extends Motor {
             renderer.setPauseTitle(t.pauseTitle);
             renderer.setPauseInstructions(t.pauseInstructions);
             renderer.setPauseResumePista(t.pauseResumePista);
-            opcionsInicials = new String[]{t.menuIniciar, t.menuSortir};
+            opcionsInicials = new String[]{t.menuIniciar, "Música", "SFX", "Idioma", t.menuSortir};
             opcionsPausa = new String[]{t.menuReanudar, t.menuGuardar, t.menuCarregar, t.menuSortir};
             opcionsGameOver = new String[]{t.menuTornaAcomencar, t.menuSortir};
         }
