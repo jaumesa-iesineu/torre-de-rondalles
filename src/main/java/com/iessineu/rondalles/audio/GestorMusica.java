@@ -1,19 +1,17 @@
 package com.iessineu.rondalles.audio;
 
 import com.iessineu.rondalles.joc.ConfigGame;
-import javazoom.jl.player.Player;
 
 import javax.sound.sampled.*;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 public class GestorMusica {
 
-    private static Clip clipActual = null;
-    private static Thread threadMp3 = null;
+    private static volatile SourceDataLine lineActual = null;
+    private static Thread threadReprodueix = null;
     private static volatile boolean reproduint = false;
     private static volatile boolean silenciat = false;
     private static String pistaActual = null;
@@ -46,62 +44,83 @@ public class GestorMusica {
             return;
         }
 
-        if (fitxer.toLowerCase().endsWith(".mp3")) {
-            reprodueixMp3("audio/" + fitxer);
-        } else {
-            reprodueixWav("audio/" + fitxer);
-        }
+        reprodueixAudio("audio/" + fitxer);
     }
 
-    private static void reprodueixWav(String path) {
-        try {
-            URL url = GestorMusica.class.getClassLoader().getResource(path);
-            if (url == null) { System.out.println("No s'ha trobat: " + path); return; }
-            AudioInputStream ais = AudioSystem.getAudioInputStream(url);
-            clipActual = AudioSystem.getClip();
-            clipActual.open(ais);
-            ais.close();
-            aplicaVolum();
-            clipActual.loop(Clip.LOOP_CONTINUOUSLY);
-            clipActual.start();
-        } catch (Exception e) {
-            System.out.println("Error WAV: " + e.getMessage());
-        }
-    }
-
-    private static void reprodueixMp3(String path) {
+    private static void reprodueixAudio(String path) {
         reproduint = true;
-        threadMp3 = new Thread(() -> {
+        threadReprodueix = new Thread(() -> {
             while (reproduint && !Thread.currentThread().isInterrupted()) {
                 try {
-                    InputStream is = GestorMusica.class.getClassLoader().getResourceAsStream(path);
-                    if (is == null) { System.out.println("No s'ha trobat: " + path); return; }
-                    Player player = new Player(new BufferedInputStream(is));
-                    player.play();
-                    player.close();
-                    is.close();
-                } catch (javazoom.jl.decoder.JavaLayerException e) {
-                    if (reproduint) System.out.println("Error MP3: " + e.getMessage());
+                    URL url = GestorMusica.class.getClassLoader().getResource(path);
+                    if (url == null) {
+                        System.out.println("No s'ha trobat: " + path);
+                        return;
+                    }
+
+                    AudioInputStream aisOriginal = AudioSystem.getAudioInputStream(url);
+                    AudioFormat formatOriginal = aisOriginal.getFormat();
+
+                    // Convertir a PCM si cal (MP3, etc.)
+                    AudioInputStream ais = aisOriginal;
+                    AudioFormat format = formatOriginal;
+                    if (formatOriginal.getEncoding() != AudioFormat.Encoding.PCM_SIGNED
+                            && formatOriginal.getEncoding() != AudioFormat.Encoding.PCM_UNSIGNED) {
+                        format = new AudioFormat(
+                                AudioFormat.Encoding.PCM_SIGNED,
+                                formatOriginal.getSampleRate(),
+                                16,
+                                formatOriginal.getChannels(),
+                                formatOriginal.getChannels() * 2,
+                                formatOriginal.getSampleRate(),
+                                false
+                        );
+                        ais = AudioSystem.getAudioInputStream(format, aisOriginal);
+                    }
+
+                    DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
+                    SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
+                    line.open(format);
+                    lineActual = line;
+                    aplicaVolum();
+                    line.start();
+
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while (reproduint && !Thread.currentThread().isInterrupted()
+                            && (bytesRead = ais.read(buffer)) != -1) {
+                        line.write(buffer, 0, bytesRead);
+                    }
+
+                    line.drain();
+                    line.stop();
+                    line.close();
+                    lineActual = null;
+                    ais.close();
+
+                } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+                    if (reproduint) System.out.println("Error audio: " + e.getMessage());
                     break;
                 } catch (Exception e) {
                     break;
                 }
             }
         });
-        threadMp3.setDaemon(true);
-        threadMp3.start();
+        threadReprodueix.setDaemon(true);
+        threadReprodueix.start();
     }
 
     public static void atura() {
         reproduint = false;
-        if (clipActual != null) {
-            if (clipActual.isRunning()) clipActual.stop();
-            clipActual.close();
-            clipActual = null;
+        SourceDataLine line = lineActual;
+        if (line != null) {
+            line.stop();
+            line.close();
+            lineActual = null;
         }
-        if (threadMp3 != null) {
-            threadMp3.interrupt();
-            threadMp3 = null;
+        if (threadReprodueix != null) {
+            threadReprodueix.interrupt();
+            threadReprodueix = null;
         }
     }
 
@@ -122,10 +141,11 @@ public class GestorMusica {
     public static float getVolum() { return volum; }
 
     private static void aplicaVolum() {
-        if (clipActual == null) return;
+        SourceDataLine line = lineActual;
+        if (line == null) return;
         try {
-            if (clipActual.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
-                FloatControl gain = (FloatControl) clipActual.getControl(FloatControl.Type.MASTER_GAIN);
+            if (line.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+                FloatControl gain = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
                 float dB;
                 if (volum <= 0.001f) {
                     dB = gain.getMinimum();
