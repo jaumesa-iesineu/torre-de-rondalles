@@ -1118,6 +1118,7 @@ public class Joc extends Motor {
             for (char[] fila : mapaRecord) {
                 java.util.Arrays.fill(fila, ' ');
             }
+            amagaTerrenyEspecial();
 
             GestorMusica.reprodueix("PIS_" + pisActual);
         } catch (Exception ex) {
