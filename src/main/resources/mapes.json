@@ -3,9 +3,7 @@
         "ordre": [
             "planta1",
             "planta2",
-            "planta3",
-            "planta4",
-            "planta5"
+            "planta3"
         ],
         "registres": [
             {
@@ -19,14 +17,6 @@
             {
                 "id": "planta3",
                 "fitxer": "mapes/planta3.map"
-            },
-            {
-                "id": "planta4",
-                "fitxer": "mapes/planta4.map"
-            },
-            {
-                "id": "planta5",
-                "fitxer": "mapes/planta5.map"
             }
         ]
     }

@@ -5,6 +5,7 @@
     "portaBloquejada": ["&"],
     "spawnJugador": ["@"],
     "escalaBaix": ["<"],
+    "escalaDalt": [">"],
     "marcadorItem": ["i"],
     "marcadorPorta": ["P"],
     "marcadorNpc": ["N"]
