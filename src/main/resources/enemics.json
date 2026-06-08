@@ -88,6 +88,24 @@
             },
             {
                 "simbols": [
+                    "đ"
+                ],
+                "nom": "Drac",
+                "vida": 50,
+                "atac": 20,
+                "radi": 8,
+                "colorR": 220,
+                "colorG": 30,
+                "colorB": 30,
+                "velocitat": 2,
+                "patroIA": "guardia",
+                "esBoss": true,
+                "artFitxer": "art/drac.txt",
+                "gameOver": "gameover/drac.json",
+                "boss": true
+            },
+            {
+                "simbols": [
                     "M"
                 ],
                 "nom": "NaMariaEnganxa",
@@ -424,11 +442,29 @@
             },
             {
                 "mapa": "planta2",
-                "simbol": "G",
-                "x": 5,
-                "y": 3,
-                "area": 10
+                "simbol": "đ",
+                "x": 54,
+                "y": 30
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "đ",
+                "x": 0,
+                "y": 34
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "đ",
+                "x": 1,
+                "y": 37
+            },
+            {
+                "mapa": "planta2",
+                "simbol": "đ",
+                "x": 25,
+                "y": 17
             }
+            
         ]
     }
 }
