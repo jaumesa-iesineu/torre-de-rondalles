@@ -799,6 +799,10 @@ public class Joc extends Motor {
 
         NpcComerciants npc = trobaNpcA(nx, ny);
         if (npc != null) {
+            if (npc.isComerciatJa()) {
+                afegeixLog("El comerciant ja ha tancat la botiga per avui.");
+                return;
+            }
             npcActual = npc;
             enigmaInput = "";
             enigmaErrorMsg = "";
@@ -1385,11 +1389,15 @@ public class Joc extends Motor {
 
     private void gestionaComerciants(KeyStroke tecla) {
         if (tecla.getKeyType() == KeyType.Escape) {
+            if (itemsAgafats > 0) npcActual.setComerciatJa(true);
             estat = Estat.MON;
             return;
         }
         if (itemsAgafats >= maxItemsComerciant) {
-            if (tecla.getKeyType() == KeyType.Enter) estat = Estat.MON;
+            if (tecla.getKeyType() == KeyType.Enter) {
+                npcActual.setComerciatJa(true);
+                estat = Estat.MON;
+            }
             return;
         }
         if (tecla.getKeyType() == KeyType.ArrowUp) {

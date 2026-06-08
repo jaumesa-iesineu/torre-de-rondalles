@@ -9,6 +9,7 @@ public class NpcComerciants extends Entitat {
 
     private final int pis;
     private int nivellResolt = 0; // 0=no resolt, 1/2/3=nivell resolt
+    private boolean comerciatJa = false;
     private List<ConfigGame.DitaConfig> dites = new ArrayList<>();
     private List<String> itemsVenda = new ArrayList<>();
 
@@ -61,6 +62,14 @@ public class NpcComerciants extends Entitat {
 
     public List<String> getItemsVenda() {
         return itemsVenda;
+    }
+
+    public boolean isComerciatJa() {
+        return comerciatJa;
+    }
+
+    public void setComerciatJa(boolean comerciatJa) {
+        this.comerciatJa = comerciatJa;
     }
 
     public int getPis() {
