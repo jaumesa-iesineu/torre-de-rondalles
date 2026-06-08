@@ -1,0 +1,33 @@
+{
+  "enemics": {
+    "tipus": [
+      {
+        "simbols": ["d", "e"],
+        "nom": "DimoniBoiet",
+        "vida": 5,
+        "atac": 2,
+        "radi": 5,
+        "colorR": 180,
+        "colorG": 40,
+        "colorB": 10,
+        "patroIA": "pacman",
+        "artFitxer": "art/dimoni.txt"
+      },
+      {
+        "simbols": ["B"],
+        "nom": "Bubota",
+        "vida": 10,
+        "atac": 2,
+        "radi": 100,
+        "colorR": 180,
+        "colorG": 180,
+        "colorB": 255,
+        "velocitat": 2,
+        "travessaParets": true,
+        "patroIA": "perseguir",
+        "requereixDescobriment": true,
+        "artFitxer": "art/bubota.txt"
+      }
+    ]
+  }
+}

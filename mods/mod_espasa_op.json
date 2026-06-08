@@ -1,0 +1,20 @@
+{
+  "items": {
+    "catalogItems": {
+      "armes": [
+        {
+          "id": "espasa-legendaria",
+          "nom": "Espasa Llegendaria des Cavaller Foll",
+          "pes": 1,
+          "simbol": "X",
+          "atac": 1000,
+          "rang": 1,
+          "tier": 9
+        }
+      ]
+    }
+  },
+  "equipamentInicial": {
+    "arma": "espasa-legendaria"
+  }
+}

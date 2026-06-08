@@ -231,6 +231,19 @@ java -jar joc.jar -mod enemics.json
 
 > Els mods es carreguen **sobre** la configuració base (o la configuració `-game` si s'especifica). Es poden encadenar múltiples fitxers.
 
+#### Mods d'exemple
+
+A la carpeta `mods/` hi ha tres mods bàsics ja fets que es poden provar directament:
+
+- `mod_facil.json` — baixa la vida i l'atac del Dimoni Boiet i la Bubota
+- `mod_tresor.json` — afegeix pocions de vida i una espasa extra a planta1
+- `mod_espasa_nova.json` — dona d'alta una arma nova al catàleg (Espasa de foc) i la posa al mapa
+
+```bash
+java -jar joc.jar -mod mods/mod_facil.json
+java -jar joc.jar -mod mods/mod_tresor.json mods/mod_espasa_nova.json
+```
+
 ---
 
 ## Creació de contingut personalitzat

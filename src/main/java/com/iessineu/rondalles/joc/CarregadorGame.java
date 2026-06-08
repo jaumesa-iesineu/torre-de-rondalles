@@ -1,6 +1,7 @@
 package com.iessineu.rondalles.joc;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -65,10 +66,20 @@ public class CarregadorGame {
         if (fragment.personatgeCustom != null) base.personatgeCustom = fragment.personatgeCustom;
     }
 
-    //carrega un JSON extern del sistema de fitxers (argument -game o -mod)
+    //carrega un JSON extern del sistema de fitxers (argument -mod)
+    //no fusiona subfitxers, perque un mod nomes ha d'aportar es seus propis canvis
     public static ConfigGame carregaFitxerExtern(String ruta) throws Exception {
+        return carregaFitxerExtern(ruta, false);
+    }
+
+    //carrega un JSON extern, fusionant-hi tambe es seus subfitxers si en te (argument -game)
+    //un -game pot estar partit en mapes.json, enemics.json... igual que es game.json de dins
+    public static ConfigGame carregaFitxerExtern(String ruta, boolean ambSubfitxers) throws Exception {
         try (Reader reader = new InputStreamReader(new FileInputStream(ruta), StandardCharsets.UTF_8)) {
             ConfigGame config = new Gson().fromJson(reader, ConfigGame.class);
+            if (ambSubfitxers) {
+                carregaSubfitxers(config);
+            }
             resolgArt(config);
             return config;
         }
@@ -86,6 +97,18 @@ public class CarregadorGame {
                 base.configuracio = new ConfigGame.Configuracio();
             }
             base.configuracio.mapaInicial = mod.configuracio.mapaInicial;
+        }
+
+        if (mod.equipamentInicial != null) {
+            if (base.equipamentInicial == null) {
+                base.equipamentInicial = new ConfigGame.EquipamentInicial();
+            }
+            if (mod.equipamentInicial.arma != null) {
+                base.equipamentInicial.arma = mod.equipamentInicial.arma;
+            }
+            if (mod.equipamentInicial.armadures != null) {
+                base.equipamentInicial.armadures = mod.equipamentInicial.armadures;
+            }
         }
 
         if (mod.mapes != null) {
@@ -154,6 +177,16 @@ public class CarregadorGame {
                 }
                 base.portes.posicions.addAll(mod.portes.posicions);
             }
+        }
+    }
+
+    //llegeix es node items.catalogItems d'un mod (si en te), per poder afegir armes/armadures/pocions/claus noves
+    public static JsonObject llegeixCatalogItemsDelMod(String ruta) throws Exception {
+        try (Reader reader = new InputStreamReader(new FileInputStream(ruta), StandardCharsets.UTF_8)) {
+            JsonObject arrel = new Gson().fromJson(reader, JsonObject.class);
+            if (arrel == null || !arrel.has("items")) return null;
+            JsonObject items = arrel.getAsJsonObject("items");
+            return items.has("catalogItems") ? items.getAsJsonObject("catalogItems") : null;
         }
     }
 

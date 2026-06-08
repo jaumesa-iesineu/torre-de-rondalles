@@ -31,8 +31,8 @@ public class RegistreItems {
     }
 
     private void carregaDeJson() {
-        //carregam tots els items del items.json
-        InputStream in = getClass().getResourceAsStream("/items.json");
+        //primer miram si hi ha un items.json extern (basedir d'un -game), sino el de dins el jar
+        InputStream in = obriItemsJson();
         if (in == null) throw new RuntimeException("No s'ha trobat items.json");
 
         JsonObject arrel = new Gson().fromJson(
@@ -41,6 +41,32 @@ public class RegistreItems {
         JsonObject catalog = arrel.getAsJsonObject("catalogItems");
         if (catalog == null) return;
 
+        carregaCatalog(catalog);
+    }
+
+    private InputStream obriItemsJson() {
+        String basedir = com.iessineu.rondalles.joc.CarregadorGame.getBasedir();
+        if (basedir != null) {
+            java.io.File f = new java.io.File(basedir, "items.json");
+            if (f.exists()) {
+                try {
+                    return new java.io.FileInputStream(f);
+                } catch (Exception e) {
+                    //si peta, seguim amb el de dins el jar
+                }
+            }
+        }
+        return getClass().getResourceAsStream("/items.json");
+    }
+
+    //afegeix (o sobreescriu per id) entrades del catalog d'un mod sobre les ja carregades
+    public void aplicaMod(JsonObject catalogMod) {
+        if (catalogMod == null) return;
+        carregaCatalog(catalogMod);
+    }
+
+    //llegeix un node "catalogItems" i omple/sobreescriu els mapes (last wins per id)
+    private void carregaCatalog(JsonObject catalog) {
         JsonArray jArmes = catalog.getAsJsonArray("armes");
         if (jArmes != null) {
             for (JsonElement e : jArmes) {

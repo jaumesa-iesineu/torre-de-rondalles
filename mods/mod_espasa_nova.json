@@ -1,0 +1,20 @@
+{
+  "items": {
+    "catalogItems": {
+      "armes": [
+        {
+          "id": "espasa-foc",
+          "nom": "Espasa de foc",
+          "pes": 2,
+          "simbol": "F",
+          "atac": 9,
+          "rang": 1,
+          "tier": 2
+        }
+      ]
+    },
+    "posicions": [
+      { "mapa": "planta1", "id": "espasa-foc", "x": 15, "y": 4 }
+    ]
+  }
+}
