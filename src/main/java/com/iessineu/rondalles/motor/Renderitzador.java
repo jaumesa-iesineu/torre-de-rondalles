@@ -191,7 +191,7 @@ public class Renderitzador { // classe per gestionar la pantalla
             }
             double dist = Math.sqrt((e.getX() - jx) * (e.getX() - jx) + (e.getY() - jy) * (e.getY() - jy));
             double factor = 1.0 - (dist / radiLlanterna) * 0.5;
-            screen.setCharacter(sc, sf, new TextCharacter(e.getSimbol(), fosqueix(e.getColor(), factor), TextColor.ANSI.BLACK));
+            screen.setCharacter(sc, sf, new TextCharacter(e.getSimbol(), fosqueix(e.getColor(), factor), fosqueix(fonsCasella(celles[e.getY()][e.getX()]), factor)));
         }
 
         //ítems del terra (només si visibles)
@@ -209,14 +209,14 @@ public class Renderitzador { // classe per gestionar la pantalla
             }
             double dist = Math.sqrt((im.getX() - jx) * (im.getX() - jx) + (im.getY() - jy) * (im.getY() - jy));
             double factor = 1.0 - (dist / radiLlanterna) * 0.75;
-            screen.setCharacter(sc, sf, new TextCharacter(im.getItem().getSimbol(), fosqueix(im.getItem().getColor(), factor), TextColor.ANSI.BLACK));
+            screen.setCharacter(sc, sf, new TextCharacter(im.getItem().getSimbol(), fosqueix(im.getItem().getColor(), factor), fosqueix(fonsCasella(celles[im.getY()][im.getX()]), factor)));
         }
 
         //jugador sempre verd per damunt de tot
         int psc = 1 + (jx - camX);
         int psf = 3 + (jy - camY);
         if (psc >= 1 && psc < colSep && psf >= 3 && psf < files - 1) {
-            screen.setCharacter(psc, psf, new TextCharacter('@', TextColor.ANSI.GREEN_BRIGHT, TextColor.ANSI.BLACK));
+            screen.setCharacter(psc, psf, new TextCharacter('@', TextColor.ANSI.GREEN_BRIGHT, fosqueix(fonsCasella(celles[jy][jx]), 1.0)));
         }
 
         dibuixaHUD(jugador, colSep + 1, 3, files - 1);
@@ -1065,10 +1065,8 @@ public class Renderitzador { // classe per gestionar la pantalla
         screen.refresh();
     }
 
-    // Dibuixa la pantalla de game over amb animacio typewriter sobre el text.
-    // caractersVisibles: quants caracters del text ja s'han de mostrar.
-    // animacioAcabada: quan es true, mostra el menu d'opcions.
-    public void dibuixaGameOver(PantallaGameOver pantalla, int caractersVisibles, boolean animacioAcabada, String[] opcions, int opcioSeleccionada) throws IOException {
+    public void dibuixaGameOver(MotorDialog dialog, PantallaGameOver pantalla,
+            String[] opcions, int opcioSeleccionada) throws IOException {
         screen.clear();
         int cols = screen.getTerminalSize().getColumns();
         int files = screen.getTerminalSize().getRows();
@@ -1076,17 +1074,16 @@ public class Renderitzador { // classe per gestionar la pantalla
         TextColor vermellSang = new TextColor.RGB(190, 35, 35);
         TextColor blanc = new TextColor.RGB(220, 220, 220);
 
-        // titol centrat a la part de dalt
-        String titol = pantalla.getTitol();
+        String titol = dialog.getTitol();
         int titolY = Math.max(2, files / 8);
         pintaText((cols - titol.length()) / 2, titolY, titol, vermellSang);
 
-        // linea separadora sota el titol
         String sep = "═".repeat(Math.min(cols - 4, titol.length() + 4));
         pintaText((cols - sep.length()) / 2, titolY + 1, sep, new TextColor.RGB(80, 20, 20));
 
-        // text amb efecte typewriter, centrat com a bloc
-        String[] liniesText = pantalla.getLiniesText();
+        // typewriter del text, centrat
+        String[] liniesText = dialog.getLinies();
+        int caractersVisibles = dialog.getCaractersVisibles();
         int ampleText = 0;
         for (String l : liniesText) {
             if (l.length() > ampleText) ampleText = l.length();
@@ -1118,7 +1115,7 @@ public class Renderitzador { // classe per gestionar la pantalla
         }
 
         // menu d'opcions (només quan l'animacio ja ha acabat)
-        if (animacioAcabada) {
+        if (dialog.esAcabada()) {
             int oy = Math.min(files - opcions.length - 2, Math.max(artY + liniesArt.length + 2, files / 2 + 2));
             for (int i = 0; i < opcions.length; i++) {
                 String prefix = (i == opcioSeleccionada) ? " > " : "   ";
@@ -1134,24 +1131,25 @@ public class Renderitzador { // classe per gestionar la pantalla
         screen.refresh();
     }
 
-    public void dibuixaVictoria(PantallaVictoria pantalla, int caractersVisibles,
-            boolean animacioAcabada, String[] opcions, int opcioSeleccionada) throws IOException {
+    public void dibuixaVictoria(MotorDialog dialog, PantallaVictoria pantalla,
+            String[] opcions, int opcioSeleccionada) throws IOException {
         screen.clear();
         int cols = screen.getTerminalSize().getColumns();
         int files = screen.getTerminalSize().getRows();
 
         TextColor daurat = new TextColor.RGB(255, 215, 0);
         TextColor blanc  = new TextColor.RGB(220, 220, 180);
-        TextColor brill  = new TextColor.RGB(255, 255, 120);
 
-        String titol = pantalla.getTitol();
+        String titol = dialog.getTitol();
         int titolY = Math.max(2, files / 8);
         pintaText((cols - titol.length()) / 2, titolY, titol, daurat);
 
         String sep = "*".repeat(Math.min(cols - 4, titol.length() + 4));
         pintaText((cols - sep.length()) / 2, titolY + 1, sep, new TextColor.RGB(180, 140, 0));
 
-        String[] liniesText = pantalla.getLiniesText();
+        // typewriter del text, centrat
+        String[] liniesText = dialog.getLinies();
+        int caractersVisibles = dialog.getCaractersVisibles();
         int ampleText = 0;
         for (String l : liniesText) if (l.length() > ampleText) ampleText = l.length();
         int textY = titolY + 4;
@@ -1166,6 +1164,7 @@ public class Renderitzador { // classe per gestionar la pantalla
             consumits += linia.length() + 1;
         }
 
+        // ascii art, centrat
         String[] liniesArt = pantalla.getLiniesArt();
         int artY = textY + liniesText.length + 2;
         int ampleArt = 0;
@@ -1175,7 +1174,7 @@ public class Renderitzador { // classe per gestionar la pantalla
             pintaText((cols - ampleArt) / 2, artY + i, liniesArt[i], daurat);
         }
 
-        if (animacioAcabada) {
+        if (dialog.esAcabada()) {
             int oy = Math.min(files - opcions.length - 2,
                      Math.max(artY + liniesArt.length + 2, files / 2 + 2));
             for (int i = 0; i < opcions.length; i++) {
@@ -1186,6 +1185,51 @@ public class Renderitzador { // classe per gestionar la pantalla
                 pintaText((cols - text.length()) / 2, oy + i * 2, text, color);
             }
         }
+        screen.refresh();
+    }
+
+    // dialeg amb typewriter, sense art ni menu, mostra avis en acabar
+    public void dibuixaDialog(MotorDialog dialog) throws IOException {
+        screen.clear();
+        int cols = screen.getTerminalSize().getColumns();
+        int files = screen.getTerminalSize().getRows();
+
+        TextColor daurat = new TextColor.RGB(255, 215, 0);
+        TextColor blanc  = new TextColor.RGB(220, 220, 180);
+
+        String titol = dialog.getTitol();
+        int titolY = Math.max(2, files / 6);
+        pintaText((cols - titol.length()) / 2, titolY, titol, daurat);
+
+        String sep = "~".repeat(Math.min(cols - 4, titol.length() + 4));
+        pintaText((cols - sep.length()) / 2, titolY + 1, sep, new TextColor.RGB(180, 140, 0));
+
+        // typewriter del text
+        String[] linies = dialog.getLinies();
+        int caractersVisibles = dialog.getCaractersVisibles();
+        int ample = 0;
+        for (String l : linies) if (l.length() > ample) ample = l.length();
+        int textY = titolY + 4;
+        int consumits = 0;
+        for (int i = 0; i < linies.length; i++) {
+            String linia = linies[i];
+            if (textY + i >= files - 4) break;
+            if (caractersVisibles <= consumits) break;
+            int carLinia = Math.min(linia.length(), caractersVisibles - consumits);
+            if (carLinia > 0)
+                pintaText((cols - ample) / 2, textY + i, linia.substring(0, carLinia), blanc);
+            consumits += linia.length() + 1;
+        }
+
+        // quan acaba l'animacio, avis per tancar
+        if (dialog.esAcabada()) {
+            String avis = "Prem qualsevol tecla per continuar...";
+            int avisY = textY + linies.length + 3;
+            if (avisY < files - 1)
+                pintaText((cols - avis.length()) / 2, avisY, avis,
+                        TextColor.ANSI.BLACK_BRIGHT);
+        }
+
         screen.refresh();
     }
 
