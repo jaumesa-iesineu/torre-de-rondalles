@@ -606,11 +606,15 @@ public class Joc extends Motor {
                     estat = Estat.MON;
 
                 case 1 -> {
+                    GestorPartida.desa(this);
                     estat = Estat.MON;
                 }
-                case 2 ->
+                case 2 -> {
+                    GestorPartida.carrega(this);
+                    estat = Estat.MON;
+                }
+                case 3 ->
                     corrent = false;
-
             }
         }
         if (tecla.getKeyType() == KeyType.Character) {

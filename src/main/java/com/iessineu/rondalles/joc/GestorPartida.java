@@ -56,7 +56,7 @@ public class GestorPartida {
             }
 
             //enemics morts (llista de posicions originals)
-            dos.writeShort(((DataOutputStream) joc.enemicsMorts).size());
+            dos.writeShort(joc.enemicsMorts.size());
             for (int[] pos : joc.enemicsMorts) {
                 dos.writeShort(pos[0]);
                 dos.writeShort(pos[1]);
