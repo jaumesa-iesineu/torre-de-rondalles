@@ -1,6 +1,7 @@
 package com.iessineu.rondalles.entitats;
 
 import com.googlecode.lanterna.TextColor;
+import com.iessineu.rondalles.motor.CeldaArt;
 import com.iessineu.rondalles.motor.EinesColor;
 import com.iessineu.rondalles.joc.TipusEnemic;
 import com.iessineu.rondalles.joc.Simbols;
@@ -8,9 +9,9 @@ import java.util.List;
 
 public class Enemic extends Entitat {
 
-    //color i art carregats des del game.json
-    protected TextColor colorDef = null;
-    protected String[] artAscii = null;
+    protected transient TextColor colorDef = null;
+    protected transient String[] artAscii = null;
+    protected transient CeldaArt[][] artJson = null;
 
     char lletra;
 
@@ -404,6 +405,7 @@ public class Enemic extends Entitat {
         this.radDeteccio = def.radi;
         this.colorDef = EinesColor.creaColor(def.colorR, def.colorG, def.colorB);
         this.artAscii = def.artAscii;
+        this.artJson = def.artJson;
         setVelocitat(def.velocitat);
         setTravessaParets(def.travessaParets);
         this.patroIA = def.patroIA != null ? def.patroIA : "perseguir";
@@ -551,6 +553,8 @@ public class Enemic extends Entitat {
         }
         return !Simbols.bloquejaMoviment(cells[ny][nx]);
     }
+
+    public CeldaArt[][] getArtJson() { return artJson; }
 
     public String[] getArtAscii() {
         return artAscii;

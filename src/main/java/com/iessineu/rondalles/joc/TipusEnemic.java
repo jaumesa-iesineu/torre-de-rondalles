@@ -1,5 +1,6 @@
 package com.iessineu.rondalles.joc;
 
+import com.iessineu.rondalles.motor.CeldaArt;
 import java.util.List;
 
 //POJO que Gson omple amb ses dades de cada tipus d'enemic del game.json
@@ -24,8 +25,10 @@ public class TipusEnemic {
     public boolean requereixDescobriment; //Bubota nomes persegueix si l'han vist
     public boolean esBoss; //quan el maten, apareix una clau a l'inventari
 
-    public String artFitxer;  //ruta a resources/art/xxx.txt (prioritat sobre artAscii)
-    public String[] artAscii; //fallback inline si no hi ha artFitxer
+    public String artFitxer;     //ruta a resources/art/xxx.txt
+    public String[] artAscii;   //fallback inline
+    public String artJsonFitxer; //ruta a resources/art/xxx.json (prioritat sobre txt)
+    public CeldaArt[][] artJson; //grid colorit carregat del JSON
 
     // Ruta al fitxer JSON amb la pantalla de game over personalitzada
     // d'aquest enemic (opcional). Ex: "gameover/drac.json".

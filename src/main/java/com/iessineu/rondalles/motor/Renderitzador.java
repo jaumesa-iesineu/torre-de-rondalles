@@ -5,6 +5,7 @@
 package com.iessineu.rondalles.motor;
 
 import com.iessineu.rondalles.entitats.Enemic;
+import com.iessineu.rondalles.motor.CeldaArt;
 import com.iessineu.rondalles.entitats.Entitat;
 import com.iessineu.rondalles.joc.Simbols;
 import com.iessineu.rondalles.mapa.Mapa;
@@ -549,14 +550,25 @@ public class Renderitzador { // classe per gestionar la pantalla
 
         // ═══ ZONA ENEMIC (dalt) ═══
 
-        //caixa stats enemic (dalt-esquerra), amplada fixa de 28
-        String nomEn = enemic.getNom() != null ? enemic.getNom().toUpperCase() : enemic.getClass().getSimpleName().toUpperCase();
-        pintaCaixaVida(2, 3, nomEn, enemic.getVida(), enemic.getVidaMaxima(), 18, vermell);
-
-        //sprite enemic (dalt-dreta), alineat a la dreta de la zona de batalla
+        //sprite primer (fons), HP box a sobre per que no quedi tapat
         TextColor colorEnemic = enemic.getColor() != null ? enemic.getColor() : blanc;
+        CeldaArt[][] artJsonEn = enemic.getArtJson();
         String[] artEn = enemic.getArtAscii();
-        if (artEn != null) {
+        if (artJsonEn != null) {
+            int spriteAmple = artJsonEn[0].length;
+            int xSprite = Math.max(2, (colSep - spriteAmple) / 2);
+            int fEn = 3;
+            for (CeldaArt[] fila : artJsonEn) {
+                if (fEn >= midBat) break;
+                for (int x = 0; x < fila.length; x++) {
+                    int col = xSprite + x;
+                    if (col >= colSep) break;
+                    CeldaArt cel = fila[x];
+                    screen.setCharacter(col, fEn, new TextCharacter(cel.c(), cel.fg(), cel.bg()));
+                }
+                fEn++;
+            }
+        } else if (artEn != null) {
             int spriteAmple = artEn[0].length();
             int xSprite = Math.max(2, (colSep - spriteAmple) / 2);
             int maxAmple = colSep - xSprite - 1;
@@ -567,6 +579,10 @@ public class Renderitzador { // classe per gestionar la pantalla
                 pintaText(xSprite, fEn++, l, colorEnemic);
             }
         }
+
+        //caixa HP enemic (dalt-esquerra), sempre a sobre del sprite
+        String nomEn = enemic.getNom() != null ? enemic.getNom().toUpperCase() : enemic.getClass().getSimpleName().toUpperCase();
+        pintaCaixaVida(2, 3, nomEn, enemic.getVida(), enemic.getVidaMaxima(), 18, vermell);
 
         // ═══ ZONA JUGADOR (baix) ═══
 

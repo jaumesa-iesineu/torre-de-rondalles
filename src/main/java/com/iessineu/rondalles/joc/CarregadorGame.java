@@ -1,7 +1,9 @@
 package com.iessineu.rondalles.joc;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.iessineu.rondalles.motor.CeldaArt;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -235,7 +237,9 @@ public class CarregadorGame {
     private static void resolgArt(ConfigGame config) {
         if (config.enemics != null && config.enemics.tipus != null) {
             for (TipusEnemic t : config.enemics.tipus) {
-                if (t.artFitxer != null && !t.artFitxer.isBlank()) {
+                if (t.artJsonFitxer != null && !t.artJsonFitxer.isBlank()) {
+                    t.artJson = carregaArtJson(t.artJsonFitxer);
+                } else if (t.artFitxer != null && !t.artFitxer.isBlank()) {
                     t.artAscii = carregaArt(t.artFitxer);
                 }
             }
@@ -245,6 +249,31 @@ public class CarregadorGame {
         }
         if (config.jugador != null && config.jugador.artFitxerEsquena != null && !config.jugador.artFitxerEsquena.isBlank()) {
             config.jugador.artAsciiEsquena = carregaArt(config.jugador.artFitxerEsquena);
+        }
+    }
+
+    private static CeldaArt[][] carregaArtJson(String rutaRecurs) {
+        InputStream is = CarregadorGame.class.getClassLoader().getResourceAsStream(rutaRecurs);
+        if (is == null) return null;
+        try (Reader r = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+            JsonObject arrel = new Gson().fromJson(r, JsonObject.class);
+            JsonArray grid = arrel.getAsJsonArray("grid");
+            int rows = grid.size();
+            CeldaArt[][] resultat = new CeldaArt[rows][];
+            for (int y = 0; y < rows; y++) {
+                JsonArray fila = grid.get(y).getAsJsonArray();
+                resultat[y] = new CeldaArt[fila.size()];
+                for (int x = 0; x < fila.size(); x++) {
+                    JsonObject cel = fila.get(x).getAsJsonObject();
+                    char c = cel.get("char").getAsString().charAt(0);
+                    String fg = cel.has("fg") ? cel.get("fg").getAsString() : "#FFFFFF";
+                    String bg = cel.has("bg") ? cel.get("bg").getAsString() : "#000000";
+                    resultat[y][x] = new CeldaArt(c, CeldaArt.hexAColor(fg), CeldaArt.hexAColor(bg));
+                }
+            }
+            return resultat;
+        } catch (Exception e) {
+            return null;
         }
     }
 

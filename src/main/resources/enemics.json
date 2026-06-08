@@ -15,7 +15,7 @@
                 "colorB": 10,
                 "patroIA": "pacman",
                 "esBoss": false,
-                "artFitxer": "art/dimoni.txt"
+                "artJsonFitxer": "art/dimoni38x14.json"
             },
             {
                 "simbols": [
@@ -33,7 +33,7 @@
                 "patroIA": "perseguir",
                 "requereixDescobriment": true,
                 "esBoss": false,
-                "artFitxer": "art/bubota.txt"
+                "artJsonFitxer": "art/bubota17x17.json"
             },
             {
                 "simbols": [
@@ -49,7 +49,7 @@
                 "velocitat": 2,
                 "patroIA": "guardia",
                 "esBoss": true,
-                "artFitxer": "art/gegant.txt",
+                "artJsonFitxer": "art/gegant45x19.json",
                 "boss": true
             },
             {
@@ -66,7 +66,7 @@
                 "velocitat": 2,
                 "patroIA": "guardia",
                 "esBoss": false,
-                "artFitxer": "art/gegant.txt"
+                "artJsonFitxer": "art/gegant45x19.json"
             },
             {
                 "simbols": [
@@ -82,7 +82,7 @@
                 "velocitat": 2,
                 "patroIA": "guardia",
                 "esBoss": true,
-                "artFitxer": "art/drac.txt",
+                "artJsonFitxer": "art/drac47x24.json",
                 "gameOver": "gameover/drac.json",
                 "boss": true
             },
@@ -117,7 +117,7 @@
                 "colorB": 220,
                 "patroIA": "estatic",
                 "esBoss": true,
-                "artFitxer": "art/maria.txt",
+                "artJsonFitxer": "art/maria27x21.json",
                 "gameOver": "gameover/maria.json"
             }
         ],
