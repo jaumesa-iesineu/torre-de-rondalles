@@ -77,8 +77,8 @@ public class Joc extends Motor {
     // --- Menú inicial amb fletxa ---
     // opcions: 0=Iniciar, 1=Música (slider), 2=Idioma, 3=Sortir
     private int opcioMenuInicial = 0;
-    private static final int MENU_OPCIONS = 5;
-    private String[] opcionsInicials = {"Iniciar partida", "Música", "SFX", "Idioma", "Sortir"};
+    private static final int MENU_OPCIONS = 4;
+    private String[] opcionsInicials = {"Iniciar partida", "Música", "SFX", "Sortir"};
 
     // --- Selecció i creació de personatge ---
     private int opcioPersonatge = 0;
@@ -235,7 +235,7 @@ public class Joc extends Motor {
             renderer.setPauseTitle(t.pauseTitle);
             renderer.setPauseInstructions(t.pauseInstructions);
             renderer.setPauseResumePista(t.pauseResumePista);
-            opcionsInicials = new String[]{t.menuIniciar, "Música", "SFX", "Idioma", t.menuSortir};
+            opcionsInicials = new String[]{t.menuIniciar, "Música", "SFX", t.menuSortir};
             opcionsPausa = new String[]{t.menuReanudar, t.menuGuardar, t.menuCarregar, t.menuSortir};
             opcionsGameOver = new String[]{t.menuTornaAcomencar, t.menuSortir};
         }
@@ -476,16 +476,6 @@ public class Joc extends Motor {
                 // sfx -10%
                 float v = Math.max(0f, GestorSfx.getVolum() - 0.1f);
                 GestorSfx.setVolum(v);
-            } else if (opcioMenuInicial == 3) {
-                // idioma anterior
-                String[] codis = GestorIdioma.getIdiomasCodi();
-                for (int i = 0; i < codis.length; i++) {
-                    if (codis[i].equals(GestorIdioma.getIdioma())) {
-                        GestorIdioma.setIdioma(codis[(i + codis.length - 1) % codis.length]);
-                        actualitzaTextosIdioma();
-                        break;
-                    }
-                }
             }
             return;
         }
@@ -498,16 +488,6 @@ public class Joc extends Motor {
                 // sfx +10%
                 float v = Math.min(1f, GestorSfx.getVolum() + 0.1f);
                 GestorSfx.setVolum(v);
-            } else if (opcioMenuInicial == 3) {
-                // idioma següent
-                String[] codis = GestorIdioma.getIdiomasCodi();
-                for (int i = 0; i < codis.length; i++) {
-                    if (codis[i].equals(GestorIdioma.getIdioma())) {
-                        GestorIdioma.setIdioma(codis[(i + 1) % codis.length]);
-                        actualitzaTextosIdioma();
-                        break;
-                    }
-                }
             }
             return;
         }
@@ -515,7 +495,7 @@ public class Joc extends Motor {
             if (opcioMenuInicial == 0) {
                 opcioPersonatge = 0;
                 estat = Estat.SELECCIO_PERSONATGE;
-            } else if (opcioMenuInicial == 4) {
+            } else if (opcioMenuInicial == 3) {
                 corrent = false;
             }
             return;

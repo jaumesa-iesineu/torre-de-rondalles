@@ -826,7 +826,7 @@ public class Renderitzador { // classe per gestionar la pantalla
                     new TextCharacter(subtitol.charAt(j), TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
         }
 
-        // opcions del menú (5 opcions: 0=Iniciar, 1=Música, 2=SFX, 3=Idioma, 4=Sortir)
+        // opcions del menú (4 opcions: 0=Iniciar, 1=Música, 2=SFX, 3=Sortir)
         int oy = cy + 1;
         for (int i = 0; i < opcions.length; i++) {
             boolean sel = (i == opcioSeleccionada);
@@ -855,15 +855,6 @@ public class Renderitzador { // classe per gestionar la pantalla
                 if (sel) {
                     TextColor grisAjuda = new TextColor.RGB(100, 100, 100);
                     String ajuda = "[ ← → ] ajustar";
-                    pintaText(cx - ajuda.length() / 2, oy + i * 2 + 1, ajuda, grisAjuda);
-                }
-            } else if (i == 3) {
-                // Idioma
-                text = prefix + com.iessineu.rondalles.joc.GestorIdioma.t("menuIdioma") + ":  "
-                        + com.iessineu.rondalles.joc.GestorIdioma.getNomIdioma();
-                if (sel) {
-                    TextColor grisAjuda = new TextColor.RGB(100, 100, 100);
-                    String ajuda = "[ ← → ] canviar";
                     pintaText(cx - ajuda.length() / 2, oy + i * 2 + 1, ajuda, grisAjuda);
                 }
             } else if (i == 0) {
