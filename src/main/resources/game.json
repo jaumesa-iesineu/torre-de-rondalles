@@ -17,11 +17,14 @@
         "penalitzacioVelNormal": 1,
         "penalitzacioVelPesat": 2,
         "pctSortRondalla": 15,
-        "bonusEvasioLleugera": 20
+        "bonusEvasioLleugera": 20,
+        "pctFugir": 50,
+        "pctEsquivar": 40
     },
     "controls": {
         "atacar": "a",
         "fugir": "f",
+        "esquivar": "d",
         "inventari": "i",
         "interactuar": "e",
         "mourePes": "m"

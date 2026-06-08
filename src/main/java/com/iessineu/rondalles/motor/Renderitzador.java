@@ -623,6 +623,7 @@ public class Renderitzador { // classe per gestionar la pantalla
             if (nomTallat.length() > maxNom) nomTallat = nomTallat.substring(0, Math.max(0, maxNom));
             pintaText(cHud, fHud++, prefix + nomTallat + quant, slot.item().getColor());
         }
+        pintaText(cHud, fHud++, "[ D ]  Esquivar", gris2);
         pintaText(cHud, fHud, "[ F ]  Fugir", gris2);
 
         //--- CAIXA DE LOG (amplada total, sota tot) ---

@@ -343,6 +343,7 @@ public class PartidaRepository {
         try (PreparedStatement ps = conn.prepareStatement("INSERT INTO controls VALUES (?,?)")) {
             desaAccio(ps, "atacar", ctrl.atacar);
             desaAccio(ps, "fugir", ctrl.fugir);
+            desaAccio(ps, "esquivar", ctrl.esquivar);
             desaAccio(ps, "inventari", ctrl.inventari);
             desaAccio(ps, "interactuar", ctrl.interactuar);
             desaAccio(ps, "mourePes", ctrl.mourePes);
@@ -816,6 +817,7 @@ public class PartidaRepository {
         ConfigGame.ControlsConfig ctrl = new ConfigGame.ControlsConfig();
         ctrl.atacar = caracter(accions, "atacar", ctrl.atacar);
         ctrl.fugir = caracter(accions, "fugir", ctrl.fugir);
+        ctrl.esquivar = caracter(accions, "esquivar", ctrl.esquivar);
         ctrl.inventari = caracter(accions, "inventari", ctrl.inventari);
         ctrl.interactuar = caracter(accions, "interactuar", ctrl.interactuar);
         ctrl.mourePes = caracter(accions, "mourePes", ctrl.mourePes);

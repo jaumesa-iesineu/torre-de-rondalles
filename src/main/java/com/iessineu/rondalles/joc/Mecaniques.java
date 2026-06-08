@@ -12,6 +12,8 @@ public class Mecaniques {
     public static int penalitzacioVelPesat = 2;
     public static int pctSortRondalla = 15;
     public static int bonusEvasioLleugera = 20;
+    public static int pctFugir = 50;
+    public static int pctEsquivar = 40;
 
     public static void inicialitza(ConfigGame.Configuracio cfg) {
         if (cfg == null) return;
@@ -25,5 +27,7 @@ public class Mecaniques {
         penalitzacioVelPesat = cfg.penalitzacioVelPesat;
         pctSortRondalla = cfg.pctSortRondalla;
         bonusEvasioLleugera = cfg.bonusEvasioLleugera;
+        pctFugir = cfg.pctFugir;
+        pctEsquivar = cfg.pctEsquivar;
     }
 }

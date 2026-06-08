@@ -25,6 +25,12 @@ public class SistemaCombat {
         return dany;
     }
 
+    public static int atacaJugadorSenseEsquiva(Enemic enemic, Jugador jugador) {
+        int dany = calculaDany(enemic.getAtacEfectiu(), jugador.getDefensaTotal());
+        jugador.rebreDany(dany);
+        return dany;
+    }
+
     public static String tickEnemics(Enemic enemic) {
         StringBuilder sb = new StringBuilder();
         String nom = enemic.getNom().toUpperCase();

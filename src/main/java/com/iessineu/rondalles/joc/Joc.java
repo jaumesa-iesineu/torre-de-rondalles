@@ -698,11 +698,42 @@ public class Joc extends Motor {
             return;
         }
         if (Controls.esFugir(c)) {
-            enemicCombat = null;
+            if (java.util.concurrent.ThreadLocalRandom.current().nextInt(100) < Mecaniques.pctFugir) {
+                enemicCombat = null;
+                GestorMusica.reprodueix("PIS_" + Math.min(pisActual, 5));
+                afegeixLog("Has aconseguit fugir!");
+                estat = Estat.MON;
+            } else {
+                String nom = enemicCombat.getNom().toUpperCase();
+                int danyRebut = atacaDirecteJugador(enemicCombat);
+                if (danyRebut == -1) {
+                    afegeixLog("No has pogut fugir! " + nom + " t'ha atacat però el mode god t'ha protegit.");
+                } else {
+                    afegeixLog("No has pogut fugir! " + nom + " t'ha atacat i has rebut " + danyRebut + " de dany.");
+                }
+                if (jugador.esMort()) {
+                    iniciaGameOver(enemicCombat);
+                }
+            }
+            return;
+        }
 
-            GestorMusica.reprodueix("PIS_" + Math.min(pisActual, 5));
-
-            estat = Estat.MON;
+        if (Controls.esEsquivar(c)) {
+            String nom = enemicCombat.getNom().toUpperCase();
+            if (java.util.concurrent.ThreadLocalRandom.current().nextInt(100) < Mecaniques.pctEsquivar) {
+                afegeixLog("Has esquivat l'atac de " + nom + "!");
+            } else {
+                int danyRebut = atacaDirecteJugador(enemicCombat);
+                if (danyRebut == -1) {
+                    afegeixLog("Has intentat esquivar però el mode god t'ha protegit.");
+                } else {
+                    afegeixLog("No has pogut esquivar! " + nom + " t'ha impactat i has rebut " + danyRebut + " de dany.");
+                }
+                if (jugador.esMort()) {
+                    iniciaGameOver(enemicCombat);
+                    return;
+                }
+            }
             return;
         }
 
@@ -1026,6 +1057,11 @@ public class Joc extends Motor {
     private int atacaJugadorAmbGod(Enemic enemic) {
         if (godMode) return -1;
         return SistemaCombat.atacaJugador(enemic, jugador);
+    }
+
+    private int atacaDirecteJugador(Enemic enemic) {
+        if (godMode) return -1;
+        return SistemaCombat.atacaJugadorSenseEsquiva(enemic, jugador);
     }
 
     private void aplicaAtacSorpresa() {

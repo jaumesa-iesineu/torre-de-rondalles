@@ -48,6 +48,8 @@ public class ConfigGame {
         public int penalitzacioVelPesat = 2;
         public int pctSortRondalla = 15;
         public int bonusEvasioLleugera = 20;
+        public int pctFugir = 50;
+        public int pctEsquivar = 40;
     }
 
     //definició d'un tipus de terra des del JSON
@@ -69,6 +71,7 @@ public class ConfigGame {
     public static class ControlsConfig {
         public char atacar = 'a';
         public char fugir = 'f';
+        public char esquivar = 'd';
         public char inventari = 'i';
         public char interactuar = 'e';
         public char mourePes = 'm';
