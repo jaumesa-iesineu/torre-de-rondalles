@@ -1,0 +1,9 @@
+{
+  "items": {
+    "posicions": [
+      { "mapa": "planta1", "id": "pocio-vida", "x": 14, "y": 2 },
+      { "mapa": "planta1", "id": "pocio-vida", "x": 15, "y": 2 },
+      { "mapa": "planta1", "id": "espasa-cavaller", "x": 14, "y": 3 }
+    ]
+  }
+}
