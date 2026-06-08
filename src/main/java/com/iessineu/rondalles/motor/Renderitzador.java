@@ -1134,4 +1134,59 @@ public class Renderitzador { // classe per gestionar la pantalla
         screen.refresh();
     }
 
+    public void dibuixaVictoria(PantallaVictoria pantalla, int caractersVisibles,
+            boolean animacioAcabada, String[] opcions, int opcioSeleccionada) throws IOException {
+        screen.clear();
+        int cols = screen.getTerminalSize().getColumns();
+        int files = screen.getTerminalSize().getRows();
+
+        TextColor daurat = new TextColor.RGB(255, 215, 0);
+        TextColor blanc  = new TextColor.RGB(220, 220, 180);
+        TextColor brill  = new TextColor.RGB(255, 255, 120);
+
+        String titol = pantalla.getTitol();
+        int titolY = Math.max(2, files / 8);
+        pintaText((cols - titol.length()) / 2, titolY, titol, daurat);
+
+        String sep = "*".repeat(Math.min(cols - 4, titol.length() + 4));
+        pintaText((cols - sep.length()) / 2, titolY + 1, sep, new TextColor.RGB(180, 140, 0));
+
+        String[] liniesText = pantalla.getLiniesText();
+        int ampleText = 0;
+        for (String l : liniesText) if (l.length() > ampleText) ampleText = l.length();
+        int textY = titolY + 4;
+        int consumits = 0;
+        for (int i = 0; i < liniesText.length; i++) {
+            String linia = liniesText[i];
+            if (textY + i >= files - 2) break;
+            if (caractersVisibles <= consumits) break;
+            int carLinia = Math.min(linia.length(), caractersVisibles - consumits);
+            if (carLinia > 0)
+                pintaText((cols - ampleText) / 2, textY + i, linia.substring(0, carLinia), blanc);
+            consumits += linia.length() + 1;
+        }
+
+        String[] liniesArt = pantalla.getLiniesArt();
+        int artY = textY + liniesText.length + 2;
+        int ampleArt = 0;
+        for (String l : liniesArt) if (l.length() > ampleArt) ampleArt = l.length();
+        for (int i = 0; i < liniesArt.length; i++) {
+            if (artY + i >= files - 2) break;
+            pintaText((cols - ampleArt) / 2, artY + i, liniesArt[i], daurat);
+        }
+
+        if (animacioAcabada) {
+            int oy = Math.min(files - opcions.length - 2,
+                     Math.max(artY + liniesArt.length + 2, files / 2 + 2));
+            for (int i = 0; i < opcions.length; i++) {
+                String prefix = (i == opcioSeleccionada) ? " > " : "   ";
+                String text = prefix + opcions[i];
+                TextColor color = (i == opcioSeleccionada)
+                        ? TextColor.ANSI.YELLOW_BRIGHT : TextColor.ANSI.WHITE;
+                pintaText((cols - text.length()) / 2, oy + i * 2, text, color);
+            }
+        }
+        screen.refresh();
+    }
+
 }

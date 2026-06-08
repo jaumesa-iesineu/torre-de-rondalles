@@ -1,0 +1,31 @@
+{
+    "titol": "  *  VICTORIA!  *  ",
+    "text": [
+        "Ho has aconseguit, valent aventurer!",
+        "Has pujat tota la Torre de Rondalles",
+        "i vencut tots els perills que t'esperaven.",
+        " ",
+        "Les rondalles mallorquines t'acompanyaran",
+        "per sempre en el teu cami."
+    ],
+    "art": [
+        "     *    *    *    *    *    *    ",
+        "  ^     ^     ^     ^     ^     ^  ",
+        "     *    *    *    *    *    *    ",
+        "                                  ",
+        "           +==========+           ",
+        "          +) +======+ (+)          ",
+        "          |  | +==+ |  |          ",
+        "          |  | |^^| |  |          ",
+        "          |  | +==+ |  |          ",
+        "          |  +======+  |          ",
+        "          +============+          ",
+        "          |  CONQUERIDA |          ",
+        "          +============+          ",
+        "          |   TORRE DE |          ",
+        "          |  RONDALLES |          ",
+        "         =+============+=         ",
+        "        |                |        ",
+        "        +================+        "
+    ]
+}

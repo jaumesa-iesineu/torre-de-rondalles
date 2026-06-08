@@ -303,6 +303,16 @@
                 "LEFT",
                 "G"
             ]
+        },
+        {
+            "accio": "victoria",
+            "sequencia": [
+                "UP",
+                "UP",
+                "DOWN",
+                "DOWN",
+                "V"
+            ]
         }
     ],
     "texts": {

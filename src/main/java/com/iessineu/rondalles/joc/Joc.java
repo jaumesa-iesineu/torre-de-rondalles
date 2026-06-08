@@ -31,6 +31,8 @@ import com.iessineu.rondalles.motor.Estat;
 import com.iessineu.rondalles.motor.Motor;
 import com.iessineu.rondalles.motor.PantallaGameOver;
 import com.iessineu.rondalles.motor.CarregadorPantallaGameOver;
+import com.iessineu.rondalles.motor.PantallaVictoria;
+import com.iessineu.rondalles.motor.CarregadorPantallaVictoria;
 import com.iessineu.rondalles.motor.Renderitzador;
 import com.iessineu.rondalles.joc.Mecaniques;
 
@@ -102,6 +104,15 @@ public class Joc extends Motor {
     private static final int CPS_GAME_OVER = 35;
     private int opcioGameOver = 0;
     private String[] opcionsGameOver = {"Torna a començar", "Sortir"};
+
+    // --- Victoria ---
+    private static final int CPS_VICTORIA = 40;
+    private PantallaVictoria pantallaVictoria;
+    private boolean animantVictoria;
+    private int caractersVisiblesVictoria;
+    private long iniciAnimacioVictoria;
+    private int opcioVictoria;
+    private String[] opcionsVictoria = {"Sortir"};
 
     private int maxLog = 3;
     private boolean jugadorIniciaCombat = false;
@@ -248,7 +259,7 @@ public class Joc extends Motor {
     @Override
     protected boolean estaAnimant() {
         //mentre es juga l'animacio typewriter del game over volem un bucle no bloquejant
-        return lliscantGel || animantGameOver;
+        return lliscantGel || animantGameOver || animantVictoria;
     }
     
     private void amagaTerrenyEspecial() {
@@ -343,6 +354,11 @@ public class Joc extends Motor {
 
         if (estat == Estat.GAME_OVER) {
             gestionaGameOver(tecla);
+            return;
+        }
+
+        if (estat == Estat.VICTORIA) {
+            gestionaVictoria(tecla);
             return;
         }
 
@@ -1088,6 +1104,7 @@ public class Joc extends Motor {
                 godMode = !godMode;
                 afegeixLog(">>> CHETO: God mode " + (godMode ? "ON" : "OFF") + "!");
             }
+            case "victoria" -> iniciaVictoria();
         }
     }
 
@@ -1095,7 +1112,7 @@ public class Joc extends Motor {
         pisActual++;
         if (pisActual > config.mapes.ordre.size()) {
             GestorMusica.reprodueix("VICTORIA");
-            estat = Estat.VICTORIA;
+            iniciaVictoria();
             return;
         }
         try {
@@ -1649,6 +1666,11 @@ public class Joc extends Motor {
                         opcioGameOver);
                 return;
             }
+            if (estat == Estat.VICTORIA) {
+                renderer.dibuixaVictoria(pantallaVictoria, caractersVisiblesVictoria,
+                        !animantVictoria, opcionsVictoria, opcioVictoria);
+                return;
+            }
             if (estat == Estat.MENU_INICIAL) {
                 renderer.dibuixaMenuInicial(opcioMenuInicial, opcionsInicials);
                 return;
@@ -1886,5 +1908,48 @@ public class Joc extends Motor {
             System.err.println("[REINICI] Error reiniciant la partida: " + ex.getMessage());
             corrent = false;
         }
+    }
+
+    // --- Victoria ---
+
+    private void iniciaVictoria() {
+        PantallaVictoria vic = CarregadorPantallaVictoria.carrega("victoria/victoria.json");
+        pantallaVictoria = vic != null ? vic : new PantallaVictoria(
+            "VICTORIA!",
+            new String[]{"Enhorabona! Has completat la Torre de Rondalles!"},
+            new String[]{"  ***  "}
+        );
+        iniciAnimacioVictoria = System.currentTimeMillis();
+        caractersVisiblesVictoria = 0;
+        animantVictoria = true;
+        opcioVictoria = 0;
+        estat = Estat.VICTORIA;
+    }
+
+    private void gestionaVictoria(KeyStroke tecla) {
+        if (pantallaVictoria == null) {
+            corrent = false;
+            return;
+        }
+
+        if (animantVictoria) {
+            long delta = System.currentTimeMillis() - iniciAnimacioVictoria;
+            int nousVisibles = (int) ((long) delta * CPS_VICTORIA / 1000L);
+            int total = pantallaVictoria.totalCaracters();
+            if (nousVisibles >= total) {
+                caractersVisiblesVictoria = total;
+                animantVictoria = false;
+            } else {
+                caractersVisiblesVictoria = nousVisibles;
+            }
+            return;
+        }
+        if (tecla == null) return;
+        if (tecla.getKeyType() == KeyType.ArrowUp)
+            opcioVictoria = (opcioVictoria + opcionsVictoria.length - 1) % opcionsVictoria.length;
+        else if (tecla.getKeyType() == KeyType.ArrowDown)
+            opcioVictoria = (opcioVictoria + 1) % opcionsVictoria.length;
+        else if (tecla.getKeyType() == KeyType.Enter)
+            corrent = false;
     }
 }
