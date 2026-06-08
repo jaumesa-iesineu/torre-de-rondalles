@@ -1,18 +1,24 @@
 package com.iessineu.rondalles.audio;
 
 import com.iessineu.rondalles.joc.ConfigGame;
+import javazoom.jl.player.Player;
+
+import javax.sound.sampled.*;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import javax.sound.sampled.*;
-import java.net.URL;
 
 public class GestorMusica {
 
     private static Clip clipActual = null;
-    private static boolean silenciat = false;
+    private static Thread threadMp3 = null;
+    private static volatile boolean reproduint = false;
+    private static volatile boolean silenciat = false;
     private static String pistaActual = null;
     private static final Map<String, String> pistes = new HashMap<>();
-    private static float volum = 0.75f; // 0.0 - 1.0
+    private static float volum = 0.75f;
 
     public static void inicialitza(ConfigGame.MusicaConfig cfg) {
         pistes.clear();
@@ -31,9 +37,7 @@ public class GestorMusica {
 
     public static void reprodueix(String nomPista) {
         pistaActual = nomPista;
-
         if (silenciat) return;
-
         atura();
 
         String fitxer = pistes.get(nomPista);
@@ -42,34 +46,62 @@ public class GestorMusica {
             return;
         }
 
-        try {
-            URL url = GestorMusica.class
-                    .getClassLoader()
-                    .getResource("audio/" + fitxer);
-
-            if (url == null) {
-                System.out.println("No s'ha trobat l'arxiu de so: " + fitxer);
-                return;
-            }
-
-            AudioInputStream ais = AudioSystem.getAudioInputStream(url);
-            clipActual = AudioSystem.getClip();
-            clipActual.open(ais);
-            ais.close(); // el Clip ja ha llegit les dades, podem tancar el stream
-            aplicaVolum();
-            clipActual.loop(Clip.LOOP_CONTINUOUSLY);
-            clipActual.start();
-
-        } catch (Exception e) {
-            System.out.println("Error reproduint música: " + e.getMessage());
+        if (fitxer.toLowerCase().endsWith(".mp3")) {
+            reprodueixMp3("audio/" + fitxer);
+        } else {
+            reprodueixWav("audio/" + fitxer);
         }
     }
 
+    private static void reprodueixWav(String path) {
+        try {
+            URL url = GestorMusica.class.getClassLoader().getResource(path);
+            if (url == null) { System.out.println("No s'ha trobat: " + path); return; }
+            AudioInputStream ais = AudioSystem.getAudioInputStream(url);
+            clipActual = AudioSystem.getClip();
+            clipActual.open(ais);
+            ais.close();
+            aplicaVolum();
+            clipActual.loop(Clip.LOOP_CONTINUOUSLY);
+            clipActual.start();
+        } catch (Exception e) {
+            System.out.println("Error WAV: " + e.getMessage());
+        }
+    }
+
+    private static void reprodueixMp3(String path) {
+        reproduint = true;
+        threadMp3 = new Thread(() -> {
+            while (reproduint && !Thread.currentThread().isInterrupted()) {
+                try {
+                    InputStream is = GestorMusica.class.getClassLoader().getResourceAsStream(path);
+                    if (is == null) { System.out.println("No s'ha trobat: " + path); return; }
+                    Player player = new Player(new BufferedInputStream(is));
+                    player.play();
+                    player.close();
+                    is.close();
+                } catch (javazoom.jl.decoder.JavaLayerException e) {
+                    if (reproduint) System.out.println("Error MP3: " + e.getMessage());
+                    break;
+                } catch (Exception e) {
+                    break;
+                }
+            }
+        });
+        threadMp3.setDaemon(true);
+        threadMp3.start();
+    }
+
     public static void atura() {
+        reproduint = false;
         if (clipActual != null) {
             if (clipActual.isRunning()) clipActual.stop();
             clipActual.close();
             clipActual = null;
+        }
+        if (threadMp3 != null) {
+            threadMp3.interrupt();
+            threadMp3 = null;
         }
     }
 

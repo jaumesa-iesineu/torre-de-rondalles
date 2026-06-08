@@ -27,15 +27,15 @@
         "mourePes": "m"
     },
     "musica": {
-        "menu": "menu.wav",
-        "pis_1": "pis1.wav",
-        "pis_2": "pis2.wav",
-        "pis_3": "pis3.wav",
-        "pis_4": "pis4.wav",
-        "pis_5": "pis5.wav",
-        "combat": "combat.wav",
-        "boss": "boss.wav",
-        "victoria": "victoria.wav",
+        "menu": "menu.mp3",
+        "pis_1": "pis1.mp3",
+        "pis_2": "pis2.mp3",
+        "pis_3": "pis3.mp3",
+        "pis_4": "pis4.mp3",
+        "pis_5": "pis5.mp3",
+        "combat": "combat.mp3",
+        "boss": "boss.mp3",
+        "victoria": "victoria.mp3",
         "gameOver": "gameover.wav"
     },
     "simbols": {
@@ -190,13 +190,13 @@
         "pesMaxim": 50
     },
     "sfx": {
-        "ATAC_JUGADOR": "sfx/atac_jugador.mp3",
-        "ATAC_ENEMIC": "sfx/atac_enemic.mp3",
-        "MORT_ENEMIC": "sfx/mort_enemic.mp3",
-        "MORT_JUGADOR": "sfx/mort_jugador.mp3",
-        "ESQUIVAT": "sfx/esquivat.mp3",
-        "RECULL_ITEM": "sfx/recull_item.mp3",
-        "PORTA_OBERTA": "sfx/porta_oberta.mp3"
+        "ATAC_JUGADOR": "sfx/atac_jugador.wav",
+        "ATAC_ENEMIC": "sfx/atac_enemic.wav",
+        "MORT_ENEMIC": "sfx/mort_enemic.wav",
+        "MORT_JUGADOR": "sfx/mort_jugador.wav",
+        "ESQUIVAT": "sfx/esquivat.wav",
+        "RECULL_ITEM": "sfx/recull_item.wav",
+        "PORTA_OBERTA": "sfx/porta_oberta.wav"
     },
     "enigmes": [
         {

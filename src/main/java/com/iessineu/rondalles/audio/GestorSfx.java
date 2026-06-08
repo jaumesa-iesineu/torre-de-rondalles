@@ -1,5 +1,6 @@
 package com.iessineu.rondalles.audio;
 
+import javax.sound.sampled.*;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -28,16 +29,24 @@ public class GestorSfx {
 
     public static void reprodueix(String clau) {
         if (mut) return;
-        // cerca primer la variant per personatge, si no la genèrica
         String fitxer = fitxers.getOrDefault(clau + "_" + personatgeId, fitxers.get(clau));
         if (fitxer == null) return;
         pool.submit(() -> {
             try {
                 InputStream is = GestorSfx.class.getClassLoader().getResourceAsStream(fitxer);
                 if (is == null) return;
-                javazoom.jl.player.Player player = new javazoom.jl.player.Player(new BufferedInputStream(is));
-                player.play();
-                player.close();
+                if (fitxer.toLowerCase().endsWith(".mp3")) {
+                    javazoom.jl.player.Player player = new javazoom.jl.player.Player(new BufferedInputStream(is));
+                    player.play();
+                    player.close();
+                } else {
+                    AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(is));
+                    Clip clip = AudioSystem.getClip();
+                    clip.open(ais);
+                    clip.start();
+                    while (clip.isRunning()) Thread.sleep(20);
+                    clip.close();
+                }
             } catch (Exception ignored) {}
         });
     }
