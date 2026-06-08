@@ -123,6 +123,7 @@ public class Joc extends Motor {
     public List<int[]> enemicsMorts = new ArrayList<>();
     public boolean[][] explorat;
     private String[] opcionsPausa = {"Reanudar", "Guardar", "Carregar", "Sortir"};
+    private boolean silenci = false;
 
     public Joc(String fitxerMapa) {
         this.fitxerMapa = fitxerMapa;
