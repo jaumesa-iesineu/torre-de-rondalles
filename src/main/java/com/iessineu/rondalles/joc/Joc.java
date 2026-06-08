@@ -241,7 +241,12 @@ public class Joc extends Motor {
         }
 
         boolean teTipusPersonatge = config != null && config.tipusPersonatge != null && !config.tipusPersonatge.isEmpty();
-        jugador = creaJugador(trobaInicialX(), trobaInicialY());
+        jugador = creaJugador(trobaSpawnX(), trobaSpawnY());
+        if (!teTipusPersonatge) {
+            String nomDefault = (config != null && config.jugador != null && config.jugador.nom != null)
+                    ? config.jugador.nom : "AVENTURER";
+            renderer.setNomPersonatge(nomDefault);
+        }
         enemics = new ArrayList<>();
         carregaEnemics();
         for (Enemic e : enemics) e.setTotsEnemics(enemics);
@@ -251,6 +256,9 @@ public class Joc extends Motor {
         if (!teTipusPersonatge) carregaEquipamentInicial();
         carregaArtJugador();
         renderer.setArtJugador(artJugador);
+        if (config != null && config.jugador != null && config.jugador.artAsciiEsquena != null) {
+            renderer.setArtJugadorEsquena(config.jugador.artAsciiEsquena);
+        }
 
         explorat = new boolean[mapa.getAlcada()][mapa.getAmplada()];
         mapaRecord = new char[mapa.getAlcada()][mapa.getAmplada()];
@@ -303,7 +311,7 @@ public class Joc extends Motor {
                     logCombat.clear();
                     afegeixLog("Combat amb " + enmig.getNom().toUpperCase() + "!");
                     estat = Estat.COMBAT;
-                    GestorMusica.reprodueix(esBoss(enmig) ? "BOSS" : "COMBAT");
+                    GestorMusica.reprodueix(enmig.isBoss() ? "BOSS" : "COMBAT");
                     aplicaAtacSorpresa();
                 } else {
                     TipusTerra tt = TipusTerra.de(terraDesti);
@@ -387,7 +395,7 @@ public class Joc extends Motor {
         }
 
 
-        comprovanChetos(tecla);
+        processaCheto(tecla);
 
         if (estat == Estat.MENU_INICIAL) {
             gestionaMenuInicial(tecla);
@@ -588,8 +596,8 @@ public class Joc extends Motor {
     }
 
     private void iniciaPartida() {
-        int spawnX = trobaInicialX();
-        int spawnY = trobaInicialY();
+        int spawnX = trobaSpawnX();
+        int spawnY = trobaSpawnY();
         ConfigGame.JugadorConfig jc = (config != null) ? config.jugador : null;
         int ms = (jc != null && jc.artAscii != null) ? Math.max(4, jc.artAscii.length) : 4;
         if (personatgeTriat != null) {
@@ -738,7 +746,7 @@ public class Joc extends Motor {
                 afegeixLog(nom + " ha caigut!");
 
                 //guardam ses dades del boss abans de treure'l de la llista
-                boolean eraBoss = esBoss(enemicCombat);
+                boolean eraBoss = enemicCombat.isBoss();
                 int bossX = enemicCombat.getX();
                 int bossY = enemicCombat.getY();
 
@@ -876,7 +884,7 @@ public class Joc extends Motor {
             logCombat.clear();
             afegeixLog("Combat amb " + enemic.getNom().toUpperCase() + "!");
             estat = Estat.COMBAT;
-            GestorMusica.reprodueix(esBoss(enemic) ? "BOSS" : "COMBAT");
+            GestorMusica.reprodueix(enemic.isBoss() ? "BOSS" : "COMBAT");
             aplicaAtacSorpresa();
             return;
         }
@@ -895,7 +903,7 @@ public class Joc extends Motor {
         if (Simbols.esEscalaBaix(simbolDesti)) {
             jugador.setX(nx);
             jugador.setY(ny);
-            passaSeguantPis();
+            avancaPis();
             return;
         }
 
@@ -1027,16 +1035,12 @@ public class Joc extends Motor {
                     logCombat.clear();
                     afegeixLog(e.getNom().toUpperCase() + " t'ataca!");
                     estat = Estat.COMBAT;
-                    GestorMusica.reprodueix(esBoss(e) ? "BOSS" : "COMBAT");
+                    GestorMusica.reprodueix(e.isBoss() ? "BOSS" : "COMBAT");
                     aplicaAtacSorpresa();
                     break;
                 }
             }
         }
-    }
-
-    private boolean esBoss(Enemic e) {
-        return e != null && e.isBoss();
     }
 
     private int atacaJugadorAmbGod(Enemic enemic) {
@@ -1060,7 +1064,7 @@ public class Joc extends Motor {
             afegeixLog("Atac sorpresa! " + nom + " ha rebut " + dany + " de dany.");
             if (enemicCombat.esMort()) {
                 afegeixLog(nom + " ha caigut!");
-                boolean eraBoss = esBoss(enemicCombat);
+                boolean eraBoss = enemicCombat.isBoss();
                 enemics.remove(enemicCombat);
                 if (eraBoss) {
                     try {
@@ -1087,7 +1091,7 @@ public class Joc extends Motor {
         }
     }
 
-    private String teclaANom(KeyStroke tecla) {
+    private String nomTecla(KeyStroke tecla) {
         return switch (tecla.getKeyType()) {
             case ArrowUp -> "UP";
             case ArrowDown -> "DOWN";
@@ -1098,9 +1102,9 @@ public class Joc extends Motor {
         };
     }
 
-    private void comprovanChetos(KeyStroke tecla) {
+    private void processaCheto(KeyStroke tecla) {
         if (config.chetos == null) return;
-        String nom = teclaANom(tecla);
+        String nom = nomTecla(tecla);
         if (nom.isEmpty()) return;
         bufferCheto.addLast(nom);
         if (bufferCheto.size() > MAX_BUFFER_CHETO) bufferCheto.pollFirst();
@@ -1138,7 +1142,7 @@ public class Joc extends Motor {
                 registre.totesLesPocions().keySet().forEach(id -> jugador.getInventari().afegeix(registre.pocio(id)));
                 afegeixLog(">>> CHETO: Inventari ple!");
             }
-            case "nextpis" -> passaSeguantPis();
+            case "nextpis" -> avancaPis();
             case "god" -> {
                 godMode = !godMode;
                 afegeixLog(">>> CHETO: God mode " + (godMode ? "ON" : "OFF") + "!");
@@ -1147,7 +1151,7 @@ public class Joc extends Motor {
         }
     }
 
-    private void passaSeguantPis() {
+    private void avancaPis() {
         guardaEstatPis();
         pisActual++;
         if (pisActual > config.mapes.ordre.size()) {
@@ -1164,8 +1168,8 @@ public class Joc extends Motor {
                 fitxerMapa = mc.fitxer;
             }
             mapa = CarregadorMapa.carrega(fitxerMapa);
-            jugador.setX(trobaInicialX());
-            jugador.setY(trobaInicialY());
+            jugador.setX(trobaSpawnX());
+            jugador.setY(trobaSpawnY());
             enemics.clear();
             itemsMapa.clear();
             npcs.clear();
@@ -1176,7 +1180,7 @@ public class Joc extends Motor {
             carregaPortes();
             carregaNpcs();
 
-            exploraClausPisAnterior();
+            eliminaClausPisAnterior();
 
             explorat = new boolean[mapa.getAlcada()][mapa.getAmplada()];
             mapaRecord = new char[mapa.getAlcada()][mapa.getAmplada()];
@@ -1191,7 +1195,6 @@ public class Joc extends Motor {
         }
     }
 
-    // Guarda l'estat del pis actual per poder tornar-hi
     private void guardaEstatPis() {
         EstatPis ep = new EstatPis();
         ep.mapa = this.mapa;
@@ -1208,26 +1211,19 @@ public class Joc extends Motor {
         estatsPisos.put(this.pisActual, ep);
     }
 
-    // Torna al pis anterior (si n'hi ha) restaurant l'estat guardat
     private void passaPisAnterior() {
         if (pisActual <= 1) return;
-
         guardaEstatPis();
-
         pisActual--;
-
         if (estatsPisos.containsKey(pisActual)) {
             restauraEstatPis(pisActual);
         }
-
         GestorMusica.reprodueix("PIS_" + pisActual);
     }
 
-    // Restaura l'estat guardat d'un pis
     private void restauraEstatPis(int pis) {
         EstatPis ep = estatsPisos.get(pis);
         if (ep == null) return;
-
         this.mapa = ep.mapa;
         this.enemics = ep.enemics;
         for (Enemic e : enemics) e.setTotsEnemics(enemics);
@@ -1238,17 +1234,16 @@ public class Joc extends Motor {
         this.explorat = ep.explorat;
         this.mapaRecord = ep.mapaRecord;
         this.idMapaActual = ep.idMapaActual;
-
         if (mapa.esPasable(ep.jugadorX, ep.jugadorY)) {
             jugador.setX(ep.jugadorX);
             jugador.setY(ep.jugadorY);
         } else {
-            jugador.setX(trobaInicialX());
-            jugador.setY(trobaInicialY());
+            jugador.setX(trobaSpawnX());
+            jugador.setY(trobaSpawnY());
         }
     }
 
-    private void exploraClausPisAnterior() {
+    private void eliminaClausPisAnterior() {
         Inventari inv = jugador.getInventari();
         for (int i = inv.getMaxSlots() - 1; i >= 0; i--) {
             var slot = inv.getSlot(i);
@@ -1260,7 +1255,7 @@ public class Joc extends Motor {
 
     //Bresenham des del jugador fins a (x1,y1); retorna false si una paret talla sa linia
     //ho feim per sa boira de guerra, aixi no veus a traves de ses parets
-    private boolean teLiniaDVista(int x0, int y0, int x1, int y1, char[][] celles) {
+    private boolean teLiniaDeVista(int x0, int y0, int x1, int y1, char[][] celles) {
         int dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0);
         int sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
         int err = dx - dy;
@@ -1352,33 +1347,22 @@ public class Joc extends Motor {
                 if (dist > radiVisio) {
                     continue;
                 }
-                if (teLiniaDVista(jx, jy, x, y, celles)) {
+                if (teLiniaDeVista(jx, jy, x, y, celles)) {
                     visible[y][x] = true;
                     explorat[y][x] = true;
                     mapaRecord[y][x] = celles[y][x];
                 }
             }
         }
-        //items i enemics visibles també es recorden
-        for (ItemMapa im : itemsMapa) {
-            if (visible[im.getY()][im.getX()]) {
-                mapaRecord[im.getY()][im.getX()] = im.getItem().getSimbol();
-            }
-        }
+        //només recordam portes (estructura del món), no items ni enemics ni npcs
         for (Enemic e : enemics) {
             if (e.isActiu() && visible[e.getY()][e.getX()]) {
                 e.setDescobert(true);
-                mapaRecord[e.getY()][e.getX()] = e.getSimbol();
             }
         }
         for (Porta p : portes) {
             if (visible[p.getY()][p.getX()]) {
                 mapaRecord[p.getY()][p.getX()] = p.getSimbol();
-            }
-        }
-        for (NpcComerciants npc : npcs) {
-            if (visible[npc.getY()][npc.getX()]) {
-                mapaRecord[npc.getY()][npc.getX()] = npc.getSimbol();
             }
         }
         return visible;
@@ -1833,7 +1817,7 @@ public class Joc extends Motor {
         }
     }
 
-    private int trobaInicialX() {
+    private int trobaSpawnX() {
         char[][] celles = mapa.getCelles();
         for (int y = 0; y < celles.length; y++) {
             for (int x = 0; x < celles[y].length; x++) {
@@ -1853,7 +1837,7 @@ public class Joc extends Motor {
         return 1;
     }
 
-    private int trobaInicialY() {
+    private int trobaSpawnY() {
         char[][] celles = mapa.getCelles();
         for (int y = 0; y < celles.length; y++) {
             for (int x = 0; x < celles[y].length; x++) {
@@ -1989,7 +1973,7 @@ public class Joc extends Motor {
             mapa = CarregadorMapa.carrega(fitxerMapa);
 
             // jugador provisional (es substitueix a seleccionaPersonatge)
-            jugador = creaJugador(trobaInicialX(), trobaInicialY());
+            jugador = creaJugador(trobaSpawnX(), trobaSpawnY());
 
             // recarregam contingut del pis
             enemics = new ArrayList<>();

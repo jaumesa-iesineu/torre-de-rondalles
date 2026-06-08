@@ -1,0 +1,107 @@
+[
+    {
+        "planta": 1,
+        "dites": [
+            {
+                "nivell": 1,
+                "pregunta": "Qui tot ho vol, tot ho ___",
+                "resposta": "perd"
+            },
+            {
+                "nivell": 2,
+                "pregunta": "Poc a poc s'arriba ___",
+                "resposta": "lluny"
+            },
+            {
+                "nivell": 3,
+                "pregunta": "No hi ha mal que per bé no ___",
+                "resposta": "vengui"
+            }
+        ],
+        "itemsVenda": ["pocio-vida", "pocio-veri", "pocio-foc", "falc-llaurador", "capell-pages", "espardenyes-canem"]
+    },
+    {
+        "planta": 2,
+        "dites": [
+            {
+                "nivell": 1,
+                "pregunta": "Qui no treballa, no ___",
+                "resposta": "menja"
+            },
+            {
+                "nivell": 2,
+                "pregunta": "Menys paraules i més ___",
+                "resposta": "fets"
+            },
+            {
+                "nivell": 3,
+                "pregunta": "A enemics que fugen, ponts ___",
+                "resposta": "d'or"
+            }
+        ],
+        "itemsVenda": ["pocio-vida", "pocio-gel", "pocio-foc", "garrot-olivera", "elm-ferro-oxidat", "cota-malla", "botes-cuir", "calcons-llana"]
+    },
+    {
+        "planta": 3,
+        "dites": [
+            {
+                "nivell": 1,
+                "pregunta": "Qui fa mal, mal ___",
+                "resposta": "trobarà"
+            },
+            {
+                "nivell": 2,
+                "pregunta": "Home adormit, home ___",
+                "resposta": "perdut"
+            },
+            {
+                "nivell": 3,
+                "pregunta": "Qui cerca, ___",
+                "resposta": "troba"
+            }
+        ],
+        "itemsVenda": ["pocio-vida", "pocio-veri", "llanca-pescador", "elm-ferro-oxidat", "cota-malla", "greves-ferro", "botes-cuir", "calcons-llana"]
+    },
+    {
+        "planta": 4,
+        "dites": [
+            {
+                "nivell": 1,
+                "pregunta": "Tant va el càntir a la font que a la ___",
+                "resposta": "fi es trenca"
+            },
+            {
+                "nivell": 2,
+                "pregunta": "Qui no s'arrisca, no ___",
+                "resposta": "pisca"
+            },
+            {
+                "nivell": 3,
+                "pregunta": "El temps és ___",
+                "resposta": "or"
+            }
+        ],
+        "itemsVenda": ["pocio-vida", "pocio-gel", "espasa-cavaller", "casc-cavaller", "cota-malla", "greves-ferro", "botes-ferro", "polaines-encantades"]
+    },
+    {
+        "planta": 5,
+        "dites": [
+            {
+                "nivell": 1,
+                "pregunta": "Qui ven la seva terra, ven la seva ___",
+                "resposta": "mare"
+            },
+            {
+                "nivell": 2,
+                "pregunta": "Val més tard que ___",
+                "resposta": "mai"
+            },
+            {
+                "nivell": 3,
+                "pregunta": "De gra en gra, s'omple la ___",
+                "resposta": "pansa"
+            }
+        ],
+        "itemsVenda": ["pocio-vida", "pocio-vida", "destral-gegant", "espasa-cavaller", "casc-cavaller", "armadura-cuir-drac", "polaines-encantades", "botes-ferro"]
+    }
+]

@@ -1,0 +1,9 @@
+{
+    "ATAC_JUGADOR": "sfx/atac_jugador.wav",
+    "ATAC_ENEMIC": "sfx/atac_enemic.wav",
+    "MORT_ENEMIC": "sfx/mort_enemic.wav",
+    "MORT_JUGADOR": "sfx/mort_jugador.wav",
+    "ESQUIVAT": "sfx/esquivat.wav",
+    "RECULL_ITEM": "sfx/recull_item.wav",
+    "PORTA_OBERTA": "sfx/porta_oberta.wav"
+}

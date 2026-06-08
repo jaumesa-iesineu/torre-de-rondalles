@@ -1,0 +1,14 @@
+{
+    "windowTitle": "torre-de-rondalles",
+    "headerTitle": " TORRE DE RONDALLES  ~  ",
+    "subtitle": "~ Un joc de rondalles mallorquines ~",
+    "menuIniciar": "Iniciar partida",
+    "menuSortir": "Sortir",
+    "menuReanudar": "Reanudar",
+    "menuGuardar": "Guardar",
+    "menuCarregar": "Carregar",
+    "pauseTitle": "  *** PAUSA ***  ",
+    "pauseInstructions": "Fletxes + ENTER per seleccionar",
+    "pauseResumePista": "[ ESC ] Reanudar",
+    "menuTornaAcomencar": "Torna a començar"
+}

@@ -1,0 +1,10 @@
+{
+    "nom": "AVENTURER",
+    "artFitxer": "art/jugador.txt",
+    "artFitxerEsquena": "art/jugador_esquena.txt",
+    "vidaMaxima": 100,
+    "atac": 3,
+    "velocitat": 5,
+    "evasio": 10,
+    "pesMaxim": 50
+}

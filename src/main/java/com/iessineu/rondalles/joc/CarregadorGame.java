@@ -24,13 +24,52 @@ public class CarregadorGame {
         if (is == null) {
             throw new RuntimeException("No s'ha trobat: " + rutaRecurs);
         }
-        ConfigGame config;
+        String json;
         try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-            config = new Gson().fromJson(reader, ConfigGame.class);
+            json = llegeixReader(reader);
         }
+        json = resolveIncludes(json, false);
+        ConfigGame config = new Gson().fromJson(json, ConfigGame.class);
         carregaSubfitxers(config);
         resolgArt(config);
         return config;
+    }
+
+    private static String llegeixReader(Reader reader) throws Exception {
+        StringBuilder sb = new StringBuilder();
+        char[] buf = new char[4096];
+        int n;
+        while ((n = reader.read(buf)) != -1) sb.append(buf, 0, n);
+        return sb.toString();
+    }
+
+    private static String resolveIncludes(String json, boolean extern) {
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile("\"\\$include:([^\"]+)\"");
+        java.util.regex.Matcher m = p.matcher(json);
+        StringBuffer sb = new StringBuffer();
+        while (m.find()) {
+            String fitxer = m.group(1);
+            String contingut = null;
+            try {
+                if (extern && basedir != null) {
+                    java.io.File f = new java.io.File(basedir, fitxer);
+                    if (f.exists()) contingut = java.nio.file.Files.readString(f.toPath(), StandardCharsets.UTF_8);
+                }
+                if (contingut == null) {
+                    InputStream inc = CarregadorGame.class.getClassLoader().getResourceAsStream(fitxer);
+                    if (inc != null) {
+                        try (Reader r = new InputStreamReader(inc, StandardCharsets.UTF_8)) {
+                            contingut = llegeixReader(r);
+                        }
+                    }
+                }
+            } catch (Exception ignored) {}
+            m.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(
+                contingut != null ? contingut.trim() : "null"
+            ));
+        }
+        m.appendTail(sb);
+        return sb.toString();
     }
 
     private static void carregaSubfitxers(ConfigGame config) throws Exception {
@@ -75,14 +114,17 @@ public class CarregadorGame {
     //carrega un JSON extern, fusionant-hi tambe es seus subfitxers si en te (argument -game)
     //un -game pot estar partit en mapes.json, enemics.json... igual que es game.json de dins
     public static ConfigGame carregaFitxerExtern(String ruta, boolean ambSubfitxers) throws Exception {
+        String json;
         try (Reader reader = new InputStreamReader(new FileInputStream(ruta), StandardCharsets.UTF_8)) {
-            ConfigGame config = new Gson().fromJson(reader, ConfigGame.class);
-            if (ambSubfitxers) {
-                carregaSubfitxers(config);
-            }
-            resolgArt(config);
-            return config;
+            json = llegeixReader(reader);
         }
+        json = resolveIncludes(json, true);
+        ConfigGame config = new Gson().fromJson(json, ConfigGame.class);
+        if (ambSubfitxers) {
+            carregaSubfitxers(config);
+        }
+        resolgArt(config);
+        return config;
     }
 
     //aplica un mod sobre una config base: els camps del mod sobreescriuen els de la base (last wins)
@@ -200,6 +242,9 @@ public class CarregadorGame {
         }
         if (config.jugador != null && config.jugador.artFitxer != null && !config.jugador.artFitxer.isBlank()) {
             config.jugador.artAscii = carregaArt(config.jugador.artFitxer);
+        }
+        if (config.jugador != null && config.jugador.artFitxerEsquena != null && !config.jugador.artFitxerEsquena.isBlank()) {
+            config.jugador.artAsciiEsquena = carregaArt(config.jugador.artFitxerEsquena);
         }
     }
 
