@@ -123,20 +123,21 @@ public class Joc extends Motor {
     public List<int[]> enemicsMorts = new ArrayList<>();
     public boolean[][] explorat;
     private String[] opcionsPausa = {"Reanudar", "Guardar", "Carregar", "Sortir"};
+    private boolean silenci = false;
 
     public Joc(String fitxerMapa) {
         this.fitxerMapa = fitxerMapa;
     }
 
-    public Joc(String fitxerMapa, boolean mut) {
+    public Joc(String fitxerMapa, boolean silenci) {
         this.fitxerMapa = fitxerMapa;
-        this.mut = mut;
+        this.silenci = silenci;
     }
 
     //constructor principal: rep sa config ja construida i fusionada (amb -game i tots els -mod aplicats)
-    public Joc(ConfigGame configExterna, boolean mut) {
+    public Joc(ConfigGame configExterna, boolean silenci) {
         this.config = configExterna;
-        this.mut = mut;
+        this.silenci = silenci;
         //es mapa inicial ve de la config; s'acabara de resoldre a init()
         this.fitxerMapa = configExterna.getMapaInicial();
     }
@@ -190,8 +191,11 @@ public class Joc extends Motor {
 
         //carregam les pistes de música des del JSON
         GestorMusica.inicialitza(config != null ? config.musica : null);
+        if (silenci && !GestorMusica.estaSilenciat()) {
+            GestorMusica.toggleSilenci();
+        }
         com.iessineu.rondalles.audio.GestorSfx.inicialitza(config != null ? config.sfx : null);
-        com.iessineu.rondalles.audio.GestorSfx.setMut(mut);
+        com.iessineu.rondalles.audio.GestorSfx.setSilenci(silenci);
 
         //carregam les constants des del JSON
         Mecaniques.inicialitza(config != null ? config.configuracio : null);

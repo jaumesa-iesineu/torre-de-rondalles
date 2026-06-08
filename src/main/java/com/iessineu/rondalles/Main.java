@@ -37,7 +37,7 @@ public class Main {
 
         String fitxerGame = null;
         List<String> fitxersMod = new ArrayList<>();
-        boolean mut = false;
+        boolean silenci = false;
 
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
@@ -47,7 +47,7 @@ public class Main {
                 case "-mod", "-m" -> {
                     if (i + 1 < args.length) fitxersMod.add(args[++i]);
                 }
-                case "-mute" -> mut = true;
+                case "-mute" -> silenci = true;
             }
         }
 
@@ -72,7 +72,7 @@ public class Main {
             }
         }
 
-        Joc joc = new Joc(config, mut);
+        Joc joc = new Joc(config, silenci);
         joc.start();
     }
 }
