@@ -13,6 +13,7 @@ import java.util.Map;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.iessineu.rondalles.audio.GestorMusica;
+import com.iessineu.rondalles.audio.GestorSfx;
 import com.iessineu.rondalles.joc.GestorIdioma;
 import com.iessineu.rondalles.combat.SistemaCombat;
 import com.iessineu.rondalles.entitats.Enemic;
@@ -77,7 +78,7 @@ public class Joc extends Motor {
     // opcions: 0=Iniciar, 1=Música (slider), 2=Idioma, 3=Sortir
     private int opcioMenuInicial = 0;
     private static final int MENU_OPCIONS = 4;
-    private String[] opcionsInicials = {"Iniciar partida", "Música", "Idioma", "Sortir"};
+    private String[] opcionsInicials = {"Iniciar partida", "Música", "SFX", "Sortir"};
 
     // --- Selecció i creació de personatge ---
     private int opcioPersonatge = 0;
@@ -234,7 +235,7 @@ public class Joc extends Motor {
             renderer.setPauseTitle(t.pauseTitle);
             renderer.setPauseInstructions(t.pauseInstructions);
             renderer.setPauseResumePista(t.pauseResumePista);
-            opcionsInicials = new String[]{t.menuIniciar, t.menuSortir};
+            opcionsInicials = new String[]{t.menuIniciar, "Música", "SFX", t.menuSortir};
             opcionsPausa = new String[]{t.menuReanudar, t.menuGuardar, t.menuCarregar, t.menuSortir};
             opcionsGameOver = new String[]{t.menuTornaAcomencar, t.menuSortir};
         }
@@ -326,8 +327,9 @@ public class Joc extends Motor {
 
                         // aplicam mal del terreny actual (ja sigui revelat o no)
                         TipusTerra terraActual = TipusTerra.de(mapa.getCelles()[gy][gx]);
-                        if (terraActual != null && terraActual.getMal() > 0) {
-                            jugador.rebreDany(terraActual.getMal());
+                        if (terraActual != null) {
+                            ultimTerrenyMal = terraActual.getNom();
+                            if (terraActual.getMal() > 0) jugador.rebreDany(terraActual.getMal());
                         }
                     
                         tickTorn();
@@ -344,8 +346,9 @@ public class Joc extends Motor {
                                 terraAmagat[gy][gx] = '\0';
                                 mapa.setCella(gx, gy, simbolReal);
                                 TipusTerra tReal = TipusTerra.de(simbolReal);
-                                if (tReal != null && tReal.getMal() > 0) {
-                                    jugador.rebreDany(tReal.getMal());
+                                if (tReal != null) {
+                                    ultimTerrenyMal = tReal.getNom();
+                                    if (tReal.getMal() > 0) jugador.rebreDany(tReal.getMal());
                                 }
                             }
                         
@@ -466,37 +469,25 @@ public class Joc extends Motor {
         }
         if (tecla.getKeyType() == KeyType.ArrowLeft) {
             if (opcioMenuInicial == 1) {
-                // volum -10%
+                // música -10%
                 float v = Math.max(0f, GestorMusica.getVolum() - 0.1f);
                 GestorMusica.setVolum(v);
             } else if (opcioMenuInicial == 2) {
-                // idioma anterior
-                String[] codis = GestorIdioma.getIdiomasCodi();
-                for (int i = 0; i < codis.length; i++) {
-                    if (codis[i].equals(GestorIdioma.getIdioma())) {
-                        GestorIdioma.setIdioma(codis[(i + codis.length - 1) % codis.length]);
-                        actualitzaTextosIdioma();
-                        break;
-                    }
-                }
+                // sfx -10%
+                float v = Math.max(0f, GestorSfx.getVolum() - 0.1f);
+                GestorSfx.setVolum(v);
             }
             return;
         }
         if (tecla.getKeyType() == KeyType.ArrowRight) {
             if (opcioMenuInicial == 1) {
-                // volum +10%
+                // música +10%
                 float v = Math.min(1f, GestorMusica.getVolum() + 0.1f);
                 GestorMusica.setVolum(v);
             } else if (opcioMenuInicial == 2) {
-                // idioma següent
-                String[] codis = GestorIdioma.getIdiomasCodi();
-                for (int i = 0; i < codis.length; i++) {
-                    if (codis[i].equals(GestorIdioma.getIdioma())) {
-                        GestorIdioma.setIdioma(codis[(i + 1) % codis.length]);
-                        actualitzaTextosIdioma();
-                        break;
-                    }
-                }
+                // sfx +10%
+                float v = Math.min(1f, GestorSfx.getVolum() + 0.1f);
+                GestorSfx.setVolum(v);
             }
             return;
         }
@@ -1898,6 +1889,7 @@ public class Joc extends Motor {
         enemicMortJugador = mort;
         pantallaGameOver = carregaPantallaGameOver(mort);
         ultimTerrenyMal = null; //resetejam per al proxim cop
+        lliscantGel = false; //si mor patinant, aturam sa lliscada
         String titol = pantallaGameOver.getTitol();
         String[] linies = pantallaGameOver.getLiniesText();
         dialogGameOver = new MotorDialog(titol, linies, CPS_GAME_OVER);

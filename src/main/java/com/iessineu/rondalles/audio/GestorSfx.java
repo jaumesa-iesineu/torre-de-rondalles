@@ -19,6 +19,7 @@ public class GestorSfx {
     });
     private static boolean silenci = false;
     private static String personatgeId = "";
+    private static float volum = 0.75f;
 
     public static void inicialitza(Map<String, String> cfg) {
         fitxers.clear();
@@ -48,6 +49,29 @@ public class GestorSfx {
     public static void setSilenci(boolean m) { silenci = m; }
     public static void setPersonatgeId(String id) { personatgeId = id != null ? id : ""; }
 
+    public static void setVolum(float v) {
+        volum = Math.max(0f, Math.min(1f, v));
+    }
+
+    public static float getVolum() { return volum; }
+
+    //aplica el volum global al clip abans de reproduir
+    private static void aplicaVolum(Clip clip) {
+        try {
+            if (clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+                FloatControl gain = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                float dB;
+                if (volum <= 0.001f) {
+                    dB = gain.getMinimum();
+                } else {
+                    dB = 20f * (float) Math.log10(volum);
+                    dB = Math.max(gain.getMinimum(), Math.min(gain.getMaximum(), dB));
+                }
+                gain.setValue(dB);
+            }
+        } catch (Exception ignored) {}
+    }
+
     public static void reprodueix(String clau) {
         if (silenci) return;
         String fitxer = fitxers.getOrDefault(clau + "_" + personatgeId, fitxers.get(clau));
@@ -58,6 +82,7 @@ public class GestorSfx {
         Clip precarregat = clips.get(clauReal);
         if (precarregat != null) {
             precarregat.setFramePosition(0);
+            aplicaVolum(precarregat);
             precarregat.start();
             return;
         }
