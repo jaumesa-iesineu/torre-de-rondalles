@@ -152,13 +152,18 @@ public class Jugador extends Entitat { //el jugador tambe es una entitat
     }
 
     public String usaItem(int index) { //usa l'item del slot indicat (0-based); retorna nom o null
-        if (index < 0 || index >= inventari.getMaxSlots()) {
-            return null;
-        }
-        if (inventari.get(index) == null) {
-            return null;
-        }
+        if (index < 0 || index >= inventari.getMaxSlots()) return null;
         Item item = inventari.get(index);
+        if (item == null) return null;
+        if (item instanceof com.iessineu.rondalles.inventari.Armadura arm) {
+            inventari.equipaArmadura(arm, this);
+            return item.getNom();
+        }
+        if (item instanceof com.iessineu.rondalles.inventari.Arma arma) {
+            inventari.equipaArma(arma, this);
+            return item.getNom();
+        }
+        // pocions, claus i altres: usa i elimina
         item.aplicaEfecte(this);
         pes -= item.getPes();
         inventari.elimina(index);
@@ -212,7 +217,7 @@ public class Jugador extends Entitat { //el jugador tambe es una entitat
         return pes;
     }
 
-    public int getpesMaxim() {
+    public int getPesMaxim() {
         return pesMaxim;
     }
 

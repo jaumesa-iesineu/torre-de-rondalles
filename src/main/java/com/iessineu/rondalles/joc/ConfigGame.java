@@ -142,8 +142,11 @@ public class ConfigGame {
 
     public static class JugadorConfig {
 
+        public String nom;
         public String artFitxer;
         public String[] artAscii;
+        public String artFitxerEsquena;
+        public String[] artAsciiEsquena;
         public int vidaMaxima = 100;
         public int atac = 3;
         public int velocitat = 5;

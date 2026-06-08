@@ -1,0 +1,22 @@
+[
+    {
+        "accio": "hp",
+        "sequencia": ["UP", "UP", "DOWN", "DOWN", "H"]
+    },
+    {
+        "accio": "kills",
+        "sequencia": ["UP", "DOWN", "UP", "DOWN", "K"]
+    },
+    {
+        "accio": "inventari",
+        "sequencia": ["LEFT", "RIGHT", "LEFT", "RIGHT", "I"]
+    },
+    {
+        "accio": "nextpis",
+        "sequencia": ["DOWN", "DOWN", "DOWN", "N"]
+    },
+    {
+        "accio": "god",
+        "sequencia": ["UP", "RIGHT", "DOWN", "LEFT", "G"]
+    }
+]

@@ -1,0 +1,12 @@
+{
+    "menu": "menu.mp3",
+    "pis_1": "pis1.mp3",
+    "pis_2": "pis2.mp3",
+    "pis_3": "pis3.mp3",
+    "pis_4": "pis4.mp3",
+    "pis_5": "pis5.mp3",
+    "combat": "combat.mp3",
+    "boss": "boss.mp3",
+    "victoria": "victoria.mp3",
+    "gameOver": "gameover.wav"
+}

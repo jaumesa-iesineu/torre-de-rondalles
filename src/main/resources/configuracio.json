@@ -1,0 +1,20 @@
+{
+    "mapaInicial": "planta1",
+    "radiLlanterna": 10,
+    "ampleHud": 30,
+    "radiVisio": 10,
+    "msPasGel": 140,
+    "tornsDesorientacioGel": 1,
+    "maxLog": 3,
+    "maxSlotsInventari": 4,
+    "danyVeri": 3,
+    "penalitzacioFoc": 2,
+    "penalitzacioGel": 2,
+    "llindCarregaNormal": 0.5,
+    "llindCarregaPesat": 0.8,
+    "penalitzacioEvasioCarrega": 5,
+    "penalitzacioVelNormal": 1,
+    "penalitzacioVelPesat": 2,
+    "pctSortRondalla": 15,
+    "bonusEvasioLleugera": 20
+}

@@ -1,0 +1,11 @@
+{
+    "mur": ["#"],
+    "portaTancada": ["+"],
+    "portaOberta": ["/"],
+    "portaBloquejada": ["&"],
+    "spawnJugador": ["@"],
+    "escalaBaix": ["<"],
+    "marcadorItem": ["i"],
+    "marcadorPorta": ["P"],
+    "marcadorNpc": ["N"]
+}

@@ -44,6 +44,7 @@ public class Renderitzador { // classe per gestionar la pantalla
     private int ampleHud = 30;
 
     private String[] artJugador;
+    private String[] artJugadorEsquena;
 
     public void setRadiLlanterna(int r) { this.radiLlanterna = r; }
     public void setAmpleHud(int a) { this.ampleHud = a; }
@@ -66,6 +67,10 @@ public class Renderitzador { // classe per gestionar la pantalla
 
     public void setArtJugador(String[] art) {
         this.artJugador = art;
+    }
+
+    public void setArtJugadorEsquena(String[] art) {
+        this.artJugadorEsquena = art;
     }
 
     public Renderitzador() throws IOException {
@@ -191,7 +196,9 @@ public class Renderitzador { // classe per gestionar la pantalla
             }
             double dist = Math.sqrt((e.getX() - jx) * (e.getX() - jx) + (e.getY() - jy) * (e.getY() - jy));
             double factor = 1.0 - (dist / radiLlanterna) * 0.5;
-            screen.setCharacter(sc, sf, new TextCharacter(e.getSimbol(), fosqueix(e.getColor(), factor), fosqueix(fonsCasella(celles[e.getY()][e.getX()]), factor)));
+            TextColor fonsE = (e.getY() < celles.length && e.getX() < celles[e.getY()].length)
+                    ? fosqueix(fonsCasella(celles[e.getY()][e.getX()]), factor) : TextColor.ANSI.BLACK;
+            screen.setCharacter(sc, sf, new TextCharacter(e.getSimbol(), fosqueix(e.getColor(), factor), fonsE));
         }
 
         //ítems del terra (només si visibles)
@@ -209,14 +216,18 @@ public class Renderitzador { // classe per gestionar la pantalla
             }
             double dist = Math.sqrt((im.getX() - jx) * (im.getX() - jx) + (im.getY() - jy) * (im.getY() - jy));
             double factor = 1.0 - (dist / radiLlanterna) * 0.75;
-            screen.setCharacter(sc, sf, new TextCharacter(im.getItem().getSimbol(), fosqueix(im.getItem().getColor(), factor), fosqueix(fonsCasella(celles[im.getY()][im.getX()]), factor)));
+            TextColor fonsIm = (im.getY() < celles.length && im.getX() < celles[im.getY()].length)
+                    ? fosqueix(fonsCasella(celles[im.getY()][im.getX()]), factor) : TextColor.ANSI.BLACK;
+            screen.setCharacter(sc, sf, new TextCharacter(im.getItem().getSimbol(), fosqueix(im.getItem().getColor(), factor), fonsIm));
         }
 
         //jugador sempre verd per damunt de tot
         int psc = 1 + (jx - camX);
         int psf = 3 + (jy - camY);
         if (psc >= 1 && psc < colSep && psf >= 3 && psf < files - 1) {
-            screen.setCharacter(psc, psf, new TextCharacter('@', TextColor.ANSI.GREEN_BRIGHT, fosqueix(fonsCasella(celles[jy][jx]), 1.0)));
+            TextColor fonsJ = (jy < celles.length && jx < celles[jy].length)
+                    ? fonsCasella(celles[jy][jx]) : TextColor.ANSI.BLACK;
+            screen.setCharacter(psc, psf, new TextCharacter('@', TextColor.ANSI.GREEN_BRIGHT, fonsJ));
         }
 
         dibuixaHUD(jugador, colSep + 1, 3, files - 1);
@@ -242,12 +253,12 @@ public class Renderitzador { // classe per gestionar la pantalla
     }
 
     private TextColor fonsCasella(char c) {
-        //si es un tipus de terra, agafam el fons des del JSON
         TipusTerra t = TipusTerra.de(c);
-        if (t != null) {
-            return new TextColor.RGB(t.getFonsR(), t.getFonsG(), t.getFonsB());
-        }
+        if (t != null) return new TextColor.RGB(t.getFonsR(), t.getFonsG(), t.getFonsB());
         if (Simbols.esMur(c)) return new TextColor.RGB(40, 40, 50);
+        // marcadors (i, P, N, @) i qualsevol altra casella: fons del terra normal
+        TipusTerra normal = TipusTerra.de('.');
+        if (normal != null) return new TextColor.RGB(normal.getFonsR(), normal.getFonsG(), normal.getFonsB());
         return TextColor.ANSI.BLACK;
     }
 
@@ -286,7 +297,7 @@ public class Renderitzador { // classe per gestionar la pantalla
         pintaText(col, fila++, "DEF  " + jugador.getDefensaTotal(), blau);
         pintaText(col, fila++, "VEL  " + jugador.velocitatEfectiva(), new TextColor.RGB(100, 200, 255));
         pintaText(col, fila++, "EVA  " + jugador.evasioEfectiva() + "%", new TextColor.RGB(180, 255, 180));
-        pintaText(col, fila++, "PES  " + jugador.getPes() + " / " + jugador.getpesMaxim(), groc);
+        pintaText(col, fila++, "PES  " + jugador.getPes() + " / " + jugador.getPesMaxim(), groc);
         TextColor colorCarrega = switch (jugador.categoriaCarrega()) {
             case LLEUGER ->
                 new TextColor.RGB(80, 220, 80);
@@ -508,77 +519,95 @@ public class Renderitzador { // classe per gestionar la pantalla
         TextColor gris = new TextColor.RGB(110, 110, 110);
         TextColor daurat = new TextColor.RGB(220, 180, 50);
         TextColor vermell = new TextColor.RGB(220, 70, 70);
-
-        //marc exterior complet
-        pintaText(0, 0, "╔" + "═".repeat(cols - 2) + "╗", blanc);
-        for (int i = 1; i < rows - 1; i++) {
-            pintaText(0, i, "║" + " ".repeat(cols - 2) + "║", gris);
-        }
-        pintaText(0, rows - 1, "╚" + "═".repeat(cols - 2) + "╝", blanc);
-
-        //títol centrat
-        String titol = "T O R R E   D E   R O N D A L L E S   —   C O M B A T";
-        pintaText((cols - titol.length()) / 2, 1, titol, daurat);
-
-        //línia separadora sota el títol
-        pintaText(0, 2, "╠" + "═".repeat(cols - 2) + "╣", blanc);
-
-        //separador vertical: mateixa amplada que el HUD del mapa
-        int colSep = cols - ampleHud;
-        pintaText(colSep, 2, "╦", blanc);
-        for (int i = 3; i < rows - 6; i++) {
-            pintaText(colSep, i, "║", gris);
-        }
-        pintaText(colSep, rows - 6, "╩", blanc);
-
-        //--- ZONA ESQUERRA: caixa enemic + art ---
-        String nomEnemic = enemic.getClass().getSimpleName().toUpperCase();
-        int xBoxEn = 4;
-        int wBoxEn = colSep - 9; //amplada exterior de la caixa
-        String nomEn = nomEnemic.length() > wBoxEn - 6 ? nomEnemic.substring(0, wBoxEn - 6) : nomEnemic;
-        pintaText(xBoxEn, 3, "╔═ " + nomEn + " " + "═".repeat(wBoxEn - nomEn.length() - 5) + "╗", vermell);
-        pintaText(xBoxEn, 4, "║", vermell);
-        pintaText(xBoxEn + 2, 4, barraVida(enemic.getVida(), enemic.getVidaMaxima(), 20), colorVida(enemic.getVida(), enemic.getVidaMaxima()));
-        pintaText(xBoxEn + wBoxEn - 1, 4, "║", vermell);
-        pintaText(xBoxEn, 5, "╚" + "═".repeat(wBoxEn - 2) + "╝", vermell);
-
-        //art ascii de l'enemic (carregat des del game.json)
-        TextColor colorEnemic = enemic.getColor();
-        int fila = 7;
-        String[] art = enemic.getArtAscii();
-        for (String linia : art) {
-            if (fila >= rows - 8) {
-                break;
-            }
-            pintaText(4, fila, linia, colorEnemic);
-            fila++;
-        }
-
-        //--- ZONA DRETA: stats + equip + accions (mateix estil que HUD del mapa) ---
-        int cHud = colSep + 1;
-        int innerW = ampleHud - 2;
-        int fHud = 3;
         TextColor groc = new TextColor.RGB(180, 160, 80);
         TextColor taronja2 = new TextColor.RGB(200, 120, 50);
         TextColor blau2 = new TextColor.RGB(100, 160, 220);
         TextColor gris2 = new TextColor.RGB(100, 100, 115);
+        TextColor verdJugador = new TextColor.RGB(80, 200, 120);
 
-        //barra de vida
-        String vidaStr = jugador.getVida() + "/" + jugador.getVidaMaxima();
-        int barW = innerW - 6 - vidaStr.length();
-        barW = Math.max(4, barW);
+        //marc exterior
+        pintaText(0, 0, "╔" + "═".repeat(cols - 2) + "╗", blanc);
+        for (int i = 1; i < rows - 1; i++) pintaText(0, i, "║" + " ".repeat(cols - 2) + "║", gris);
+        pintaText(0, rows - 1, "╚" + "═".repeat(cols - 2) + "╝", blanc);
+
+        String titol = "T O R R E   D E   R O N D A L L E S   —   C O M B A T";
+        pintaText((cols - titol.length()) / 2, 1, titol, daurat);
+        pintaText(0, 2, "╠" + "═".repeat(cols - 2) + "╣", blanc);
+
+        //separador vertical HUD (igual que el mapa)
+        int colSep = cols - ampleHud;
+        pintaText(colSep, 2, "╦", blanc);
+        for (int i = 3; i < rows - 6; i++) pintaText(colSep, i, "║", gris);
+        pintaText(colSep, rows - 6, "╩", blanc);
+
+        //zona de batalla: files 3..rows-7, columnes 1..colSep-1
+        int batAlta = rows - 7 - 3;
+        int midBat = 3 + batAlta / 2;
+
+        //separador horitzontal entre zona enemic i zona jugador
+        pintaText(1, midBat, "╌".repeat(colSep - 2), gris);
+
+        // ═══ ZONA ENEMIC (dalt) ═══
+
+        //caixa stats enemic (dalt-esquerra), amplada fixa de 28
+        String nomEn = enemic.getNom() != null ? enemic.getNom().toUpperCase() : enemic.getClass().getSimpleName().toUpperCase();
+        pintaCaixaVida(2, 3, nomEn, enemic.getVida(), enemic.getVidaMaxima(), 18, vermell);
+
+        //sprite enemic (dalt-dreta), alineat a la dreta de la zona de batalla
+        TextColor colorEnemic = enemic.getColor() != null ? enemic.getColor() : blanc;
+        String[] artEn = enemic.getArtAscii();
+        if (artEn != null) {
+            int spriteAmple = artEn[0].length();
+            int xSprite = Math.max(2, (colSep - spriteAmple) / 2);
+            int maxAmple = colSep - xSprite - 1;
+            int fEn = 3;
+            for (String linia : artEn) {
+                if (fEn >= midBat) break;
+                String l = linia.length() > maxAmple ? linia.substring(0, maxAmple) : linia;
+                pintaText(xSprite, fEn++, l, colorEnemic);
+            }
+        }
+
+        // ═══ ZONA JUGADOR (baix) ═══
+
+        //sprite jugador d'esquena (baix-esquerra)
+        String[] artEs = artJugadorEsquena != null ? artJugadorEsquena : artJugador;
+        if (artEs != null) {
+            int maxAmpleJ = (colSep / 2) - 2;
+            int fJ = midBat + 1;
+            for (String linia : artEs) {
+                if (fJ >= rows - 7) break;
+                String l = linia.length() > maxAmpleJ ? linia.substring(0, maxAmpleJ) : linia;
+                pintaText(3, fJ++, l, verdJugador);
+            }
+        }
+
+        //caixa HP jugador (baix-dreta), alineada a baix de la zona de batalla
+        int filaBoxJ = rows - 10;
+        int xBoxJ = colSep / 2 + 2;
+        int maxAmpleBoxJ = colSep - xBoxJ - 2;
+        if (filaBoxJ > midBat + 1 && maxAmpleBoxJ > 10) {
+            pintaCaixaVida(xBoxJ, filaBoxJ, "TU", jugador.getVida(), jugador.getVidaMaxima(), Math.min(18, maxAmpleBoxJ - 10), verdJugador);
+        }
+
+        // ═══ HUD DRET: stats + equip + accions ═══
+        int cHud = colSep + 1;
+        int innerW = ampleHud - 2;
+        int fHud = 3;
+
+        String vidaHud = jugador.getVida() + "/" + jugador.getVidaMaxima();
+        int barW = Math.max(4, innerW - 6 - vidaHud.length());
         int plens = jugador.getVidaMaxima() > 0
                 ? Math.max(0, Math.min(barW, (int) ((double) jugador.getVida() / jugador.getVidaMaxima() * barW)))
                 : 0;
-        pintaText(cHud, fHud++, "HP [" + "█".repeat(plens) + "░".repeat(barW - plens) + "] " + vidaStr, colorVida(jugador.getVida(), jugador.getVidaMaxima()));
+        pintaText(cHud, fHud++, "HP [" + "█".repeat(plens) + "░".repeat(barW - plens) + "] " + vidaHud, colorVida(jugador.getVida(), jugador.getVidaMaxima()));
         fHud++;
 
-        //estadistiques
         pintaText(cHud, fHud++, "ATK  " + jugador.getAtacTotal(), taronja2);
         pintaText(cHud, fHud++, "DEF  " + jugador.getDefensaTotal(), blau2);
         pintaText(cHud, fHud++, "VEL  " + jugador.velocitatEfectiva(), new TextColor.RGB(100, 200, 255));
         pintaText(cHud, fHud++, "EVA  " + jugador.evasioEfectiva() + "%", new TextColor.RGB(180, 255, 180));
-        pintaText(cHud, fHud++, "PES  " + jugador.getPes() + " / " + jugador.getpesMaxim(), groc);
+        pintaText(cHud, fHud++, "PES  " + jugador.getPes() + " / " + jugador.getPesMaxim(), groc);
         TextColor colorSac = switch (jugador.categoriaCarrega()) {
             case LLEUGER -> new TextColor.RGB(80, 220, 80);
             case NORMAL  -> new TextColor.RGB(230, 200, 40);
@@ -587,13 +616,11 @@ public class Renderitzador { // classe per gestionar la pantalla
         pintaText(cHud, fHud++, "SAC  " + jugador.categoriaCarrega().name(), colorSac);
         fHud++;
 
-        //estats temporals
-        if (jugador.getTornsVeri() > 0) { pintaText(cHud, fHud++, "VERI " + jugador.getTornsVeri() + " torns", new TextColor.RGB(100, 220, 80)); }
-        if (jugador.getTornsFoc()  > 0) { pintaText(cHud, fHud++, "FOC  " + jugador.getTornsFoc()  + " torns", new TextColor.RGB(220, 120, 30)); }
-        if (jugador.getTornsGel()  > 0) { pintaText(cHud, fHud++, "GEL  " + jugador.getTornsGel()  + " torns", new TextColor.RGB(80, 180, 220)); }
+        if (jugador.getTornsVeri() > 0) pintaText(cHud, fHud++, "VERI " + jugador.getTornsVeri() + "t", new TextColor.RGB(100, 220, 80));
+        if (jugador.getTornsFoc()  > 0) pintaText(cHud, fHud++, "FOC  " + jugador.getTornsFoc()  + "t", new TextColor.RGB(220, 120, 30));
+        if (jugador.getTornsGel()  > 0) pintaText(cHud, fHud++, "GEL  " + jugador.getTornsGel()  + "t", new TextColor.RGB(80, 180, 220));
         fHud++;
 
-        //equip
         pintaText(cHud, fHud++, "--- EQUIP ---", gris2);
         var armaEqC = jugador.getInventari().getArmaEquipada();
         String txtArma = "Arma : " + (armaEqC != null ? armaEqC.getNom() : "---");
@@ -610,7 +637,6 @@ public class Renderitzador { // classe per gestionar la pantalla
         }
         fHud++;
 
-        //accions
         pintaText(cHud, fHud++, "--- ACCIONS ---", gris2);
         pintaText(cHud, fHud++, "[ A ]  Atacar", blanc);
         for (int i = 0; i < jugador.getInventari().getMaxSlots(); i++) {
@@ -623,27 +649,41 @@ public class Renderitzador { // classe per gestionar la pantalla
             if (nomTallat.length() > maxNom) nomTallat = nomTallat.substring(0, Math.max(0, maxNom));
             pintaText(cHud, fHud++, prefix + nomTallat + quant, slot.item().getColor());
         }
-        pintaText(cHud, fHud++, "[ D ]  Esquivar", gris2);
-        pintaText(cHud, fHud, "[ F ]  Fugir", gris2);
+        if (fHud < rows - 7) pintaText(cHud, fHud++, "[ D ]  Esquivar", gris2);
+        if (fHud < rows - 7) pintaText(cHud, fHud, "[ F ]  Fugir", gris2);
 
-        //--- CAIXA DE LOG (amplada total, sota tot) ---
+        // ═══ LOG (baix de tot, amplada total) ═══
         int filaLog = rows - 6;
         int ampleLog = cols - 4;
         pintaText(1, filaLog, "╔" + "═".repeat(ampleLog) + "╗", blanc);
-        for (int i = 1; i <= 3; i++) {
-            pintaText(1, filaLog + i, "║" + " ".repeat(ampleLog) + "║", gris);
-        }
+        for (int i = 1; i <= 3; i++) pintaText(1, filaLog + i, "║" + " ".repeat(ampleLog) + "║", gris);
         pintaText(1, filaLog + 4, "╚" + "═".repeat(ampleLog) + "╝", blanc);
 
         for (int i = 0; i < log.size() && i < 3; i++) {
             String msg = "> " + log.get(i);
-            if (msg.length() > ampleLog - 2) {
-                msg = msg.substring(0, ampleLog - 2);
-            }
+            if (msg.length() > ampleLog - 2) msg = msg.substring(0, ampleLog - 2);
             pintaText(3, filaLog + 1 + i, msg, colorMissatge(log.get(i)));
         }
 
         screen.refresh();
+    }
+
+    // Dibuixa una caixa de 3 files perfectament alineada:
+    //  ╔═ NOM ══...══╗
+    //  ║ [████░░] v/m ║
+    //  ╚═════════════╝
+    private void pintaCaixaVida(int x, int y, String nom, int vida, int max, int barW, TextColor color) {
+        String vidaStr = vida + "/" + max;
+        int plens = max > 0 ? Math.max(0, Math.min(barW, (int) ((double) vida / max * barW))) : 0;
+        // inner = contingut entre ║ i ║ = " [bar] vida/max "
+        // = 1(esp) + 1([) + barW + 2(] ) + vidaStr.len + 1(esp) = barW + 5 + vidaStr.len
+        int inner = barW + 5 + vidaStr.length();
+        // nom truncat perquè cap: inner - 3 (ocupa "═ NOM " dins el marc superior)
+        String nomT = nom.length() > inner - 3 ? nom.substring(0, Math.max(0, inner - 3)) : nom;
+        int pad = Math.max(0, inner - nomT.length() - 3);
+        pintaText(x, y,     "╔═ " + nomT + " " + "═".repeat(pad) + "╗", color);
+        pintaText(x, y + 1, "║ [" + "█".repeat(plens) + "░".repeat(barW - plens) + "] " + vidaStr + " ║", colorVida(vida, max));
+        pintaText(x, y + 2, "╚" + "═".repeat(inner) + "╝", color);
     }
 
     private String barraVida(int vida, int max, int ample) {
