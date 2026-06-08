@@ -449,7 +449,10 @@ public class Joc extends Motor {
             if (c >= '1' && c <= '4') {
                 int idx = c - '1';
                 Item item = jugador.getInventari().get(idx);
-                if (item instanceof com.iessineu.rondalles.inventari.Armadura arm) {
+                if (item instanceof Clau) {
+                    jugador.getInventari().elimina(idx);
+                    iniciaDialog("dialegs/clau_menjada.json");
+                } else if (item instanceof com.iessineu.rondalles.inventari.Armadura arm) {
                     jugador.getInventari().equipaArmadura(arm, jugador);
                 } else if (item instanceof com.iessineu.rondalles.inventari.Arma arma) {
                     jugador.getInventari().equipaArma(arma, jugador);
@@ -660,7 +663,11 @@ public class Joc extends Motor {
             Item item = jugador.getInventari().get(idx);
             if (item != null) {
                 String nom = enemicCombat.getNom().toUpperCase();
-                if (item instanceof Pocio pocio && pocio.getTipus() != Pocio.Tipus.VIDA) {
+                if (item instanceof Clau) {
+                    jugador.getInventari().elimina(idx);
+                    iniciaDialog("dialegs/clau_menjada.json");
+                    return;
+                } else if (item instanceof Pocio pocio && pocio.getTipus() != Pocio.Tipus.VIDA) {
                     pocio.aplicaEfecteEnemic(enemicCombat);
                     jugador.getInventari().elimina(idx);
                     afegeixLog("Has llançat " + item.getNom() + " a " + nom + "!");
@@ -812,10 +819,15 @@ public class Joc extends Motor {
                 return;
             }
             if (c >= '1' && c <= '9') {
-                jugador.usaItem(c - '1');
-
+                int idx = c - '1';
+                Item item = jugador.getInventari().get(idx);
+                if (item instanceof Clau) {
+                    jugador.getInventari().elimina(idx);
+                    iniciaDialog("dialegs/clau_menjada.json");
+                } else {
+                    jugador.usaItem(idx);
+                }
                 tickTorn();
-
                 return;
             }
         }
@@ -1552,16 +1564,11 @@ public class Joc extends Motor {
             if (porta != null) {
                 if (porta.isBloquejada()) {
                     if (porta.teClau(jugador.getInventari(), pisActual)) {
-                        // si es porta de canvi de planta, es bos t'ha enganyat
-                        if (porta.isPortaCanviPlanta()) {
-                            eliminaClauPerPorta(porta);
-                            iniciaDialog("dialegs/clau_menjada.json");
-                        } else {
-                            porta.desbloqueja();
-                            mapa.setCella(dx, dy, porta.getSimbol());
-                            afegeixLog("Has obert la porta amb la clau!");
-                            tickTorn();
-                        }
+                        porta.desbloqueja();
+                        eliminaClauPerPorta(porta);
+                        mapa.setCella(dx, dy, porta.getSimbol());
+                        afegeixLog("Has obert la porta amb la clau!");
+                        tickTorn();
                     } else {
                         afegeixLog("La porta està tancada amb un cadenat! Necessites una clau.");
                     }
