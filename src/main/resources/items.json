@@ -247,31 +247,97 @@
             {
                 "mapa": "planta1",
                 "id": "pocio-vida",
+                "x": 14,
+                "y": 9
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-vida",
+                "x": 30,
+                "y": 9
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-vida",
+                "x": 47,
+                "y": 9
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-vida",
+                "x": 24,
+                "y": 9
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-vida",
+                "x": 22,
+                "y": 28
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-veri",
+                "x": 22,
+                "y": 29
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-foc",
+                "x": 22,
+                "y": 30
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-gel",
+                "x": 22,
+                "y": 31
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-vida",
                 "x": 105,
                 "y": 1
             },
             {
                 "mapa": "planta1",
-                "id": "pocio-veri",
+                "id": "pocio-vida",
+                "x": 106,
+                "y": 1
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-vida",
                 "x": 107,
                 "y": 1
             },
             {
                 "mapa": "planta1",
-                "id": "pocio-foc",
+                "id": "pocio-vida",
+                "x": 108,
+                "y": 1
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-vida",
                 "x": 109,
                 "y": 1
             },
             {
                 "mapa": "planta1",
-                "id": "pocio-gel",
+                "id": "pocio-vida",
+                "x": 110,
+                "y": 1
+            },
+            {
+                "mapa": "planta1",
+                "id": "pocio-vida",
                 "x": 111,
                 "y": 1
             },
             {
                 "mapa": "planta1",
                 "id": "pocio-vida",
-                "x": 113,
+                "x": 112,
                 "y": 1
             },
             {
@@ -282,87 +348,21 @@
             },
             {
                 "mapa": "planta1",
-                "id": "pocio-foc",
-                "x": 85,
-                "y": 3
-            },
-            {
-                "mapa": "planta1",
-                "id": "pocio-gel",
-                "x": 4,
-                "y": 5
-            },
-            {
-                "mapa": "planta1",
-                "id": "pocio-vida",
-                "x": 8,
-                "y": 5
-            },
-            {
-                "mapa": "planta1",
                 "id": "pocio-veri",
-                "x": 10,
-                "y": 7
+                "x": 106,
+                "y": 2
             },
             {
                 "mapa": "planta1",
-                "id": "pocio-foc",
-                "x": 14,
-                "y": 7
-            },
-            {
-                "mapa": "planta1",
-                "id": "pocio-gel",
-                "x": 3,
-                "y": 8
-            },
-            {
-                "mapa": "planta1",
-                "id": "pocio-vida",
-                "x": 8,
-                "y": 8
-            },
-            {
-                "mapa": "planta1",
-                "id": "pocio-veri",
-                "x": 14,
-                "y": 8
-            },
-            {
-                "mapa": "planta1",
-                "id": "pocio-foc",
-                "x": 8,
-                "y": 9
-            },
-            {
-                "mapa": "planta1",
-                "id": "pocio-gel",
-                "x": 24,
-                "y": 14
-            },
-            {
-                "mapa": "planta1",
-                "id": "pocio-vida",
-                "x": 25,
-                "y": 17
-            },
-            {
-                "mapa": "planta1",
-                "id": "pocio-veri",
-                "x": 40,
+                "id": "botes-cuir",
+                "x": 26,
                 "y": 22
             },
             {
                 "mapa": "planta1",
-                "id": "pocio-foc",
-                "x": 40,
-                "y": 23
-            },
-            {
-                "mapa": "planta1",
-                "id": "pocio-gel",
-                "x": 33,
-                "y": 24
+                "id": "Cota de malla",
+                "x": 58,
+                "y": 2
             }
         ]
     }
