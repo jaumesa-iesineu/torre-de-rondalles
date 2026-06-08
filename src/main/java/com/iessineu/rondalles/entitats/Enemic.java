@@ -68,7 +68,6 @@ public class Enemic extends Entitat {
     private int pacmanFlancPasses = 4;
     private boolean requereixDescobriment;
     private boolean esBoss;
-    private String clauDropejada;
     private String gameOver; //ruta al fitxer JSON de game over personalitzat (opcional)
 
     public void setTotsEnemics(List<Enemic> l) {
@@ -117,10 +116,6 @@ public class Enemic extends Entitat {
 
     public boolean isBoss() {
         return esBoss;
-    }
-
-    public String getClauDropejada() {
-        return clauDropejada;
     }
 
     //retorna la ruta al fitxer JSON de game over personalitzat, o null
@@ -416,7 +411,6 @@ public class Enemic extends Entitat {
         this.pacmanFlancPasses = def.pacmanFlancPasses;
         this.requereixDescobriment = def.requereixDescobriment;
         this.esBoss = def.esBoss;
-        this.clauDropejada = def.clauDropejada;
         this.gameOver = def.gameOver;
     }
 

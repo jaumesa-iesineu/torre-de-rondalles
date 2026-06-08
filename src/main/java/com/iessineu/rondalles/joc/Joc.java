@@ -741,24 +741,18 @@ public class Joc extends Motor {
                 boolean eraBoss = esBoss(enemicCombat);
                 int bossX = enemicCombat.getX();
                 int bossY = enemicCombat.getY();
-                String clauDropejada = enemicCombat.getClauDropejada();
-                if (clauDropejada != null && clauDropejada.startsWith("clau-planta")) {
-                    clauDropejada = "clau-planta" + pisActual;
-                }
 
                 enemics.remove(enemicCombat);
                 enemicCombat = null;
 
-                if (eraBoss && clauDropejada != null && !clauDropejada.isBlank()) {
+                if (eraBoss) {
                     try {
-                        Clau clau = RegistreItems.get().clau(clauDropejada);
+                        Clau clau = RegistreItems.get().clau("clau-planta" + pisActual);
                         jugador.afegeixItem(clau);
                         afegeixLog("Has derrotat es boss! Has obtingut la " + clau.getNom() + ".");
                     } catch (Exception ex) {
                         afegeixLog("Has derrotat es boss!");
                     }
-                } else if (eraBoss) {
-                    afegeixLog("Has derrotat es boss!");
                 }
 
                 GestorMusica.reprodueix(
@@ -1067,14 +1061,10 @@ public class Joc extends Motor {
             if (enemicCombat.esMort()) {
                 afegeixLog(nom + " ha caigut!");
                 boolean eraBoss = esBoss(enemicCombat);
-                String clauDropejada = enemicCombat.getClauDropejada();
-                if (clauDropejada != null && clauDropejada.startsWith("clau-planta")) {
-                    clauDropejada = "clau-planta" + pisActual;
-                }
                 enemics.remove(enemicCombat);
-                if (eraBoss && clauDropejada != null && !clauDropejada.isBlank()) {
+                if (eraBoss) {
                     try {
-                        Clau clau = RegistreItems.get().clau(clauDropejada);
+                        Clau clau = RegistreItems.get().clau("clau-planta" + pisActual);
                         jugador.afegeixItem(clau);
                         afegeixLog("Has obtingut la " + clau.getNom() + ".");
                     } catch (Exception ex) {}
