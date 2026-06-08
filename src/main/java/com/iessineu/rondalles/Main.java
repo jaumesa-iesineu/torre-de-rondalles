@@ -4,6 +4,7 @@
  */
 package com.iessineu.rondalles;
 
+import com.iessineu.rondalles.db.PartidaRepository;
 import com.iessineu.rondalles.editor.EditorMapes;
 import com.iessineu.rondalles.joc.CarregadorGame;
 import com.iessineu.rondalles.joc.ConfigGame;
@@ -59,7 +60,14 @@ public class Main {
             CarregadorGame.setBasedir(gameFile.getParent());
             config = CarregadorGame.carregaFitxerExtern(fitxerGame);
         } else {
-            config = CarregadorGame.carrega("game.json");
+            //per defecte agafam es game.json; si no es troba, recorrem a sa copia de sa BD SQLite
+            try {
+                config = CarregadorGame.carrega("game.json");
+                PartidaRepository.inicialitza(config);
+            } catch (Exception e) {
+                System.err.println("No s'ha trobat game.json, carregant des de sa BD SQLite: " + e.getMessage());
+                config = PartidaRepository.carregaConfig();
+            }
         }
 
         //aplicam els mods en ordre (last wins per conflictes)
