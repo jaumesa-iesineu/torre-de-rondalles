@@ -16,7 +16,7 @@ public class GestorSfx {
         t.setDaemon(true);
         return t;
     });
-    private static boolean mut = false;
+    private static boolean silenci = false;
     private static String personatgeId = "";
 
     public static void inicialitza(Map<String, String> cfg) {
@@ -24,11 +24,11 @@ public class GestorSfx {
         if (cfg != null) fitxers.putAll(cfg);
     }
 
-    public static void setMut(boolean m) { mut = m; }
+    public static void setSilenci(boolean m) { silenci = m; }
     public static void setPersonatgeId(String id) { personatgeId = id != null ? id : ""; }
 
     public static void reprodueix(String clau) {
-        if (mut) return;
+        if (silenci) return;
         String fitxer = fitxers.getOrDefault(clau + "_" + personatgeId, fitxers.get(clau));
         if (fitxer == null) return;
         pool.submit(() -> {
