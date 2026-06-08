@@ -29,6 +29,7 @@ import com.iessineu.rondalles.mapa.Mapa;
 import com.iessineu.rondalles.mapa.TipusTerra;
 import com.iessineu.rondalles.motor.Estat;
 import com.iessineu.rondalles.motor.Motor;
+import com.iessineu.rondalles.motor.MotorDialog;
 import com.iessineu.rondalles.motor.PantallaGameOver;
 import com.iessineu.rondalles.motor.CarregadorPantallaGameOver;
 import com.iessineu.rondalles.motor.PantallaVictoria;
@@ -94,25 +95,25 @@ public class Joc extends Motor {
     private long ultimPasGel = 0;
     private long msPasGel = 140;
 
-    // --- Game over: qui ha matat el jugador, quina pantalla mostrar i animacio ---
+    // --- Game over ---
     private Enemic enemicMortJugador = null;
     private PantallaGameOver pantallaGameOver = null;
-    private long iniciAnimacioGameOver = 0;
-    private int caractersVisiblesGameOver = 0;
-    private boolean animantGameOver = true;
-    // velocitat de l'animacio typewriter (caracters per segon)
+    private String ultimTerrenyMal = null; //per game overs de terreny (buit, etc)
     private static final int CPS_GAME_OVER = 35;
+    private MotorDialog dialogGameOver;
     private int opcioGameOver = 0;
     private String[] opcionsGameOver = {"Torna a començar", "Sortir"};
 
     // --- Victoria ---
     private static final int CPS_VICTORIA = 40;
     private PantallaVictoria pantallaVictoria;
-    private boolean animantVictoria;
-    private int caractersVisiblesVictoria;
-    private long iniciAnimacioVictoria;
+    private MotorDialog dialogVictoria;
     private int opcioVictoria;
     private String[] opcionsVictoria = {"Sortir"};
+
+    // --- Dialegs ---
+    private static final int CPS_DIALEG = 80;
+    private MotorDialog dialogActiu;
 
     private int maxLog = 3;
     private boolean jugadorIniciaCombat = false;
@@ -258,8 +259,11 @@ public class Joc extends Motor {
 
     @Override
     protected boolean estaAnimant() {
-        //mentre es juga l'animacio typewriter del game over volem un bucle no bloquejant
-        return lliscantGel || animantGameOver || animantVictoria;
+        // mentre juga l'animacio typewriter no volem bloquejar s'input
+        boolean go = dialogGameOver != null && dialogGameOver.esAnimant();
+        boolean vi = dialogVictoria != null && dialogVictoria.esAnimant();
+        boolean di = dialogActiu != null && dialogActiu.esAnimant();
+        return lliscantGel || go || vi || di;
     }
     
     private void amagaTerrenyEspecial() {
@@ -359,6 +363,11 @@ public class Joc extends Motor {
 
         if (estat == Estat.VICTORIA) {
             gestionaVictoria(tecla);
+            return;
+        }
+
+        if (estat == Estat.DIALEG) {
+            gestionaDialog(tecla);
             return;
         }
 
@@ -914,8 +923,9 @@ public class Joc extends Motor {
 
             // ara aplicam l'efecte real
             TipusTerra tReal = TipusTerra.de(simbolReal);
-            if (tReal != null && tReal.getMal() > 0) {
-                jugador.rebreDany(tReal.getMal());
+            if (tReal != null) {
+                ultimTerrenyMal = tReal.getNom();
+                if (tReal.getMal() > 0) jugador.rebreDany(tReal.getMal());
             }
             if (tReal != null && tReal.isLlisca()) {
                 lliscantGel = true;
@@ -934,8 +944,9 @@ public class Joc extends Motor {
         // terreny normal (no amagat)
         TipusTerra terraPeu = TipusTerra.de(mapa.getCelles()[ny][nx]);
         
-        if(terraPeu !=null && terraPeu.getMal()>0){
-               jugador.rebreDany(terraPeu.getMal());
+        if (terraPeu != null) {
+            ultimTerrenyMal = terraPeu.getNom();
+            if (terraPeu.getMal() > 0) jugador.rebreDany(terraPeu.getMal());
         }
         
         if (terraPeu != null && terraPeu.isLlisca()) {
@@ -1455,10 +1466,16 @@ public class Joc extends Motor {
             if (porta != null) {
                 if (porta.isBloquejada()) {
                     if (porta.teClau(jugador.getInventari(), pisActual)) {
-                        porta.desbloqueja();
-                        mapa.setCella(dx, dy, porta.getSimbol());
-                        afegeixLog("Has obert la porta amb la clau!");
-                        tickTorn();
+                        // si es porta de canvi de planta, es bos t'ha enganyat
+                        if (porta.isPortaCanviPlanta()) {
+                            eliminaClauPerPorta(porta);
+                            iniciaDialog("dialegs/clau_menjada.json");
+                        } else {
+                            porta.desbloqueja();
+                            mapa.setCella(dx, dy, porta.getSimbol());
+                            afegeixLog("Has obert la porta amb la clau!");
+                            tickTorn();
+                        }
                     } else {
                         afegeixLog("La porta està tancada amb un cadenat! Necessites una clau.");
                     }
@@ -1469,6 +1486,19 @@ public class Joc extends Motor {
                 mapa.setCella(dx, dy, porta.getSimbol());
                 tickTorn();
                 return;
+            }
+        }
+    }
+
+    // elimina sa clau que correspon a una porta de s'inventari
+    private void eliminaClauPerPorta(Porta porta) {
+        Inventari inv = jugador.getInventari();
+        String idNecessari = porta.getClauId() != null ? porta.getClauId() : "clau-planta" + pisActual;
+        for (int i = 0; i < inv.getMaxSlots(); i++) {
+            Inventari.Slot slot = inv.getSlot(i);
+            if (slot != null && slot.item() instanceof Clau clau && clau.getId().equals(idNecessari)) {
+                inv.elimina(i);
+                break;
             }
         }
     }
@@ -1659,16 +1689,19 @@ public class Joc extends Motor {
         try {
             if (estat == Estat.GAME_OVER) {
                 renderer.dibuixaGameOver(
+                        dialogGameOver,
                         pantallaGameOver,
-                        caractersVisiblesGameOver,
-                        !animantGameOver,
                         opcionsGameOver,
                         opcioGameOver);
                 return;
             }
             if (estat == Estat.VICTORIA) {
-                renderer.dibuixaVictoria(pantallaVictoria, caractersVisiblesVictoria,
-                        !animantVictoria, opcionsVictoria, opcioVictoria);
+                renderer.dibuixaVictoria(dialogVictoria, pantallaVictoria,
+                        opcionsVictoria, opcioVictoria);
+                return;
+            }
+            if (estat == Estat.DIALEG) {
+                renderer.dibuixaDialog(dialogActiu);
                 return;
             }
             if (estat == Estat.MENU_INICIAL) {
@@ -1755,20 +1788,21 @@ public class Joc extends Motor {
 
     // --- Game over ---
 
-    // Prepara la pantalla de game over i arrenca l'animacio typewriter.
+    // arrenca sa pantalla de game over amb typewriter
     private void iniciaGameOver(Enemic mort) {
         enemicMortJugador = mort;
         pantallaGameOver = carregaPantallaGameOver(mort);
-        iniciAnimacioGameOver = System.currentTimeMillis();
-        caractersVisiblesGameOver = 0;
-        animantGameOver = true;
+        ultimTerrenyMal = null; //resetejam per al proxim cop
+        String titol = pantallaGameOver.getTitol();
+        String[] linies = pantallaGameOver.getLiniesText();
+        dialogGameOver = new MotorDialog(titol, linies, CPS_GAME_OVER);
+        dialogGameOver.inicia();
         opcioGameOver = 0;
         GestorMusica.reprodueix("GAME_OVER");
         estat = Estat.GAME_OVER;
     }
 
-    // Decideix quina pantalla de game over mostrar.
-    // Prioritat: fitxer de l'enemic > fitxer per defecte > fallback en memoria.
+    // tria game over: fitxer de s'enemic > per defecte > fallback
     private PantallaGameOver carregaPantallaGameOver(Enemic mort) {
         if (mort != null) {
             String ruta = mort.getGameOver();
@@ -1776,6 +1810,11 @@ public class Joc extends Motor {
                 PantallaGameOver custom = CarregadorPantallaGameOver.carrega(ruta);
                 if (custom != null) return custom;
             }
+        }
+        //si el va matar un terreny (buit, etc), carregam es seu game over
+        if (ultimTerrenyMal != null && !ultimTerrenyMal.isBlank()) {
+            PantallaGameOver custom = CarregadorPantallaGameOver.carrega("gameover/" + ultimTerrenyMal + ".json");
+            if (custom != null) return custom;
         }
         PantallaGameOver def = CarregadorPantallaGameOver.carrega("gameover/default.json");
         if (def != null) return def;
@@ -1795,27 +1834,15 @@ public class Joc extends Motor {
         );
     }
 
-    // Gestiona l'estat GAME_OVER: avanca l'animacio i, en acabat,
-    // mostra menu per torna a començar o sortir.
+    // gestiona game over: avança typewriter i despres mostra menu
     private void gestionaGameOver(KeyStroke tecla) {
-        if (pantallaGameOver == null) {
+        if (dialogGameOver == null || pantallaGameOver == null) {
             reiniciaPartida();
             return;
         }
 
-        if (animantGameOver) {
-            long ara = System.currentTimeMillis();
-            long delta = ara - iniciAnimacioGameOver;
-            int total = pantallaGameOver.totalCaracters();
-            int nousVisibles = (int) ((long) delta * CPS_GAME_OVER / 1000L);
-            if (nousVisibles >= total) {
-                caractersVisiblesGameOver = total;
-                animantGameOver = false;
-            } else {
-                caractersVisiblesGameOver = nousVisibles;
-            }
-            return;
-        }
+        dialogGameOver.actualitza();
+        if (dialogGameOver.esAnimant()) return;
 
         if (tecla == null) return;
 
@@ -1832,18 +1859,15 @@ public class Joc extends Motor {
         }
     }
 
-    // Torna a començar la partida de zero: reseteam estat, tornam al menu
-    // inicial i deixam que l'inici de partida construeixi un jugador nou.
+    // tornam a començar de zero
     private void reiniciaPartida() {
         try {
-            // reseteam variables de torn
-            animantGameOver = false;
+            // netejam game over
+            dialogGameOver = null;
             enemicMortJugador = null;
             pantallaGameOver = null;
-            caractersVisiblesGameOver = 0;
-            iniciAnimacioGameOver = 0;
 
-            // reseteam estat de combat
+            // netejam combat
             enemicCombat = null;
             jugadorIniciaCombat = false;
             logCombat.clear();
@@ -1919,31 +1943,23 @@ public class Joc extends Motor {
             new String[]{"Enhorabona! Has completat la Torre de Rondalles!"},
             new String[]{"  ***  "}
         );
-        iniciAnimacioVictoria = System.currentTimeMillis();
-        caractersVisiblesVictoria = 0;
-        animantVictoria = true;
+        String titol = pantallaVictoria.getTitol();
+        String[] linies = pantallaVictoria.getLiniesText();
+        dialogVictoria = new MotorDialog(titol, linies, CPS_VICTORIA);
+        dialogVictoria.inicia();
         opcioVictoria = 0;
         estat = Estat.VICTORIA;
     }
 
     private void gestionaVictoria(KeyStroke tecla) {
-        if (pantallaVictoria == null) {
+        if (dialogVictoria == null || pantallaVictoria == null) {
             corrent = false;
             return;
         }
 
-        if (animantVictoria) {
-            long delta = System.currentTimeMillis() - iniciAnimacioVictoria;
-            int nousVisibles = (int) ((long) delta * CPS_VICTORIA / 1000L);
-            int total = pantallaVictoria.totalCaracters();
-            if (nousVisibles >= total) {
-                caractersVisiblesVictoria = total;
-                animantVictoria = false;
-            } else {
-                caractersVisiblesVictoria = nousVisibles;
-            }
-            return;
-        }
+        dialogVictoria.actualitza();
+        if (dialogVictoria.esAnimant()) return;
+
         if (tecla == null) return;
         if (tecla.getKeyType() == KeyType.ArrowUp)
             opcioVictoria = (opcioVictoria + opcionsVictoria.length - 1) % opcionsVictoria.length;
@@ -1951,5 +1967,35 @@ public class Joc extends Motor {
             opcioVictoria = (opcioVictoria + 1) % opcionsVictoria.length;
         else if (tecla.getKeyType() == KeyType.Enter)
             corrent = false;
+    }
+
+    // --- Dialegs ---
+
+    // carrega un dialog de json i arrenca s'animacio
+    private void iniciaDialog(String rutaJson) {
+        dialogActiu = MotorDialog.carrega(rutaJson, CPS_DIALEG);
+        if (dialogActiu == null) {
+            // fallback si no troba es fitxer
+            dialogActiu = new MotorDialog("Dialog", new String[]{"..."}, CPS_DIALEG);
+        }
+        dialogActiu.inicia();
+        estat = Estat.DIALEG;
+    }
+
+    // gestiona es dialog: avança typewriter i tanca en picar qualsevol tecla
+    private void gestionaDialog(KeyStroke tecla) {
+        if (dialogActiu == null) {
+            estat = Estat.MON;
+            return;
+        }
+
+        dialogActiu.actualitza();
+        if (dialogActiu.esAnimant()) return;
+
+        // animacio acabada, esperam qualsevol tecla per tancar
+        if (tecla != null) {
+            dialogActiu = null;
+            estat = Estat.MON;
+        }
     }
 }
