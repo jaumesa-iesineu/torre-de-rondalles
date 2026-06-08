@@ -1249,6 +1249,11 @@ public class Joc extends Motor {
                 mapaRecord[p.getY()][p.getX()] = p.getSimbol();
             }
         }
+        for (NpcComerciants npc : npcs) {
+            if (visible[npc.getY()][npc.getX()]) {
+                mapaRecord[npc.getY()][npc.getX()] = npc.getSimbol();
+            }
+        }
         return visible;
     }
 
@@ -1655,6 +1660,7 @@ public class Joc extends Motor {
 
             List<Entitat> totes = new ArrayList<>(enemics);
             totes.addAll(portes);
+            totes.addAll(npcs);
 
             boolean[][] visible = actualitzaVisio();
             if (estat == Estat.COMBAT) {
