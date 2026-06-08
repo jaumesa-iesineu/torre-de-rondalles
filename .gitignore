@@ -12,3 +12,6 @@ nbactions.xml
 dependency-reduced-pom.xml
 dependency-reduced-pom.xml
 dependency-reduced-pom.xml
+partida.save
+rondalles.db
+*.db
