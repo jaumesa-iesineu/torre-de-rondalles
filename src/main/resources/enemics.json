@@ -499,6 +499,60 @@
                 "simbol": "B",
                 "x": 24,
                 "y": 15
+            },
+             {
+                "mapa": "planta3",
+                "simbol": "B",
+                "x": 32,
+                "y": 15
+            },
+             {
+                "mapa": "planta3",
+                "simbol": "B",
+                "x": 90,
+                "y": 15
+            },
+             {
+                "mapa": "planta3",
+                "simbol": "B",
+                "x": 35,
+                "y": 8
+            },
+             {
+                "mapa": "planta3",
+                "simbol": "B",
+                "x": 73,
+                "y": 2
+            },
+            {
+                "mapa": "planta3",
+                "simbol": "B",
+                "x": 110
+                "y": 2
+            },
+            {
+                "mapa": "planta3",
+                "simbol": "B",
+                "x": 135,
+                "y": 2
+            },
+            {
+                "mapa": "planta3",
+                "simbol": "B",
+                "x": 166,
+                "y": 2
+            },
+            {
+                "mapa": "planta3",
+                "simbol": "B",
+                "x": 73,
+                "y": 37
+            },
+            {
+                "mapa": "planta3",
+                "simbol": "B",
+                "x": 50,
+                "y": 37
             }
             
         ]
