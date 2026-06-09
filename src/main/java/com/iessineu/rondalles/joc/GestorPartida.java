@@ -1,9 +1,12 @@
 package com.iessineu.rondalles.joc;
 
 import com.iessineu.rondalles.entitats.Jugador;
+import com.iessineu.rondalles.inventari.Arma;
+import com.iessineu.rondalles.inventari.Armadura;
 import com.iessineu.rondalles.inventari.Inventari;
 import com.iessineu.rondalles.inventari.Item;
 import com.iessineu.rondalles.inventari.RegistreItems;
+import java.util.Map;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
@@ -16,7 +19,7 @@ public class GestorPartida {
 
     private static final String FITXER = "partida.save";
     private static final byte[] MAGIC = {'S', 'A', 'V', 'E'};
-    private static final byte VERSION = 1;
+    private static final byte VERSION = 2;
 
     public static void desa(Joc joc) {
         try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(FITXER))) {
@@ -52,6 +55,32 @@ public class GestorPartida {
                     dos.writeShort(nomBytes.length);
                     dos.write(nomBytes);
                     dos.writeShort(slot.quantitat());
+                }
+            }
+
+            //arma equipada
+            Arma arma = j.getInventari().getArmaEquipada();
+            if (arma != null) {
+                dos.writeByte(1);
+                byte[] nomBytes = arma.getNom().getBytes(StandardCharsets.UTF_8);
+                dos.writeShort(nomBytes.length);
+                dos.write(nomBytes);
+            } else {
+                dos.writeByte(0);
+            }
+
+            //armadures equipades (CASC, COS, CAMES, PEUS)
+            Map<Armadura.Slot, Armadura> armadures = j.getInventari().getArmaduresEquipades();
+            dos.writeByte(Armadura.Slot.values().length);
+            for (Armadura.Slot slot : Armadura.Slot.values()) {
+                Armadura arm = armadures.get(slot);
+                if (arm != null) {
+                    dos.writeByte(1);
+                    byte[] nomBytes = arm.getNom().getBytes(StandardCharsets.UTF_8);
+                    dos.writeShort(nomBytes.length);
+                    dos.write(nomBytes);
+                } else {
+                    dos.writeByte(0);
                 }
             }
 
@@ -98,8 +127,9 @@ public class GestorPartida {
                     throw new RuntimeException("Fitxer de partida invàlid");
                 }
             }
-            if (dis.readByte() != VERSION) {
-                throw new RuntimeException("Versió de partida incompatible");
+            int versionLlegida = dis.readByte();
+            if (versionLlegida < 1 || versionLlegida > VERSION) {
+                throw new RuntimeException("Versió de partida incompatible: " + versionLlegida);
             }
 
             //mapa
@@ -135,6 +165,38 @@ public class GestorPartida {
                     if (item != null) {
                         for (int q = 0; q < quantitat; q++) {
                             j.afegeixItem(item);
+                        }
+                    }
+                }
+            }
+
+            //equip (només a partir de versió 2)
+            if (versionLlegida >= 2) {
+                //arma equipada
+                int teArma = dis.readByte();
+                if (teArma == 1) {
+                    int nomLen = dis.readShort();
+                    byte[] nomBytes = new byte[nomLen];
+                    dis.readFully(nomBytes);
+                    String nom = new String(nomBytes, StandardCharsets.UTF_8);
+                    Item item = RegistreItems.get().itemPerNom(nom);
+                    if (item instanceof Arma arma) {
+                        j.getInventari().equipaArma(arma, j);
+                    }
+                }
+
+                //armadures equipades
+                int numArmadures = dis.readByte();
+                for (int i = 0; i < numArmadures; i++) {
+                    int teArmadura = dis.readByte();
+                    if (teArmadura == 1) {
+                        int nomLen = dis.readShort();
+                        byte[] nomBytes = new byte[nomLen];
+                        dis.readFully(nomBytes);
+                        String nom = new String(nomBytes, StandardCharsets.UTF_8);
+                        Item item = RegistreItems.get().itemPerNom(nom);
+                        if (item instanceof Armadura armadura) {
+                            j.getInventari().equipaArmadura(armadura, j);
                         }
                     }
                 }

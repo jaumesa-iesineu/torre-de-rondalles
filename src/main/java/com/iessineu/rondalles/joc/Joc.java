@@ -460,10 +460,8 @@ public class Joc extends Motor {
                 if (item instanceof Clau) {
                     jugador.getInventari().elimina(idx);
                     iniciaDialog("dialegs/clau_menjada.json");
-                } else if (item instanceof com.iessineu.rondalles.inventari.Armadura arm) {
-                    jugador.getInventari().equipaArmadura(arm, jugador);
-                } else if (item instanceof com.iessineu.rondalles.inventari.Arma arma) {
-                    jugador.getInventari().equipaArma(arma, jugador);
+                } else {
+                    jugador.usaItem(idx);
                 }
             }
         }

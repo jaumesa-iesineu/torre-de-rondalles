@@ -89,7 +89,7 @@ public class Jugador extends Entitat { //el jugador tambe es una entitat
 
     public Carrega categoriaCarrega() {
         if ("lleugera_vent".equals(passiu)) return Carrega.LLEUGER;
-        double pct = (double) pes / pesMaxim;
+        double pct = (double) inventari.pesTotal() / pesMaxim;
         if (pct <= Mecaniques.llindCarregaNormal) return Carrega.LLEUGER;
         if (pct <= Mecaniques.llindCarregaPesat) return Carrega.NORMAL;
         return Carrega.PESAT;
