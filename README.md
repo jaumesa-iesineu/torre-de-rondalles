@@ -255,6 +255,7 @@ java -jar joc.jar -mod mods/mod_tresor.json mods/mod_espasa_nova.json
 3. **Executar el joc** amb `-mod` o `-game` apuntant al fitxer creat
 4. **Comprovar errors** a la consola si alguna cosa no funciona (veure [Errors comuns](#errors-comuns))
 > **Nota:** En la carpeta `resources` està un exemple de com ha de estar tot estructurat.
+> **Nota:** Per fer els assets dels enemics(json) recomanam emprar la esguent pàgina: [ASCII Studio](https://asciistudio.app)
 
 ---
 
