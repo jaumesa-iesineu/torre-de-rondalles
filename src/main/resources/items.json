@@ -416,19 +416,133 @@
                 "mapa": "planta2",
                 "id": "pocio-vida",
                 "x": 60,
-                "y": 27
+                "y": 38
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-vida",
+                "x": 61,
+                "y": 38
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-vida",
+                "x": 62,
+                "y": 38
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-vida",
+                "x": 63,
+                "y": 38
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-vida",
+                "x": 64,
+                "y": 38
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-vida",
+                "x": 65,
+                "y": 38
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-vida",
+                "x": 66,
+                "y": 38
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-vida",
+                "x": 67,
+                "y": 38
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-vida",
+                "x": 68,
+                "y": 38
             },
             {
                 "mapa": "planta2",
                 "id": "pocio-foc",
-                "x": 99,
-                "y": 27
+                "x": 69,
+                "y": 38
             },
             {
                 "mapa": "planta2",
-                "id": "pocio-foc",
-                "x": 60,
-                "y": 5
+                "id": "pocio-gel",
+                "x": 70,
+                "y": 38
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-veri",
+                "x": 71,
+                "y": 38
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-veri",
+                "x": 72,
+                "y": 38
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-veri",
+                "x": 73,
+                "y": 38
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-veri",
+                "x": 74,
+                "y": 38
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-vida",
+                "x": 75,
+                "y": 38
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-vida",
+                "x": 75,
+                "y": 37
+            },
+            {
+                "mapa": "planta2",
+                "id": "destral-gegant",
+                "x": 74,
+                "y": 37
+            },
+            {
+                "mapa": "planta2",
+                "id": "casc-cavaller",
+                "x": 73,
+                "y": 37
+            },
+            {
+                "mapa": "planta2",
+                "id": "armadura-cuir-drac",
+                "x": 72,
+                "y": 37
+            },
+            {
+                "mapa": "planta2",
+                "id": "polaines-encantades",
+                "x": 71,
+                "y": 37
+            },
+            {
+                "mapa": "planta2",
+                "id": "botes-ferro",
+                "x": 70,
+                "y": 37
             }
         ]
     }
