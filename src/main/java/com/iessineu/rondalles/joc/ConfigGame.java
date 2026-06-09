@@ -147,6 +147,8 @@ public class ConfigGame {
         public String[] artAscii;
         public String artFitxerEsquena;
         public String[] artAsciiEsquena;
+        public String artJsonFitxerEsquena;
+        public com.iessineu.rondalles.motor.CeldaArt[][] artJsonEsquena;
         public int vidaMaxima = 100;
         public int atac = 3;
         public int velocitat = 5;
@@ -161,6 +163,8 @@ public class ConfigGame {
         public String passiu;       // "sort_rondalla" | "pocions_infinites" | "atac_sorpresa_doble" | "lleugera_vent" | ""
         public String descripcioPassiu;
         public String[] artAscii;
+        public String artJsonFitxerEsquena;
+        public com.iessineu.rondalles.motor.CeldaArt[][] artJsonEsquena;
         public int vidaMaxima = 100;
         public int atac = 3;
         public int velocitat = 5;

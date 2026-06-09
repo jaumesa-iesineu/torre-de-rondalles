@@ -254,6 +254,16 @@ public class CarregadorGame {
         if (config.jugador != null && config.jugador.artFitxerEsquena != null && !config.jugador.artFitxerEsquena.isBlank()) {
             config.jugador.artAsciiEsquena = carregaArt(config.jugador.artFitxerEsquena);
         }
+        if (config.jugador != null && config.jugador.artJsonFitxerEsquena != null && !config.jugador.artJsonFitxerEsquena.isBlank()) {
+            config.jugador.artJsonEsquena = carregaArtJson(config.jugador.artJsonFitxerEsquena);
+        }
+        if (config.tipusPersonatge != null) {
+            for (ConfigGame.TipusPersonatgeConfig tp : config.tipusPersonatge) {
+                if (tp.artJsonFitxerEsquena != null && !tp.artJsonFitxerEsquena.isBlank()) {
+                    tp.artJsonEsquena = carregaArtJson(tp.artJsonFitxerEsquena);
+                }
+            }
+        }
     }
 
     private static CeldaArt[][] carregaArtJson(String rutaRecurs) {
