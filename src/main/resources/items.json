@@ -365,11 +365,71 @@
                 "y": 2
             },
             {
-                "mapa": "planta1",
-                "id": "Cota de malla",
-                "x": 58,
-                "y": 2
-            }
+                "mapa": "planta2",
+                "id": "pocio-vida",
+                "x": 97,
+                "y": 24
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-vida",
+                "x": 98,
+                "y": 24
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-vida",
+                "x": 99,
+                "y": 24
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-vida",
+                "x": 100,
+                "y": 24
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-veri",
+                "x": 97,
+                "y": 28
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-veri",
+                "x": 97,
+                "y": 25
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-gel",
+                "x": 98,
+                "y": 26
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-foc",
+                "x": 99,
+                "y": 27
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-vida",
+                "x": 60,
+                "y": 27
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-foc",
+                "x": 99,
+                "y": 27
+            },
+            {
+                "mapa": "planta2",
+                "id": "pocio-foc",
+                "x": 60,
+                "y": 
+            },
         ]
     }
 }
