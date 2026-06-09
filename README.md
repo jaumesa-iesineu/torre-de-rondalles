@@ -44,7 +44,7 @@ cd torre-de-rondalles
  
 Torre de Rondalles és un joc completament local: no es connecta a cap servidor extern ni recull cap dada personal dels jugadors. Tota la informació es queda a l'equip on s'executa el joc.
  
-La base de dades `rondalles.db` s'empaqueta dins el propi `joc.jar` i conté únicament la configuració interna del joc (equivalent al que es pot definir a `game.json`). No es pot modificar des de fora sense recompilar el projecte, i fins i tot si s'aconseguís llegir-ne el contingut, no hi ha cap dada sensible: només paràmetres de joc.
+La base de dades `rondalles.db` es crea cada pic que empres el joc default dins el propi `joc.jar` i conté únicament la configuració interna del joc (equivalent al que es pot definir a `game.json`). Encara que es podria aconseguir modificar en temps d'execució del joc, com només conté configuracions del joc **no** és rellevant per a la seguretat dels usuaris.
  
 ### ⚠️ Integritat de les configuracions i mods
  
