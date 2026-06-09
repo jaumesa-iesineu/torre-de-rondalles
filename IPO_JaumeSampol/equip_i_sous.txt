@@ -1,0 +1,20 @@
+PROJECTE IPO - IES SINEU
+Nòmines de l'equip
+
+Equips i Rols:
+
+Tots treballem 5 hores al dia, de dilluns a divendres.
+Total = 25h/setmana (mitja jornada).
+
+SERGI JORDÀ MARTORELL   -> Cap de Projecte       -> 1.350 eur bruts/mes
+Jaume Sampol Alcover    -> Cap de Tecnologia     -> 1.200 eur bruts/mes
+KANHAI MASCARÓ MUNAR    -> Cap de Programació    -> 1.125 eur bruts/mes
+PERE MUNAR PAYERAS      -> Cap de Qualitat       -> 1.050 eur bruts/mes
+DANIEL CABANILLAS PEÑAS -> Cap de Continguts     -> 1.050 eur bruts/mes
+
+- IRPF del 2%
+
+Dades de "l'empresa":
+
+IES SINEU, CIF Q-123456789-A
+Dirección: Crta. Lloret de Vistalegre, s/n, 07510 Sineu, Balearic Islands
