@@ -240,7 +240,11 @@ public class CarregadorGame {
                 if (t.artJsonFitxer != null && !t.artJsonFitxer.isBlank()) {
                     t.artJson = carregaArtJson(t.artJsonFitxer);
                 } else if (t.artFitxer != null && !t.artFitxer.isBlank()) {
-                    t.artAscii = carregaArt(t.artFitxer);
+                    if (t.artFitxer.endsWith(".json")) {
+                        System.err.println("[Art] " + t.nom + ": utilitza artJsonFitxer, no artFitxer (fitxer: " + t.artFitxer + ")");
+                    } else {
+                        t.artAscii = carregaArt(t.artFitxer);
+                    }
                 }
             }
         }
@@ -249,6 +253,16 @@ public class CarregadorGame {
         }
         if (config.jugador != null && config.jugador.artFitxerEsquena != null && !config.jugador.artFitxerEsquena.isBlank()) {
             config.jugador.artAsciiEsquena = carregaArt(config.jugador.artFitxerEsquena);
+        }
+        if (config.jugador != null && config.jugador.artJsonFitxerEsquena != null && !config.jugador.artJsonFitxerEsquena.isBlank()) {
+            config.jugador.artJsonEsquena = carregaArtJson(config.jugador.artJsonFitxerEsquena);
+        }
+        if (config.tipusPersonatge != null) {
+            for (ConfigGame.TipusPersonatgeConfig tp : config.tipusPersonatge) {
+                if (tp.artJsonFitxerEsquena != null && !tp.artJsonFitxerEsquena.isBlank()) {
+                    tp.artJsonEsquena = carregaArtJson(tp.artJsonFitxerEsquena);
+                }
+            }
         }
     }
 
