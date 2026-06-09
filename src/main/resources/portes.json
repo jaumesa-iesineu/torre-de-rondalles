@@ -155,30 +155,6 @@
             },
             {
                 "mapa": "planta3",
-                "x": 98,
-                "y": 13,
-                "bloquejada": true,
-                "esPortaCanviPlanta": true,
-                "clauId": "clau-planta3"
-            },
-            {
-                "mapa": "planta3",
-                "x": 99,
-                "y": 13,
-                "bloquejada": true,
-                "esPortaCanviPlanta": true,
-                "clauId": "clau-planta3"
-            },
-            {
-                "mapa": "planta3",
-                "x": 100,
-                "y": 13,
-                "bloquejada": true,
-                "esPortaCanviPlanta": true,
-                "clauId": "clau-planta3"
-            },
-            {
-                "mapa": "planta3",
                 "x": 101,
                 "y": 13,
                 "bloquejada": true,
