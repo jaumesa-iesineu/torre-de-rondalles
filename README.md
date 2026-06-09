@@ -14,7 +14,6 @@
 - [Creació de contingut personalitzat](#creació-de-contingut-personalitzat)
 - [Format JSON de referència](#format-json-de-referència)
 - [Errors comuns](#errors-comuns)
-- [Llicència](#llicència)
 
 ---
 
