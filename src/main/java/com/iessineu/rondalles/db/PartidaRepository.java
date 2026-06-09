@@ -393,7 +393,7 @@ public class PartidaRepository {
     private static void ompleSimbols(Connection conn, ConfigGame config) throws Exception {
         ConfigGame.SimbolsConfig s = config.simbols;
         if (s == null) return;
-        try (PreparedStatement ps = conn.prepareStatement("INSERT OR IGNORE INTO simbols VALUES (?,?)")) {
+        try (PreparedStatement ps = conn.prepareStatement("INSERT OR REPLACE INTO simbols VALUES (?,?)")) {
             desaSimbols(ps, "mur", s.mur);
             desaSimbols(ps, "portaTancada", s.portaTancada);
             desaSimbols(ps, "portaOberta", s.portaOberta);
@@ -432,7 +432,7 @@ public class PartidaRepository {
     private static void ompleTerrenys(Connection conn, ConfigGame config) throws Exception {
         if (config.terrenys == null) return;
         try (PreparedStatement ps = conn.prepareStatement(
-                "INSERT OR IGNORE INTO terrenys VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)")) {
+                "INSERT OR REPLACE INTO terrenys VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)")) {
             for (ConfigGame.TerrenyConfig t : config.terrenys) {
                 ps.setString(1, unirCaracters(t.simbols));
                 ps.setString(2, t.nom);
@@ -470,7 +470,7 @@ public class PartidaRepository {
     private static void ompleTipusEnemics(Connection conn, ConfigGame config) throws Exception {
         if (config.enemics == null || config.enemics.tipus == null) return;
         try (PreparedStatement ps = conn.prepareStatement(
-                "INSERT OR IGNORE INTO tipus_enemics VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")) {
+                "INSERT OR REPLACE INTO tipus_enemics VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")) {
             for (TipusEnemic t : config.enemics.tipus) {
                 ps.setString(1, unirTextos(t.simbols));
                 ps.setString(2, t.nom);
@@ -521,7 +521,7 @@ public class PartidaRepository {
         if (catalog == null) return;
 
         try (PreparedStatement ps = conn.prepareStatement(
-                "INSERT OR IGNORE INTO catalog_items VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)")) {
+                "INSERT OR REPLACE INTO catalog_items VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)")) {
             desaCategoriaItems(ps, catalog, "armes", "ARMA");
             desaCategoriaItems(ps, catalog, "armadures", "ARMADURA");
             desaCategoriaItems(ps, catalog, "claus", "CLAU");
@@ -585,7 +585,7 @@ public class PartidaRepository {
     @SuppressWarnings("unchecked")
     private static void ompleTipusNpcs(Connection conn, ConfigGame config) throws Exception {
         if (config.npcs == null || config.npcs.tipus == null) return;
-        try (PreparedStatement ps = conn.prepareStatement("INSERT OR IGNORE INTO tipus_npcs VALUES (?,?,?,?,?,?,?,?)")) {
+        try (PreparedStatement ps = conn.prepareStatement("INSERT OR REPLACE INTO tipus_npcs VALUES (?,?,?,?,?,?,?,?)")) {
             for (Object obj : config.npcs.tipus) {
                 if (!(obj instanceof Map)) continue;
                 Map<String, Object> m = (Map<String, Object>) obj;
@@ -622,7 +622,7 @@ public class PartidaRepository {
     private static void ompleEquipamentInicial(Connection conn, ConfigGame config) throws Exception {
         ConfigGame.EquipamentInicial eq = config.equipamentInicial;
         if (eq == null) return;
-        try (PreparedStatement ps = conn.prepareStatement("INSERT OR IGNORE INTO equipament_inicial VALUES (?,?)")) {
+        try (PreparedStatement ps = conn.prepareStatement("INSERT OR REPLACE INTO equipament_inicial VALUES (?,?)")) {
             if (eq.arma != null) {
                 ps.setString(1, "arma");
                 ps.setString(2, eq.arma);
@@ -654,7 +654,7 @@ public class PartidaRepository {
     private static void ompleTipusPersonatge(Connection conn, ConfigGame config) throws Exception {
         if (config.tipusPersonatge == null) return;
         try (PreparedStatement ps = conn.prepareStatement(
-                "INSERT OR IGNORE INTO tipus_personatge VALUES (?,?,?,?,?,?,?,?,?,?)")) {
+                "INSERT OR REPLACE INTO tipus_personatge VALUES (?,?,?,?,?,?,?,?,?,?)")) {
             for (ConfigGame.TipusPersonatgeConfig tp : config.tipusPersonatge) {
                 ps.setString(1, tp.id);
                 ps.setString(2, tp.nom);
@@ -692,7 +692,7 @@ public class PartidaRepository {
 
     private static void ompleEnigmes(Connection conn, ConfigGame config) throws Exception {
         if (config.enigmes == null) return;
-        try (PreparedStatement psEnigma = conn.prepareStatement("INSERT OR IGNORE INTO enigmes VALUES (?)");
+        try (PreparedStatement psEnigma = conn.prepareStatement("INSERT OR REPLACE INTO enigmes VALUES (?)");
              PreparedStatement psDita = conn.prepareStatement("INSERT INTO dites (planta, nivell, pregunta, resposta) VALUES (?,?,?,?)");
              PreparedStatement psVenda = conn.prepareStatement("INSERT INTO items_venda (planta, item_id, ordre) VALUES (?,?,?)")) {
 
@@ -723,7 +723,7 @@ public class PartidaRepository {
 
     private static void ompleChetos(Connection conn, ConfigGame config) throws Exception {
         if (config.chetos == null) return;
-        try (PreparedStatement ps = conn.prepareStatement("INSERT OR IGNORE INTO chetos VALUES (?,?)")) {
+        try (PreparedStatement ps = conn.prepareStatement("INSERT OR REPLACE INTO chetos VALUES (?,?)")) {
             for (ConfigGame.ChetoConfig c : config.chetos) {
                 ps.setString(1, c.accio);
                 ps.setString(2, unirTextos(c.sequencia));
