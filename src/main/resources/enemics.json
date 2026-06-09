@@ -100,7 +100,7 @@
                 "velocitat": 3,
                 "patroIA": "guardia",
                 "esBoss": true,
-                "artFitxer": "art/drac47x24.json",
+                "artJsonFitxer": "art/drac47x24.json",
                 "gameOver": "gameover/drac.json",
                 "boss": true
             },
@@ -118,7 +118,7 @@
                 "velocitat": 2,
                 "patroIA": "guardia",
                 "esBoss": true,
-                "artFitxer": "art/drac47x24.json",
+                "artJsonFitxer": "art/drac47x24.json",
                 "gameOver": "gameover/drac.json",
                 "boss": true
             },
