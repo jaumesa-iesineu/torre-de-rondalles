@@ -155,19 +155,59 @@
             },
             {
                 "mapa": "planta3",
-                "x": 170,
-                "y": 19,
+                "x": 98,
+                "y": 13,
                 "bloquejada": true,
-                "esPortaCanviPlanta": false,
+                "esPortaCanviPlanta": true,
                 "clauId": "clau-planta3"
             },
             {
-                "mapa": "planta4",
-                "x": 106,
-                "y": 21,
+                "mapa": "planta3",
+                "x": 99,
+                "y": 13,
                 "bloquejada": true,
-                "esPortaCanviPlanta": false,
-                "clauId": "clau-planta4"
+                "esPortaCanviPlanta": true,
+                "clauId": "clau-planta3"
+            },
+            {
+                "mapa": "planta3",
+                "x": 100,
+                "y": 13,
+                "bloquejada": true,
+                "esPortaCanviPlanta": true,
+                "clauId": "clau-planta3"
+            },
+            {
+                "mapa": "planta3",
+                "x": 101,
+                "y": 13,
+                "bloquejada": true,
+                "esPortaCanviPlanta": true,
+                "clauId": "clau-planta3"
+            },
+            {
+                "mapa": "planta3",
+                "x": 102,
+                "y": 13,
+                "bloquejada": true,
+                "esPortaCanviPlanta": true,
+                "clauId": "clau-planta3"
+            },
+            {
+                "mapa": "planta3",
+                "x": 103,
+                "y": 13,
+                "bloquejada": true,
+                "esPortaCanviPlanta": true,
+                "clauId": "clau-planta3"
+            },
+            {
+                "mapa": "planta3",
+                "x": 104,
+                "y": 13,
+                "bloquejada": true,
+                "esPortaCanviPlanta": true,
+                "clauId": "clau-planta3"
             }
         ]
     }

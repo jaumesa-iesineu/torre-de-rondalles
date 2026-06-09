@@ -91,7 +91,7 @@
                     "£"
                 ],
                 "nom": "Drac antic",
-                "vida": 100,
+                "vida": 150,
                 "atac": 35,
                 "radi": 15,
                 "colorR": 220,
@@ -566,6 +566,13 @@
                 "x": 50,
                 "y": 37
             },
+            {
+                "mapa": "planta3",
+                "simbol": "D",
+                "x": 52,
+                "y": 27,
+                "area": 10
+            }
             
         ]
     }
