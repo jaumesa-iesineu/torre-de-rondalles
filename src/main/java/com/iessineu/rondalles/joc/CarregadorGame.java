@@ -240,7 +240,11 @@ public class CarregadorGame {
                 if (t.artJsonFitxer != null && !t.artJsonFitxer.isBlank()) {
                     t.artJson = carregaArtJson(t.artJsonFitxer);
                 } else if (t.artFitxer != null && !t.artFitxer.isBlank()) {
-                    t.artAscii = carregaArt(t.artFitxer);
+                    if (t.artFitxer.endsWith(".json")) {
+                        System.err.println("[Art] " + t.nom + ": utilitza artJsonFitxer, no artFitxer (fitxer: " + t.artFitxer + ")");
+                    } else {
+                        t.artAscii = carregaArt(t.artFitxer);
+                    }
                 }
             }
         }
