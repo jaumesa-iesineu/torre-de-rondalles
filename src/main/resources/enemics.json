@@ -553,7 +553,19 @@
                 "simbol": "B",
                 "x": 50,
                 "y": 37
-            }
+            },
+            {
+                "mapa": "planta3",
+                "simbol": "B",
+                "x": 100,
+                "y": 37
+            },
+            {
+                "mapa": "planta3",
+                "simbol": "B",
+                "x": 50,
+                "y": 37
+            },
             
         ]
     }
