@@ -610,6 +610,7 @@ public class Joc extends Motor {
             renderer.setNomPersonatge(personatgeTriat.nom);
             com.iessineu.rondalles.audio.GestorSfx.setPersonatgeId(personatgeTriat.id);
             if (personatgeTriat.artAscii != null) renderer.setArtJugador(personatgeTriat.artAscii);
+            if (personatgeTriat.artJsonEsquena != null) renderer.setArtJugadorJsonEsquena(personatgeTriat.artJsonEsquena);
         }
         carregaEquipamentInicial();
         GestorMusica.reprodueix("PIS_1");

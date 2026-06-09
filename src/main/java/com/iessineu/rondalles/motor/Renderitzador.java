@@ -46,6 +46,7 @@ public class Renderitzador { // classe per gestionar la pantalla
 
     private String[] artJugador;
     private String[] artJugadorEsquena;
+    private CeldaArt[][] artJugadorJsonEsquena;
 
     public void setRadiLlanterna(int r) { this.radiLlanterna = r; }
     public void setAmpleHud(int a) { this.ampleHud = a; }
@@ -72,6 +73,10 @@ public class Renderitzador { // classe per gestionar la pantalla
 
     public void setArtJugadorEsquena(String[] art) {
         this.artJugadorEsquena = art;
+    }
+
+    public void setArtJugadorJsonEsquena(CeldaArt[][] art) {
+        this.artJugadorJsonEsquena = art;
     }
 
     public Renderitzador() throws IOException {
@@ -587,14 +592,28 @@ public class Renderitzador { // classe per gestionar la pantalla
         // ═══ ZONA JUGADOR (baix) ═══
 
         //sprite jugador d'esquena (baix-esquerra)
-        String[] artEs = artJugadorEsquena != null ? artJugadorEsquena : artJugador;
-        if (artEs != null) {
+        if (artJugadorJsonEsquena != null) {
             int maxAmpleJ = (colSep / 2) - 2;
             int fJ = midBat + 1;
-            for (String linia : artEs) {
+            for (CeldaArt[] fila : artJugadorJsonEsquena) {
                 if (fJ >= rows - 7) break;
-                String l = linia.length() > maxAmpleJ ? linia.substring(0, maxAmpleJ) : linia;
-                pintaText(3, fJ++, l, verdJugador);
+                for (int x = 0; x < fila.length; x++) {
+                    if (3 + x >= colSep || 3 + x >= maxAmpleJ + 3) break;
+                    CeldaArt cel = fila[x];
+                    screen.setCharacter(3 + x, fJ, new TextCharacter(cel.c(), cel.fg(), cel.bg()));
+                }
+                fJ++;
+            }
+        } else {
+            String[] artEs = artJugadorEsquena != null ? artJugadorEsquena : artJugador;
+            if (artEs != null) {
+                int maxAmpleJ = (colSep / 2) - 2;
+                int fJ = midBat + 1;
+                for (String linia : artEs) {
+                    if (fJ >= rows - 7) break;
+                    String l = linia.length() > maxAmpleJ ? linia.substring(0, maxAmpleJ) : linia;
+                    pintaText(3, fJ++, l, verdJugador);
+                }
             }
         }
 
