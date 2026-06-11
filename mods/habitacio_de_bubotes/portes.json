@@ -184,6 +184,16 @@
                 "bloquejada": true,
                 "esPortaCanviPlanta": true,
                 "clauId": "clau-planta3"
+            },
+            {
+                "mapa": "planta1",
+                "x": 8,
+                "y": 34
+            },
+            {
+                "mapa": "planta1",
+                "x": 9,
+                "y": 34
             }
         ]
     }
