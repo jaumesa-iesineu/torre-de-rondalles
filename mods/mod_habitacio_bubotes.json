@@ -6,8 +6,8 @@
           "B"
         ],
         "nom": "Bubota Trista",
-        "vida": 1,
-        "atac": 1,
+        "vida": 10,
+        "atac": 5,
         "radi": 100,
         "colorR": 180,
         "colorG": 180,
@@ -21,18 +21,6 @@
       }
     ],
     "posicions": [
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 8,
-        "y": 34
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 9,
-        "y": 34
-      },
       {
         "mapa": "planta1",
         "simbol": "B",
@@ -67,30 +55,6 @@
         "mapa": "planta1",
         "simbol": "B",
         "x": 6,
-        "y": 35
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 7,
-        "y": 35
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 8,
-        "y": 35
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 9,
-        "y": 35
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 10,
         "y": 35
       },
       {
@@ -156,6 +120,12 @@
       {
         "mapa": "planta1",
         "simbol": "B",
+        "x": 21,
+        "y": 35
+      },
+      {
+        "mapa": "planta1",
+        "simbol": "B",
         "x": 1,
         "y": 36
       },
@@ -181,42 +151,6 @@
         "mapa": "planta1",
         "simbol": "B",
         "x": 5,
-        "y": 36
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 6,
-        "y": 36
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 7,
-        "y": 36
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 8,
-        "y": 36
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 9,
-        "y": 36
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 10,
-        "y": 36
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 11,
         "y": 36
       },
       {
@@ -270,6 +204,12 @@
       {
         "mapa": "planta1",
         "simbol": "B",
+        "x": 21,
+        "y": 36
+      },
+      {
+        "mapa": "planta1",
+        "simbol": "B",
         "x": 1,
         "y": 37
       },
@@ -289,54 +229,6 @@
         "mapa": "planta1",
         "simbol": "B",
         "x": 4,
-        "y": 37
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 5,
-        "y": 37
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 6,
-        "y": 37
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 7,
-        "y": 37
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 8,
-        "y": 37
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 9,
-        "y": 37
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 10,
-        "y": 37
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 11,
-        "y": 37
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 12,
         "y": 37
       },
       {
@@ -391,66 +283,6 @@
         "mapa": "planta1",
         "simbol": "B",
         "x": 3,
-        "y": 38
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 4,
-        "y": 38
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 5,
-        "y": 38
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 6,
-        "y": 38
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 7,
-        "y": 38
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 8,
-        "y": 38
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 9,
-        "y": 38
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 10,
-        "y": 38
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 11,
-        "y": 38
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 12,
-        "y": 38
-      },
-      {
-        "mapa": "planta1",
-        "simbol": "B",
-        "x": 13,
         "y": 38
       },
       {
