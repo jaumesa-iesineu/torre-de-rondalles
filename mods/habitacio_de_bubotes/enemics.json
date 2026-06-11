@@ -1,6 +1,41 @@
 {
     "enemics": {
-        "tipus": [],
-        "posicions": []
+        "tipus": [
+            {
+                "simbols": ["B"],
+                "nom": "Bubota",
+                "vida": 20,
+                "atac": 5,
+                "radi": 100,
+                "colorR": 180,
+                "colorG": 180,
+                "colorB": 255,
+                "velocitat": 2,
+                "travessaParets": true,
+                "patroIA": "perseguir",
+                "requereixDescobriment": true,
+                "esBoss": false,
+                "artJsonFitxer": "art/bubota17x17.json"
+            },
+            {
+                "simbols": ["£"],
+                "nom": "Drac antic",
+                "vida": 150,
+                "atac": 35,
+                "radi": 15,
+                "colorR": 220,
+                "colorG": 30,
+                "colorB": 30,
+                "velocitat": 3,
+                "patroIA": "guardia",
+                "esBoss": true,
+                "artJsonFitxer": "art/drac47x24.json",
+                "gameOver": "gameover/drac.json",
+                "boss": true
+            }
+        ],
+        "posicions": [
+            {"mapa": "planta3", "simbol": "£", "x": 103, "y": 11}
+        ]
     }
 }
