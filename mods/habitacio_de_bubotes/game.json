@@ -1,0 +1,14 @@
+{
+    "configuracio": "$include:configuracio.json",
+    "controls": "$include:controls.json",
+    "musica": "$include:musica.json",
+    "simbols": "$include:simbols.json",
+    "colorsPresets": "$include:colorsPresets.json",
+    "npcs": "$include:npcs.json",
+    "jugador": "$include:jugador.json",
+    "sfx": "$include:sfx.json",
+    "enigmes": "$include:enigmes.json",
+    "equipamentInicial": "$include:equipamentInicial.json",
+    "chetos": "$include:chetos.json",
+    "texts": "$include:texts.json"
+}
